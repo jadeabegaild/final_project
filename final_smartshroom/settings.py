@@ -136,19 +136,49 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-import firebase_admin
-from firebase_admin import credentials, firestore
 import os
+import json
+from pathlib import Path
 
-# Use the local firebase_credentials.json file
-firebase_path = os.path.join(BASE_DIR, "final_smartshroom", "firebase_credentials.json")
+# ... other settings ...
 
-if os.path.exists(firebase_path):
-    cred = credentials.Certificate(firebase_path)
-    firebase_admin.initialize_app(cred)
-    db = firestore.client()
+# 1. Get the JSON content from the environment variable
+firebase_credentials_json_str = os.environ.get('FIREBASE_CREDENTIALS_JSON')
+
+if firebase_credentials_json_str:
+    # 2. Define the path where the temporary file will be created
+    temp_dir = Path('/tmp')  # Use /tmp for writable storage on Render
+    firebase_temp_path = temp_dir / 'firebase_credentials.json'
+
+    try:
+        # 3. Write the JSON string content to the temporary file
+        with open(firebase_temp_path, 'w') as f:
+            # Ensure the content is valid JSON before writing
+            credentials = json.loads(firebase_credentials_json_str)
+            json.dump(credentials, f)
+        
+        # 4. Use the temporary file path for initialization
+        FIREBASE_CREDENTIALS_PATH = str(firebase_temp_path)
+        
+    except json.JSONDecodeError:
+        raise ValueError("FIREBASE_CREDENTIALS_JSON environment variable is not valid JSON.")
+    except Exception as e:
+        raise RuntimeError(f"Could not create temporary Firebase credentials file: {e}")
+
 else:
-    raise FileNotFoundError(f"Firebase credentials not found at {firebase_path}")
+    # Handle case where the environment variable is missing (e.g., local development or a fallback)
+    # You might keep the FileNotFoundError here for development if you still use a local file
+    # Or set a default for local development.
+    local_path = os.path.join(BASE_DIR, "final_smartshroom/firebase_credentials.json")
+    if os.path.exists(local_path):
+        FIREBASE_CREDENTIALS_PATH = local_path
+    else:
+        # If running on Render without the env var, raise an error
+        raise FileNotFoundError("Firebase credentials not found. Set FIREBASE_CREDENTIALS_JSON environment variable.")
+
+
+# Then, use `FIREBASE_CREDENTIALS_PATH` when initializing Firebase
+# e.g., service_account.Credentials.from_service_account_file(FIREBASE_CREDENTIALS_PATH)
 
 
 
