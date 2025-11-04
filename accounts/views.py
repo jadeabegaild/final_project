@@ -591,18 +591,36 @@ def update_control_settings(request):
 # Import the firebase utils
 from .firebase_utils import db, add_safe_globals
 
-# Determine which framework to use based on the model file
+import os
+from django.conf import settings
+
 MODEL_PATH = os.path.join(settings.BASE_DIR, 'static/models/mushroom_mobilenetv2.h5')
 
 # Model will be loaded lazily when needed
 model = None
+_tf_loaded = False
 
 def load_model():
-    """Load the ML model."""
-    global model
+    """Load the ML model lazily."""
+    global model, _tf_loaded
     
     if model is not None:
         return
+    
+    # Import TensorFlow only when needed (not at module level)
+    if not _tf_loaded:
+        import tensorflow as tf
+        # Configure TensorFlow for lower memory usage
+        tf.config.set_visible_devices([], 'GPU')  # Disable GPU if not needed
+        physical_devices = tf.config.list_physical_devices('CPU')
+        if physical_devices:
+            try:
+                # Limit memory growth
+                for device in physical_devices:
+                    tf.config.experimental.set_memory_growth(device, True)
+            except:
+                pass
+        _tf_loaded = True
         
     try:
         # Check if file exists
@@ -611,13 +629,18 @@ def load_model():
             return
 
         try:
-            # For TensorFlow/Keras models (.h5 files)
-            import tensorflow as tf
             from tensorflow import keras
             print("Loading TensorFlow/Keras model...")
             
-            # Load the model
-            model = keras.models.load_model(MODEL_PATH)
+            # Load the model with memory optimization
+            model = keras.models.load_model(
+                MODEL_PATH,
+                compile=False  # Don't compile if you're only doing inference
+            )
+            
+            # Compile for inference only (lighter weight)
+            model.compile(optimizer='adam', loss='categorical_crossentropy')
+            
             print("TensorFlow/Keras model loaded successfully")
                 
         except Exception as e:
@@ -634,21 +657,24 @@ def process_image_with_model(img):
     """Process an image with the ML model and return the classification result."""
     global model
     
+    # Load model only when first prediction is needed
     if model is None:
         load_model()
         if model is None:
             raise Exception("Model could not be loaded")
-        
+    
+    # Import image processing libraries only when needed
+    from PIL import Image
+    import numpy as np
+    
     try:
-        import tensorflow as tf
-        import numpy as np
+        # Import tensorflow functions only when needed
         from tensorflow.keras.preprocessing import image
         
         # Convert image to RGB if it has an alpha channel (4 channels)
         if img.mode == 'RGBA':
-            # Create a white background and paste the image
             background = Image.new('RGB', img.size, (255, 255, 255))
-            background.paste(img, mask=img.split()[3])  # Use alpha channel as mask
+            background.paste(img, mask=img.split()[3])
             img = background
         elif img.mode != 'RGB':
             img = img.convert('RGB')
@@ -658,26 +684,23 @@ def process_image_with_model(img):
         img_array = image.img_to_array(img_resized)
         img_array = np.expand_dims(img_array, axis=0)
         
-        # Normalize pixel values to [0,1] range (typical for MobileNetV2)
+        # Normalize pixel values to [0,1] range
         img_array = img_array / 255.0
         
-        # Alternative normalization if your model was trained with ImageNet preprocessing:
-        # img_array = tf.keras.applications.mobilenet_v2.preprocess_input(img_array)
-        
         # Make prediction
-        predictions = model.predict(img_array)
+        predictions = model.predict(img_array, verbose=0)  # verbose=0 to reduce logging
         
         # Get the predicted class and confidence
         class_labels = ['Healthy Mushroom', 'Trichoderma']
         predicted_class_idx = np.argmax(predictions[0])
         confidence = float(predictions[0][predicted_class_idx])
     
-        # Create result dictionary - UPDATED TO MATCH JAVASCRIPT EXPECTATIONS
+        # Create result dictionary
         result = {
             'class': class_labels[predicted_class_idx],
-            'confidence': confidence * 100,  # Convert to percentage
-            'status': class_labels[predicted_class_idx],  # Changed to match JavaScript
-            'disease': class_labels[predicted_class_idx],  # Changed to match JavaScript
+            'confidence': confidence * 100,
+            'status': class_labels[predicted_class_idx],
+            'disease': class_labels[predicted_class_idx],
         }
         
         return result
