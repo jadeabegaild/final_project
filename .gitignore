@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+
+# Environment
+.env
+venv/
+ENV/
+.venv/
+*.env
+
+# Django stuff
+db.sqlite3
+/staticfiles/
+media/
+
+# Firebase service key
+firebase-service-account.json
+serviceAccountKey.json
+
+# OS files
+.DS_Store
+Thumbs.db

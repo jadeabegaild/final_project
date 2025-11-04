@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mushroom Disease Scanner</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Montserrat Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <style>
+        /* Enhanced Oyster mushroom palette */
+        :root {
+            --primary: #D6C1B1; /* Light mushroom tan */
+            --primary-dark: #c0ab9b; /* Darker shade for hover states */
+            --secondary: #8B786D; /* Medium mushroom brown */
+            --accent: #4D6A6D; /* Complementary blue-green */
+            --accent-light: #5d8286; /* Lighter accent for gradients */
+            --light: #F5F1ED; /* Very light tan */
+            --dark: #3A3238; /* Deep purple-brown */
+            --highlight: #BED3C9; /* Soft sage green */
+            --success: #4D6A6D;
+            --danger: #A15C54;
+            
+            /* New variables for modern design */
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+            --radius: 16px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--light) 0%, var(--highlight) 100%);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+        
+        /* Modern navbar styling */
+        .navbar {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%) !important;
+            box-shadow: var(--shadow-md);
+            padding: 0.5rem 1rem;
+        }
+        
+        .navbar-brand {
+            color: var(--light) !important;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+        }
+        
+        .navbar-brand i {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-right: 10px;
+            transition: var(--transition);
+        }
+        
+        .navbar-brand:hover i {
+            transform: rotate(-15deg);
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            transition: var(--transition);
+            position: relative;
+            border-radius: var(--radius);
+            margin: 0 0.2rem;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary) !important;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link.active {
+            color: var(--primary) !important;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .nav-link i {
+            margin-right: 8px;
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .dropdown-menu {
+            border-radius: var(--radius);
+            border: none;
+            box-shadow: var(--shadow-md);
+            background: white;
+            overflow: hidden;
+        }
+        
+        .dropdown-item {
+            padding: 0.7rem 1.2rem;
+            transition: var(--transition);
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--highlight);
+            color: var(--dark);
+        }
+        
+        .dropdown-item i {
+            margin-right: 8px;
+            color: var(--accent);
+            width: 18px;
+        }
+        
+        /* Main content */
+        .content-container {
+            padding: 2rem 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            color: var(--dark);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section-title i {
+            color: var(--accent);
+            margin-right: 15px;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 2px;
+        }
+        
+        /* Card styling */
+        .card {
+            border: none;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            background: white;
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .card-header {
+            border: none;
+            padding: 1.5rem;
+            font-weight: 600;
+            border-radius: var(--radius) var(--radius) 0 0 !important;
+        }
+        
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%) !important;
+            color: white;
+        }
+
+        .bg-gradient-info {
+            background: linear-gradient(135deg, var(--secondary) 0%, #9c8a7f 100%) !important;
+            color: white;
+        }
+
+        .bg-gradient-secondary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+            color: var(--dark);
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        /* Camera placeholder styling */
+        .camera-placeholder {
+            background: linear-gradient(135deg, var(--light) 0%, rgba(214, 193, 177, 0.3) 100%);
+            border: 3px dashed var(--secondary);
+            border-radius: var(--radius);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+        }
+        
+        .camera-placeholder:hover {
+            background: linear-gradient(135deg, rgba(214, 193, 177, 0.2) 0%, rgba(190, 211, 201, 0.3) 100%);
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .camera-placeholder i {
+            color: var(--secondary);
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+        
+        .camera-placeholder:hover i {
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+        
+        /* Button styling */
+        .btn {
+            border: none;
+            border-radius: var(--radius);
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+            color: white;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary) 0%, #9c8a7f 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #9c8a7f 0%, var(--secondary) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+            color: white;
+        }
+        
+        /* Result styling */
+        .result-badge {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+        }
+        
+        .result-healthy {
+            background: linear-gradient(135deg, var(--accent), var(--highlight));
+            color: white;
+        }
+        
+        .result-disease {
+            background: linear-gradient(135deg, var(--danger), #D67B6A);
+            color: white;
+        }
+        
+        .recommendation-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .recommendation-list li {
+            padding: 0.8rem 0;
+            border-bottom: 2px solid rgba(214, 193, 177, 0.3);
+            position: relative;
+            padding-left: 2rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .recommendation-list li:before {
+            content: "●";
+            color: var(--accent);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+        
+        .recommendation-list li:last-child {
+            border-bottom: none;
+        }
+        
+        /* Analysis history styling */
+        #analysis-history .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 2px solid rgba(214, 193, 177, 0.2);
+            transition: var(--transition);
+        }
+        
+        #analysis-history .history-item:hover {
+            background: rgba(214, 193, 177, 0.1);
+            border-radius: 10px;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        
+        #analysis-history .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.8rem;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid white;
+        }
+        
+        .status-dot.healthy {
+            background-color: var(--accent);
+        }
+        
+        .status-dot.disease {
+            background-color: var(--danger);
+        }
+        
+        .status-dot.warning {
+            background-color: #E6B800;
+        }
+        
+        /* Video element styling */
+        #camera {
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            border: 4px solid var(--primary);
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+        }
+        
+        /* Performance metrics */
+        .performance-metric {
+            background: linear-gradient(135deg, rgba(214, 193, 177, 0.1) 0%, rgba(190, 211, 201, 0.1) 100%);
+            border-radius: var(--radius);
+            padding: 1rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .performance-metric:hover {
+            background: linear-gradient(135deg, rgba(214, 193, 177, 0.2) 0%, rgba(190, 211, 201, 0.2) 100%);
+            transform: scale(1.05);
+        }
+        
+        /* Form controls */
+        .form-control {
+            border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+            border-radius: var(--radius);
+            padding: 0.8rem 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--accent) 25%, transparent);
+        }
+        
+        .input-group-text {
+            background: color-mix(in srgb, var(--accent) 10%, transparent);
+            border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+            color: var(--accent);
+            border-radius: var(--radius);
+        }
+        
+        /* Upload area */
+        .upload-area {
+            border: 3px dashed var(--secondary);
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(214, 193, 177, 0.1) 0%, rgba(190, 211, 201, 0.1) 100%);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(214, 193, 177, 0.2) 0%, rgba(190, 211, 201, 0.2) 100%);
+        }
+        
+        /* Preview modal styling */
+        .preview-modal-img {
+            max-height: 60vh;
+            object-fit: contain;
+            width: 100%;
+            border-radius: var(--radius);
+        }
+        
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        /* Notification container */
+        .notification-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 350px;
+        }
+        
+        .notification {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            animation: slideInRight 0.3s ease;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .notification.success {
+            border-left-color: var(--success);
+        }
+        
+        .notification.warning {
+            border-left-color: var(--warning, #E6B800);
+        }
+        
+        .notification.danger {
+            border-left-color: var(--danger);
+        }
+        
+        .notification-icon {
+            font-size: 1.5rem;
+            margin-right: 0.8rem;
+            flex-shrink: 0;
+        }
+        
+        .notification-content {
+            flex-grow: 1;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        
+        .notification-message {
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--secondary);
+            margin-left: 0.5rem;
+            flex-shrink: 0;
+        }
+        
+        .notification-progress {
+            height: 4px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        
+        .notification-progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 100%;
+            animation: progressBar 5s linear forwards;
+        }
+        
+        .notification.success .notification-progress-bar {
+            background: var(--success);
+        }
+        
+        .notification.warning .notification-progress-bar {
+            background: var(--warning, #E6B800);
+        }
+        
+        .notification.danger .notification-progress-bar {
+            background: var(--danger);
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes progressBar {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .content-container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .camera-placeholder {
+                height: 300px;
+            }
+            
+            .btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .preview-modal-img {
+                max-height: 50vh;
+            }
+            
+            .toast-container {
+                left: 20px;
+                right: 20px;
+            }
+            
+            .notification-container {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+        }
+        
+        /* Animation for status changes */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .status-updated {
+            animation: pulse 0.5s ease;
+        }
+        
+        /* Loading spinner */
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-width: 0.2em;
+            border-color: var(--accent);
+            border-right-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast container for messages -->
+    <div class="toast-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="toast align-items-center text-white bg-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                            {{ message }}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Notification container -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-seedling"></i>SMARTSHROOM</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto"> 
+                    <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link " href="{% url 'report' %}"><i class="fas fa-file-alt"></i> Report</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{% url 'scan' %}"><i class="fas fa-qrcode"></i> Scan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'remote' %}"><i class="fas fa-wifi"></i> Remote</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> 
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content-container">
+        <h2 class="section-title animate__animated animate__fadeInDown">
+            <i class="fas fa-microscope"></i>Mushroom Disease Detection System
+        </h2>
+
+        <!-- Real-time Camera Section -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="card border-0 animate__animated animate__fadeInLeft">
+                    <div class="card-header bg-gradient-primary">
+                        <h5 class="mb-0">
+                            <i class="fas fa-camera me-2"></i>Real-time Mushroom Disease Detection
+                        </h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <!-- Camera Placeholder -->
+                        <div id="camera-placeholder" class="camera-placeholder">
+                            <i class="fas fa-video"></i>
+                            <h5 class="text-muted mt-3">Click to Start Real-time Analysis</h5>
+                            <p class="text-muted mb-0">Camera will analyze mushrooms continuously</p>
+                        </div>
+                        
+                        <!-- Video Element -->
+                        <video id="camera" class="d-none" autoplay playsinline muted></video>
+                        
+                        <!-- Camera Error Message -->
+                        <div id="camera-error" class="alert alert-danger d-none mt-3">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <span id="error-message"></span>
+                        </div>
+                        
+                        <!-- Camera Controls -->
+                        <div class="mt-4 d-flex justify-content-center gap-3">
+                            <button type="button" id="start-camera" class="btn btn-success">
+                                <i class="fas fa-video me-2"></i>Start Real-time Analysis
+                            </button>
+                            <button type="button" id="capture-image" class="btn btn-primary d-none">
+                                <i class="fas fa-camera me-2"></i>Save Current Frame
+                            </button>
+                        </div>
+                        
+                        <!-- Status Indicator -->
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Real-time analysis updates every 2 seconds
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Real-time Results Panel -->
+            <div class="col-lg-4">
+                <div id="result-container" class="d-none animate__animated animate__fadeInRight">
+                    <div class="card border-0">
+                        <div class="card-header bg-gradient-info">
+                            <h6 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>Live Analysis Feed
+                            </h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <!-- Real-time results will be inserted here -->
+                            <div id="real-time-result"></div>
+                            
+                            <!-- Analysis History -->
+                            <div class="p-3 border-top">
+                                <h6 class="text-muted mb-3">
+                                    <i class="fas fa-history me-2"></i>Recent Detections
+                                </h6>
+                                <div id="analysis-history" class="small">
+                                    <!-- History items will be added here -->
+                                    <div class="text-center text-muted py-3">
+                                        <i class="fas fa-clock me-2"></i>No recent analyses
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Metrics -->
+                    <div class="card border-0 mt-4">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted mb-3">
+                                <i class="fas fa-tachometer-alt me-2"></i>Performance Metrics
+                            </h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="performance-metric">
+                                        <div class="fw-bold text-success fs-4" id="fps-counter">0</div>
+                                        <small class="text-muted">FPS</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="performance-metric">
+                                        <div class="fw-bold text-info fs-4" id="analysis-counter">0</div>
+                                        <small class="text-muted">Analyzed</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Traditional Upload Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card border-0 animate__animated animate__fadeInUp">
+                    <div class="card-header bg-gradient-secondary">
+                        <h5 class="mb-0">
+                            <i class="fas fa-upload me-2"></i>Upload Image for Analysis
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <div class="upload-area p-4 text-center">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                    <h6 class="text-muted">Drop your mushroom image here</h6>
+                                    <p class="text-muted small mb-3">Or click to browse files</p>
+                                    <input type="file" class="form-control d-none" id="image-upload" accept="image/*">
+                                    <button type="button" class="btn btn-primary" onclick="document.getElementById('image-upload').click()">
+                                        <i class="fas fa-folder-open me-2"></i>Choose File
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="upload-info">
+                                    <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Upload Guidelines</h6>
+                                    <ul class="recommendation-list">
+                                        <li>Use high-quality images (min. 640x640px)</li>
+                                        <li>Ensure good lighting conditions</li>
+                                        <li>Focus on mushroom caps and stems</li>
+                                        <li>Supported formats: JPG, PNG, WebP</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+
+    <!-- Analysis Result Modal -->
+    <div class="modal fade" id="analysisModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-microscope me-2"></i>Analysis Results</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="text-center mb-3">
+                                <img id="modal-image" src="" class="img-fluid rounded" style="max-height: 300px;" alt="Analyzed mushroom">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-center mb-3">
+                                <div id="result-badge" class="result-badge mb-3"></div>
+                                <p id="confidence-text" class="text-muted"></p>
+                                <div class="progress mb-3" style="height: 10px; border-radius: 5px;">
+                                    <div id="confidence-bar" class="progress-bar" role="progressbar" style="border-radius: 5px;"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="recommendations" class="alert">
+                                <h6><i class="fas fa-lightbulb me-2"></i>Recommendations</h6>
+                                <ul id="recommendation-list" class="recommendation-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="downloadReport()">
+                        <i class="fas fa-download me-2"></i>Download Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-secondary text-white">
+                    <h5 class="modal-title"><i class="fas fa-image me-2"></i>Image Preview</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="preview-modal-image" src="" class="preview-modal-img mb-4" alt="Image preview">
+                    <p class="text-muted mb-4">Review your image before analysis</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="analyzeUploadedImage()">
+                        <i class="fas fa-search me-2"></i>Analyze Image
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // Real-time camera functionality
+    let camera = null;
+    let analysisInterval = null;
+    let frameCount = 0;
+    let analysisCount = 0;
+    let isCameraActive = false;
+    let currentUploadedImage = null;
+    let isAnalyzing = false; // Prevent multiple simultaneous requests
+
+    // Get CSRF token for Django
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // Event listeners
+    document.getElementById('start-camera').addEventListener('click', toggleCamera);
+    document.getElementById('capture-image').addEventListener('click', captureFrame);
+    document.getElementById('camera-placeholder').addEventListener('click', toggleCamera);
+
+    // Notification functions
+    function showNotification(type, title, message, duration = 5000) {
+        const notificationContainer = document.getElementById('notification-container');
+        const notificationId = 'notification-' + Date.now();
+        
+        let iconClass = 'fas fa-info-circle';
+        if (type === 'success') iconClass = 'fas fa-check-circle';
+        else if (type === 'warning') iconClass = 'fas fa-exclamation-triangle';
+        else if (type === 'danger') iconClass = 'fas fa-exclamation-circle';
+        
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.id = notificationId;
+        notification.innerHTML = `
+            <div class="notification-icon">
+                <i class="${iconClass}"></i>
+            </div>
+            <div class="notification-content">
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+                <div class="notification-progress">
+                    <div class="notification-progress-bar"></div>
+                </div>
+            </div>
+            <button class="notification-close" onclick="removeNotification('${notificationId}')">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        notificationContainer.appendChild(notification);
+        
+        // Auto remove notification after duration
+        if (duration > 0) {
+            setTimeout(() => {
+                removeNotification(notificationId);
+            }, duration);
+        }
+        
+        return notificationId;
+    }
+    
+    function removeNotification(id) {
+        const notification = document.getElementById(id);
+        if (notification) {
+            notification.style.animation = 'slideInRight 0.3s ease reverse';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }
+    }
+
+    function toggleCamera() {
+        if (isCameraActive) {
+            stopCamera();
+        } else {
+            startCamera();
+        }
+    }
+
+    async function startCamera() {
+        try {
+            // Show loading state
+            const startButton = document.getElementById('start-camera');
+            const originalText = startButton.innerHTML;
+            startButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Starting...';
+            startButton.disabled = true;
+            
+            // Hide any previous error messages
+            document.getElementById('camera-error').classList.add('d-none');
+            
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    width: { ideal: 640 },
+                    height: { ideal: 480 },
+                    facingMode: 'environment' // Use back camera if available
+                } 
+            });
+            
+            camera = document.getElementById('camera');
+            camera.srcObject = stream;
+            
+            // Wait for video to be ready
+            await new Promise((resolve) => {
+                camera.onloadedmetadata = () => {
+                    camera.play();
+                    resolve();
+                };
+            });
+            
+            // Show video, hide placeholder
+            document.getElementById('camera-placeholder').classList.add('d-none');
+            camera.classList.remove('d-none');
+            document.getElementById('capture-image').classList.remove('d-none');
+            document.getElementById('result-container').classList.remove('d-none');
+            
+            // Start FPS counter
+            setInterval(updateFPS, 1000);
+            
+            // Start real-time analysis (every 2 seconds)
+            analysisInterval = setInterval(analyzeCurrentFrame, 2000);
+            
+            // Update button
+            startButton.innerHTML = '<i class="fas fa-stop me-2"></i>Stop Camera';
+            startButton.disabled = false;
+            
+            isCameraActive = true;
+            
+        } catch (error) {
+            console.error('Error accessing camera:', error);
+            
+            // Show error message
+            const errorDiv = document.getElementById('camera-error');
+            const errorMessage = document.getElementById('error-message');
+            
+            if (error.name === 'NotAllowedError') {
+                errorMessage.textContent = 'Camera access denied. Please allow camera permissions and try again.';
+            } else if (error.name === 'NotFoundError' || error.name === 'OverconstrainedError') {
+                errorMessage.textContent = 'No camera found. Please check if your camera is connected properly.';
+            } else {
+                errorMessage.textContent = 'Could not access camera. Please try again.';
+            }
+            
+            errorDiv.classList.remove('d-none');
+            
+            // Reset button
+            const startButton = document.getElementById('start-camera');
+            startButton.innerHTML = '<i class="fas fa-video me-2"></i>Start Real-time Analysis';
+            startButton.disabled = false;
+        }
+    }
+
+    function stopCamera() {
+        if (camera && camera.srcObject) {
+            camera.srcObject.getTracks().forEach(track => track.stop());
+            camera.classList.add('d-none');
+            document.getElementById('camera-placeholder').classList.remove('d-none');
+            document.getElementById('capture-image').classList.add('d-none');
+            
+            clearInterval(analysisInterval);
+            
+            document.getElementById('start-camera').innerHTML = '<i class="fas fa-video me-2"></i>Start Real-time Analysis';
+            isCameraActive = false;
+            isAnalyzing = false;
+        }
+    }
+
+    function updateFPS() {
+        document.getElementById('fps-counter').textContent = frameCount;
+        frameCount = 0;
+    }
+
+    function analyzeCurrentFrame() {
+        if (!camera || camera.videoWidth === 0 || isAnalyzing) return;
+        
+        isAnalyzing = true;
+        
+        try {
+            // Capture current frame from video
+            const canvas = document.createElement('canvas');
+            canvas.width = camera.videoWidth;
+            canvas.height = camera.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(camera, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to data URL with lower quality for faster transmission
+            const imageData = canvas.toDataURL('image/jpeg', 0.7);
+            
+            // Send to server for analysis
+            fetch('/scan/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    camera_image: imageData
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    updateRealTimeResult(data.result);
+                    addToHistory(data.result);
+                    frameCount++;
+                    analysisCount++;
+                    document.getElementById('analysis-counter').textContent = analysisCount;
+                    
+                    // NEW: Call functions based on detection results
+
+                    
+                } else {
+                    console.error('Analysis error:', data.error);
+                    showAnalysisError(data.error || 'Analysis failed');
+                }
+                isAnalyzing = false;
+            })
+            .catch(error => {
+                console.error('Request failed:', error);
+                showAnalysisError('Network error. Please try again.');
+                isAnalyzing = false;
+            });
+            
+        } catch (error) {
+            console.error('Error in analyzeCurrentFrame:', error);
+            isAnalyzing = false;
+        }
+    }
+    
+
+    function updateRealTimeResult(result) {
+        const resultDiv = document.getElementById('real-time-result');
+        const badgeClass = result.status === 'Healthy Mushroom' ? 'result-healthy' : 'result-disease';
+        const icon = result.status === 'Healthy Mushroom' ? 'fa-check-circle' : 'fa-exclamation-triangle';
+        
+        resultDiv.innerHTML = `
+            <div class="p-3 text-center">
+                <div class="result-badge ${badgeClass} mb-3">
+                    <i class="fas ${icon} me-2"></i>${result.class}
+                </div>
+                <div class="text-muted small">
+                    Confidence: ${result.confidence.toFixed(1)}%
+                </div>
+                <div class="progress mt-2" style="height: 8px; border-radius: 10px;">
+                    <div class="progress-bar" role="progressbar" 
+                         style="width: ${result.confidence}%; 
+                                background: ${result.status === 'Healthy Mushroom' ? 'var(--accent)' : 'var(--danger)'}; 
+                                border-radius: 10px;"></div>
+                </div>
+                <small class="text-muted d-block mt-2">
+                    <i class="fas fa-clock me-1"></i>${new Date().toLocaleTimeString()}
+                </small>
+            </div>
+        `;
+    }
+
+    function showAnalysisError(message) {
+        const resultDiv = document.getElementById('real-time-result');
+        resultDiv.innerHTML = `
+            <div class="p-3 text-center">
+                <div class="result-badge result-disease mb-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Error
+                </div>
+                <div class="text-muted small">
+                    ${message}
+                </div>
+            </div>
+        `;
+    }
+
+    function addToHistory(result) {
+        const historyDiv = document.getElementById('analysis-history');
+        const time = new Date().toLocaleTimeString();
+        const dotClass = result.status === 'Healthy Mushroom' ? 'healthy' : 'disease';
+        
+        // Remove "no recent analyses" message if present
+        if (historyDiv.querySelector('.text-center')) {
+            historyDiv.innerHTML = '';
+        }
+        
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+            <span>
+                <span class="status-dot ${dotClass}"></span>
+                ${result.class} (${result.confidence.toFixed(1)}%)
+            </span>
+            <small class="text-muted">${time}</small>
+        `;
+        
+        historyDiv.insertBefore(historyItem, historyDiv.firstChild);
+        
+        // Keep only last 5 items
+        while (historyDiv.children.length > 5) {
+            historyDiv.removeChild(historyDiv.lastChild);
+        }
+    }
+
+    function captureFrame() {
+        if (!camera || camera.videoWidth === 0) return;
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = camera.videoWidth;
+        canvas.height = camera.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(camera, 0, 0, canvas.width, canvas.height);
+        
+        // Create a download link
+        const link = document.createElement('a');
+        link.download = 'mushroom-scan-' + new Date().toISOString().replace(/:/g, '-') + '.jpg';
+        link.href = canvas.toDataURL('image/jpeg', 0.9);
+        link.click();
+    }
+
+    // File upload handling
+    document.getElementById('image-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            showImagePreview(file);
+        }
+    });
+
+    function showImagePreview(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentUploadedImage = e.target.result;
+            
+            // Show preview in modal
+            const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+            document.getElementById('preview-modal-image').src = currentUploadedImage;
+            previewModal.show();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function analyzeUploadedImage() {
+        console.log('Starting image analysis...');
+        
+        if (!currentUploadedImage) {
+            console.error('No image to analyze');
+            return;
+        }
+
+        // Close the preview modal
+        const previewModal = bootstrap.Modal.getInstance(document.getElementById('previewModal'));
+        previewModal.hide();
+
+        // Show loading state in analysis modal
+        const analysisModal = new bootstrap.Modal(document.getElementById('analysisModal'));
+        document.getElementById('modal-image').src = currentUploadedImage;
+        document.getElementById('result-badge').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+        document.getElementById('result-badge').className = 'result-badge';
+        document.getElementById('confidence-text').textContent = '';
+        document.getElementById('confidence-bar').style.width = '0%';
+        document.getElementById('recommendation-list').innerHTML = '';
+        
+        analysisModal.show();
+
+        // Create FormData for file upload
+        const formData = new FormData();
+        const fileInput = document.getElementById('image-upload');
+        formData.append('image', fileInput.files[0]);
+
+        // Add AJAX header to indicate this is an AJAX request
+        const headers = {
+            'X-CSRFToken': csrftoken,
+            'X-Requested-With': 'XMLHttpRequest'  // This is crucial for your Django view
+        };
+
+        fetch('/scan/', {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                // If not JSON, read as text to see what we got
+                return response.text().then(text => {
+                    throw new Error(`Server returned HTML instead of JSON: ${text.substring(0, 100)}...`);
+                });
+            }
+        })
+        .then(data => {
+            console.log('Response data:', data);
+            if (data.status === 'success') {
+                updateResultModal(data.result);
+                
+                // NEW: Call functions based on detection results
+
+                
+                // Update the modal image with the processed image URL if available
+                if (data.image_url) {
+                    document.getElementById('modal-image').src = data.image_url;
+                }
+            } else {
+                throw new Error(data.error || 'Analysis failed');
+            }
+        })
+        .catch(error => {
+            console.error('Upload failed:', error);
+            document.getElementById('result-badge').innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Error';
+            document.getElementById('result-badge').className = 'result-badge result-disease';
+            document.getElementById('confidence-text').textContent = 'Analysis failed: ' + error.message;
+        });
+    }
+
+    function updateResultModal(result) {
+        const badgeClass = result.status === 'Healthy Mushroom' ? 'result-health极' : 'result-disease';
+        const icon = result.status === 'Healthy Mushroom' ? 'fa-check-circle' : 'fa-exclamation-triangle';
+        const alertClass = result.status === 'Healthy Mushroom' ? 'alert-success' : 'alert-danger';
+
+        document.getElementById('result-badge').innerHTML = `<i class="fas ${icon} me-2"></i>${result.class}`;
+        document.getElementById('result-badge').className = `result-badge ${badgeClass} mb-3`;
+        
+        document.getElementById('confidence-text').textContent = `Confidence Level: ${result.confidence.toFixed(1)}%`;
+        document.getElementById('confidence-bar').style.width = `${result.confidence}%`;
+        document.getElementById('confidence-bar').className = `progress-bar ${result.status === 'Healthy Mushroom' ? 'bg-success' : 'bg-danger'}`;
+        
+        document.getElementById('recommendations').className = `alert ${alertClass}`;
+        
+        const recommendations = getRecommendations(result.class);
+        const recommendationList = document.getElementById('recommendation-list');
+        recommendationList.innerHTML = recommendations.map(rec => `<li>${rec}</li>`).join('');
+    }
+
+    function getRecommendations(status) {
+        if (status === 'Healthy Mushroom') {
+            return [
+                'Continue current growing conditions',
+                'Monitor humidity levels (85-95%)',
+                'Maintain temperature between 18-24°C',
+                'Harvest when caps flatten'
+            ];
+        } else if (status === 'Trichoderma') {
+            return [
+                'Isolate affected mushrooms immediately',
+                'Improve ventilation in growing area',
+                'Apply organic fungicide (neem oil solution)',
+                'Sterilize growing equipment',
+                'Reduce humidity levels temporarily'
+            ];
+        }
+        return ['Consult with mushroom cultivation expert'];
+    }
+
+    function downloadReport() {
+        const resultBadge = document.getElementById('result-badge').textContent;
+        const confidence = document.getElementById('confidence-text').textContent;
+        
+        const reportContent = `
+    MUSHROOM ANALYSIS REPORT
+    ========================
+
+    Result: ${resultBadge}
+    ${confidence}
+
+    Date: ${new Date().toLocaleString()}
+
+    Recommendations:
+    ${Array.from(document.getElementById('recommendation-list').children)
+        .map(li => '- ' + li.textContent).join('\n')}
+        `;
+        
+        const blob = new Blob([reportContent], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'mushroom-analysis-report.txt';
+        link.click();
+    }
+
+    // Drag and drop functionality
+    const uploadArea = document.querySelector('.upload-area');
+        
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'var(--accent)';
+        uploadArea.style.background = 'linear-gradient(135deg, rgba(77, 106, 109, 0.1) 0%, rgba(190, 211, 201, 0.2) 100%)';
+    });
+
+    uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'var(--secondary)';
+        uploadArea.style.background = 'linear-gradient(135deg, rgba(214, 193, 177, 0.1) 0%, rgba(190, 211, 201, 0.1) 100%)';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'var(--secondary)';
+        uploadArea.style.background = 'linear-gradient(135deg, rgba(214, 193, 177, 0.1) 0%, rgba(190, 211, 201, 0.1) 100%)';
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type.startsWith('image/')) {
+            document.getElementById('image-upload').files = files;
+            showImagePreview(files[0]);
+        } else {
+            alert('Please upload an image file (JPG, PNG, WebP)');
+        }
+    });
+
+    // Initialize animations
+    document.addEventListener('DOMContentLoaded', function() {
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate__fadeInUp');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.card').forEach(card => {
+            observer.observe(card);
+        });
+    });
+    </script>
+</body>
+</html>

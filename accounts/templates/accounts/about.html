@@ -1,0 +1,689 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Smart Shroom</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts - Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Enhanced Oyster mushroom palette */
+            --primary: #D6C1B1; /* Light mushroom tan */
+            --primary-dark: #c0ab9b; /* Darker shade for hover states */
+            --secondary: #8B786D; /* Medium mushroom brown */
+            --accent: #4D6A6D; /* Complementary blue-green */
+            --accent-light: #5d8286; /* Lighter accent for gradients */
+            --light: #F5F1ED; /* Very light tan */
+            --dark: #3A3238; /* Deep purple-brown */
+            --highlight: #BED3C9; /* Soft sage green */
+            
+            /* New variables for modern design */
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+            --radius: 16px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--light) 0%, var(--highlight) 100%);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+        
+        /* Modern navbar styling */
+        .navbar {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%) !important;
+            box-shadow: var(--shadow-md);
+            padding: 0.5rem 1rem;
+        }
+        
+        .navbar-brand {
+            color: var(--light) !important;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+        }
+        
+        .navbar-brand i {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-right: 10px;
+            transition: var(--transition);
+        }
+        
+        .navbar-brand:hover i {
+            transform: rotate(-15deg);
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            transition: var(--transition);
+            position: relative;
+            border-radius: var(--radius);
+            margin: 0 0.2rem;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary) !important;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link.active {
+            color: var(--primary) !important;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .nav-link i {
+            margin-right: 8px;
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .dropdown-menu {
+            border-radius: var(--radius);
+            border: none;
+            box-shadow: var(--shadow-md);
+            background: white;
+            overflow: hidden;
+        }
+        
+        .dropdown-item {
+            padding: 0.7rem 1.2rem;
+            transition: var(--transition);
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--highlight);
+            color: var(--dark);
+        }
+        
+        .dropdown-item i {
+            margin-right: 8px;
+            color: var(--accent);
+            width: 18px;
+        }
+        
+        /* Main content */
+        .about-container {
+            padding: 2rem 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Page header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+            color: var(--dark);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="white" stroke-width="0.5" stroke-opacity="0.1"/></svg>');
+            opacity: 0.1;
+        }
+        
+        .page-title {
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .page-title i {
+            color: var(--accent);
+            margin-right: 15px;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .page-subtitle {
+            color: var(--dark);
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        /* Section styling */
+        .section {
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            color: var(--dark);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 2px;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+        
+        /* Card styling */
+        .card {
+            border: none;
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            background: white;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .card-header {
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: white;
+            padding: 1.2rem 1.5rem;
+            border: none;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        /* Process steps */
+        .process-step {
+            position: relative;
+            padding-left: 3.5rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .process-step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2.8rem;
+            height: 2.8rem;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .process-step h4 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        /* Feature cards */
+        .feature-card {
+            padding: 1.5rem;
+            border-left: 4px solid var(--highlight);
+            margin-bottom: 1.5rem;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-left: 4px solid var(--accent);
+        }
+        
+        .feature-icon {
+            color: var(--accent);
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature-card h4 {
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* System features section */
+        .system-features {
+            background: linear-gradient(135deg, var(--highlight) 0%, color-mix(in srgb, var(--highlight) 80%, white) 100%);
+            padding: 4rem 0;
+            margin: 4rem 0;
+        }
+        
+        /* Team section */
+        .team-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            height: 100%;
+        }
+        
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .team-member-img {
+            height: 150px;
+            width: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid var(--highlight);
+            margin: 0 auto 1.5rem;
+            display: block;
+            transition: var(--transition);
+        }
+        
+        .team-card:hover .team-member-img {
+            border-color: var(--accent);
+        }
+        
+        .team-name {
+            color: var(--dark);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .team-role {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .social-icons a {
+            color: var(--secondary);
+            margin: 0 0.5rem;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .social-icons a:hover {
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        /* Contact section */
+        .contact-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            height: 100%;
+        }
+        
+        .contact-card h5 {
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .contact-card h5 i {
+            color: var(--accent);
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        /* Image styling */
+        .about-img {
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            max-width: 100%;
+            height: auto;
+            transition: var(--transition);
+        }
+        
+        .about-img:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%);
+            color: white;
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+        }
+        
+        .social-links a {
+            color: white;
+            margin: 0 0.7rem;
+            font-size: 1.3rem;
+            transition: var(--transition);
+            display: inline-block;
+        }
+        
+        .social-links a:hover {
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .about-container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .process-step {
+                padding-left: 3rem;
+            }
+            
+            .process-step-number {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-seedling"></i>SMARTSHROOM</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto"> 
+                    <li class="nav-item"><a class="nav-link " href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'report' %}"><i class="fas fa-file-alt"></i> Report</a></li>
+                    <li class="nav-item"><a class="nav-link " href="{% url 'scan' %}"><i class="fas fa-qrcode"></i> Scan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'remote' %}"><i class="fas fa-wifi"></i> Remote</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> 
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Header Section -->
+    <div class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="page-title"><i class="fas fa-mushroom"></i>About Smart Shroom</h1>
+                    <p class="page-subtitle">Revolutionizing mushroom cultivation with smart climate control systems</p>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{% static 'images/production.jpg' %}" alt="Mushroom farm" class="img-fluid about-img">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="about-container">
+        <!-- About Mushroom Production -->
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-seedling"></i>Mushroom Production</h2>
+            <div class="row">
+                <div class="col-lg-6">
+                    <p>Smart Shroom specializes in the cultivation of gourmet and medicinal mushrooms using advanced controlled environment agriculture techniques. Our state-of-the-art facilities are designed to create the optimal growing conditions for a variety of mushroom species.</p>
+                    <p>We focus on sustainable practices, using locally sourced agricultural by-products as substrate material, minimizing waste, and maximizing resource efficiency through our climate control systems.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Production Process -->
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-diagram-project"></i>How We Produce Mushrooms</h2>
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <img src="{% static 'images/s.jpg' %}" alt="Mushroom production process" class="img-fluid about-img">
+                </div>
+                <div class="col-lg-6">
+                    <div class="process-step">
+                        <div class="process-step-number">1</div>
+                        <h4>Substrate Preparation</h4>
+                        <p>We begin by preparing a nutrient-rich substrate from agricultural by-products like straw, wood chips, and coffee grounds. This substrate is then sterilized to eliminate competing organisms.</p>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="process-step-number">2</div>
+                        <h4>Inoculation</h4>
+                        <p>Mushroom spawn (mycelium-covered grain) is introduced to the sterilized substrate in a controlled, clean environment to prevent contamination.</p>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="process-step-number">3</div>
+                        <h4>Incubation</h4>
+                        <p>The inoculated substrate is kept in ideal temperature, humidity, and CO₂ conditions for mycelium growth using our Smart Shroom monitoring system.</p>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="process-step-number">4</div>
+                        <h4>Fruiting</h4>
+                        <p>When the substrate is fully colonized, environmental conditions are altered to trigger fruiting. Our automated climate control system adjusts temperature, fresh air exchange, and humidity levels precisely.</p>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="process-step-number">5</div>
+                        <h4>Harvesting & Distribution</h4>
+                        <p>Mushrooms are hand-harvested at peak maturity, then quickly packaged and distributed to ensure maximum freshness and nutritional value.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- System Features Section -->
+    <section class="system-features">
+        <div class="container">
+            <h2 class="section-title text-center" style="color: var(--dark);"><i class="fas fa-microchip"></i>Our Smart Shroom System</h2>
+            <p class="text-center mb-5">Advanced technology for optimal mushroom cultivation</p>
+            <div class="row">
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-temperature-half"></i>
+                        </div>
+                        <h4>Climate Control</h4>
+                        <p>Our system maintains precise temperature and humidity levels critical for optimal mushroom growth. Remote monitoring allows for real-time adjustments and alerts.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-droplet"></i>
+                        </div>
+                        <h4>Mist Management</h4>
+                        <p>Automated misting system creates the perfect microclimate for different mushroom varieties, ensuring consistent humidity levels throughout the growing cycle.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-fan"></i>
+                        </div>
+                        <h4>Air Exchange</h4>
+                        <p>Controlled ventilation system manages CO₂ levels and fresh air exchange, critical factors in preventing malformation and optimizing growth.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>Data Analytics</h4>
+                        <p>Comprehensive reporting and analytics tools help identify optimal growing conditions and improve yields over time through data-driven decisions.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-screen"></i>
+                        </div>
+                        <h4>Remote Management</h4>
+                        <p>Control all aspects of your mushroom production from anywhere using our mobile-friendly web interface. Receive alerts and updates in real-time.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h4>Smart Automation</h4>
+                        <p>AI-driven system learns and adapts to optimize growing conditions based on historical data and current environmental readings.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="about-container">
+        <!-- Team Section -->
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-users"></i>Meet Our Team</h2>
+            <div class="row">
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="team-card">
+                        <img src="{% static 'images/production.jpg' %}" alt="Team Member" class="team-member-img">
+                        <h4 class="team-name">Rocella Condiman</h4>
+                        <p class="team-role">BSIT Student</p>
+                        <p>Technical Writer</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="team-card">
+                        <img src="{% static 'images/production.jpg' %}" alt="Team Member" class="team-member-img">
+                        <h4 class="team-name">Jade Abegail Datinguinoo</h4>
+                        <p class="team-role">BSIT Student</p>
+                        <p>Project Manager</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="team-card">
+                        <img src="{% static 'images/production.jpg' %}" alt="Team Member" class="team-member-img">
+                        <h4 class="team-name">Mikaela Magat</h4>
+                        <p class="team-role">BSIT Student</p>
+                        <p>Technical Writer</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section class="section">
+            <h2 class="section-title"><i class="fas fa-envelope"></i>Contact Us</h2>
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="contact-card">
+                        <h5><i class="fas fa-location-dot"></i>Visit Us</h5>
+                        <p>Macatoc, Victoria<br>Oriental Mindoro</p>
+                        
+                        <h5><i class="fas fa-phone"></i>Call Us</h5>
+                        <p>(555) 123-4567</p>
+                        
+                        <h5><i class="fas fa-envelope"></i>Email Us</h5>
+                        <p>info@smartshroom.com</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p><i class="fas fa-mushroom me-2"></i>Smart Shroom &copy; 2025 - All Rights Reserved</p>
+                    <div class="social-links mt-3">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

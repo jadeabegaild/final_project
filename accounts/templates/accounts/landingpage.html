@@ -1,0 +1,820 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Shroom - IoT-Driven Mushroom Growth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            /* Enhanced Oyster mushroom palette - matching login page */
+            --primary: #D6C1B1; /* Light mushroom tan */
+            --secondary: #8B786D; /* Medium mushroom brown */
+            --accent: #4D6A6D; /* Complementary blue-green */
+            --accent-light: #5d8286; /* Lighter accent for gradients */
+            --light: #F5F1ED; /* Very light tan */
+            --dark: #3A3238; /* Deep purple-brown */
+            --highlight: #BED3C9; /* Soft sage green */
+            --text: #2a242c; /* Darker text for better contrast */
+            
+            /* New variables for modern design */
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            background: var(--light);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            position: relative;
+        }
+
+        /* Modern Header with Sticky Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 18px 30px;
+            margin: 20px auto 0;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        header.scrolled {
+            box-shadow: var(--shadow-md);
+            top: 10px;
+            background-color: rgba(255, 255, 255, 0.98);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 32px;
+            color: var(--accent);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--dark));
+            color: var(--light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: linear-gradient(135deg, var(--dark), var(--accent));
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--accent);
+            color: var(--light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Modern Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin: 80px auto;
+            background: white;
+            border-radius: var(--radius);
+            padding: 60px 40px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, var(--highlight) 0%, transparent 70%);
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .hero-text {
+            max-width: 900px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            color: var(--dark);
+            margin-bottom: 24px;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .hero-text p {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .cta-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, var(--accent), var(--dark));
+            color: var(--light);
+            padding: 18px 38px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .cta:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--dark), var(--accent));
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            box-shadow: none;
+        }
+
+        .cta-secondary:hover {
+            background: var(--accent);
+            color: var(--light);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--highlight), var(--accent));
+            margin: 15px auto 30px;
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--secondary);
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 32px;
+            color: var(--light);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            border-radius: var(--radius);
+            padding: 70px 40px;
+            margin: 100px 0;
+            color: var(--light);
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-item p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 100px 0;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            font-weight: bold;
+        }
+
+        .author-info h4 {
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .author-info p {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%);
+            border-radius: var(--radius);
+            padding: 80px 40px;
+            margin: 100px 0;
+            text-align: center;
+            color: var(--light);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 0 30px;
+            margin-top: 100px;
+            background-color: var(--dark);
+            color: var(--light);
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            text-align: left;
+            margin-bottom: 50px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--highlight);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: var(--light);
+            text-decoration: none;
+            transition: var(--transition);
+            opacity: 0.8;
+        }
+
+        .footer-column a:hover {
+            opacity: 1;
+            color: var(--highlight);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: var(--transition);
+            color: var(--light);
+        }
+
+        .social-links a:hover {
+            background: var(--highlight);
+            color: var(--dark);
+        }
+
+        .copyright {
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-text h1 {
+                font-size: 2.8rem;
+            }
+            
+            .hero-text p {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .hero {
+                padding: 40px 20px;
+                margin: 40px auto;
+            }
+            
+            .hero-text h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-text p {
+                font-size: 1.1rem;
+            }
+            
+            .cta-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .stats-grid, .features-grid, .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+
+        /* Animation utilities */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Modern enhancements */
+        .floating-mushroom {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .floating-mushroom-1 {
+            top: 10%;
+            left: 5%;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .floating-mushroom-2 {
+            bottom: 20%;
+            right: 5%;
+            animation: float 10s ease-in-out infinite 1s;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid #ddd;
+        }
+        
+        /* Modern card enhancements */
+        .card-hover {
+            transition: var(--transition);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating decorative elements -->
+    <div class="floating-mushroom floating-mushroom-1">
+        <i class="fas fa-mushroom" style="font-size: 120px; color: var(--accent);"></i>
+    </div>
+    <div class="floating-mushroom floating-mushroom-2">
+        <i class="fas fa-mushroom" style="font-size: 120px; color: var(--accent);"></i>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header id="main-header">
+            <div class="logo">
+                <i class="fas fa-mushroom"></i>
+                SMARTSHROOM
+            </div>
+            <div class="auth-buttons">
+                <a href="{% url 'login' %}"><button class="btn btn-secondary">Login</button></a>
+                <a href="{% url 'signup' %}"><button class="btn btn-primary">Sign Up</button></a>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-text">
+                <h1>Revolutionize Mushroom Farming with IoT Technology</h1>
+                <p>Optimize the growth of oyster mushrooms with our advanced IoT-driven disease detection and automated climate control system.</p>
+                <div class="cta-container">
+                    <a href="{% url 'signup' %}" class="cta">Get Started <i class="fas fa-arrow-right"></i></a>
+                    <a href="#features" class="cta cta-secondary">Learn More <i class="fas fa-book-open"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Our IoT system continuously monitors and optimizes the growing environment for maximum yield and health</p>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in card-hover">
+                    <div class="feature-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <h3>Temperature Control</h3>
+                    <p>Maintain optimal growing conditions with our automated climate control system that adjusts in real-time.</p>
+                </div>
+                
+                <div class="feature-card fade-in card-hover">
+                    <div class="feature-icon">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                    <h3>Humidity Management</h3>
+                    <p>Precise humidity control ensures your mushrooms develop in the perfect moist environment they need.</p>
+                </div>
+                
+                <div class="feature-card fade-in card-hover">
+                    <div class="feature-icon">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <h3>Disease Detection</h3>
+                    <p>Early detection of common mushroom diseases allows for prompt treatment before they spread.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats fade-in">
+            <h2>Why Farmers Choose Smart Shroom</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>40%</h3>
+                    <p>Increase in Yield</p>
+                </div>
+                <div class="stat-item">
+                    <h3>65%</h3>
+                    <p>Reduction in Losses</p>
+                </div>
+                <div class="stat-item">
+                    <h3>24/7</h3>
+                    <p>Monitoring</p>
+                </div>
+                <div class="stat-item">
+                    <h3>100+</h3>
+                    <p>Happy Farmers</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials">
+            <h2 class="section-title">What Farmers Say</h2>
+            <p class="section-subtitle">Hear from mushroom farmers who have transformed their operations with Smart Shroom</p>
+            
+            <div class="testimonial-grid">
+                <div class="testimonial-card fade-in card-hover">
+                    <p class="testimonial-text">"Since implementing Smart Shroom, our yield has increased dramatically while our labor costs have decreased. The disease detection feature alone has saved us thousands."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MJ</div>
+                        <div class="author-info">
+                            <h4>Maria Juana</h4>
+                            <p>Naujan Mushroom Farm</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card fade-in card-hover">
+                    <p class="testimonial-text">"The automated temperature control has taken the guesswork out of mushroom farming. I can now focus on expansion while the system manages the growing environment."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RS</div>
+                        <div class="author-info">
+                            <h4>Ramon Santos</h4>
+                            <p>Oriental Mindoro Farms</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card fade-in card-hover">
+                    <p class="testimonial-text">"As a new mushroom farmer, the insights and automation provided by Smart Shroom have been invaluable. It's like having an expert guide me through the process."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">EL</div>
+                        <div class="author-info">
+                            <h4>Elena Lopez</h4>
+                            <p>Pinamalayan Growers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA Section -->
+        <section class="cta-section fade-in">
+            <h2>Ready to Transform Your Mushroom Farm?</h2>
+            <p>Join dozens of successful farmers who are already benefiting from our IoT technology. Sign up today and get started in minutes.</p>
+            <a href="{% url 'signup' %}" class="cta">Start Your Journey <i class="fas fa-seedling"></i></a>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Smart Shroom</h3>
+                    <p>IoT-driven solutions for modern mushroom farming</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Navigation</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">About Us</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Naujan, Oriental Mindoro</li>
+                        <li><i class="fas fa-phone"></i> +63 912 345 6789</li>
+                        <li><i class="fas fa-envelope"></i> info@smartshroom.com</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Smart Shroom. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Sticky header
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Fade-in animation for elements
+        function checkFade() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', checkFade);
+        window.addEventListener('load', checkFade);
+    </script>
+</body>
+</html>
