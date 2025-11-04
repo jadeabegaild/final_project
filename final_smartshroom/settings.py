@@ -138,28 +138,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 import firebase_admin
 from firebase_admin import credentials, firestore
-import json
-import base64
 
-# Option A: use a JSON file in development
-service_account_path = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH")
+# Direct absolute path to your credentials file
+firebase_path = r"C:\Users\acer\Downloads\final_smartshroom\firebase_credentials.json"
 
-if service_account_path and os.path.exists(service_account_path):
-    cred = credentials.Certificate(service_account_path)
-# Option B: load from environment variable in Render
-elif os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON"):
-    cred_dict = json.loads(os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON"))
-    cred = credentials.Certificate(cred_dict)
-# Option C: load from base64-encoded variable
-elif os.getenv("FIREBASE_SERVICE_ACCOUNT_B64"):
-    decoded = base64.b64decode(os.getenv("FIREBASE_SERVICE_ACCOUNT_B64")).decode("utf-8")
-    cred_dict = json.loads(decoded)
-    cred = credentials.Certificate(cred_dict)
+if os.path.exists(firebase_path):
+    cred = credentials.Certificate(firebase_path)
+    firebase_admin.initialize_app(cred)
+    db = firestore.client()
 else:
-    raise ValueError("No Firebase credentials found.")
+    raise FileNotFoundError(f"Firebase credentials not found at {firebase_path}")
 
-firebase_admin.initialize_app(cred)
-db = firestore.client()
 
 
 
