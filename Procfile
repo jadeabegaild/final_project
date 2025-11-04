@@ -1,1 +1,1 @@
-web: gunicorn final_smartshroom.wsgi:application --timeout 120
+gunicorn final_smartshroom.wsgi:application --timeout 300 --bind 0.0.0.0:$PORT
