@@ -19,7 +19,7 @@ db.sqlite3
 media/
 
 # Firebase service key
-firebase-service-account.json
+firebase_credentials.json
 serviceAccountKey.json
 
 # OS files
