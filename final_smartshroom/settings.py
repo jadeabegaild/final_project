@@ -138,9 +138,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 import firebase_admin
 from firebase_admin import credentials, firestore
+import os
 
-# Direct absolute path to your credentials file
-firebase_path = r"C:\Users\acer\Downloads\final_smartshroom\firebase_credentials.json"
+# Use the local firebase_credentials.json file
+firebase_path = os.path.join(BASE_DIR, "final_smartshroom", "firebase_credentials.json")
 
 if os.path.exists(firebase_path):
     cred = credentials.Certificate(firebase_path)
@@ -148,6 +149,7 @@ if os.path.exists(firebase_path):
     db = firestore.client()
 else:
     raise FileNotFoundError(f"Firebase credentials not found at {firebase_path}")
+
 
 
 
