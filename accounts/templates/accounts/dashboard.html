@@ -1,1276 +1,1219 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SmartShroom Dashboard</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-        :root {
-            --primary: #D6C1B1;
-            --primary-dark: #c0ab9b;
-            --secondary: #8B786D;
-            --accent: #4D6A6D;
-            --accent-light: #5d8286;
-            --light: #F5F1ED;
-            --dark: #3A3238;
-            --highlight: #BED3C9;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
-            --radius: 16px;
-            --transition: all 0.3s ease;
+      :root {
+        --primary: #d6c1b1;
+        --primary-dark: #c0ab9b;
+        --secondary: #8b786d;
+        --accent: #4d6a6d;
+        --accent-light: #5d8286;
+        --light: #f5f1ed;
+        --dark: #3a3238;
+        --highlight: #bed3c9;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+        --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+        --radius: 16px;
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          var(--light) 0%,
+          var(--highlight) 100%
+        );
+        font-family: "Montserrat", sans-serif;
+        color: var(--dark);
+        min-height: 100vh;
+        padding-bottom: 2rem;
+      }
+
+      .navbar {
+        background: linear-gradient(
+          135deg,
+          var(--accent) 0%,
+          var(--dark) 100%
+        ) !important;
+        box-shadow: var(--shadow-md);
+        padding: 0.5rem 1rem;
+      }
+
+      .navbar-brand {
+        color: var(--light) !important;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        font-size: 1.4rem;
+      }
+
+      .navbar-brand i {
+        color: var(--primary);
+        font-size: 1.8rem;
+        margin-right: 10px;
+        transition: var(--transition);
+      }
+
+      .navbar-brand:hover i {
+        transform: rotate(-15deg);
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.85) !important;
+        font-weight: 500;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        transition: var(--transition);
+        position: relative;
+        border-radius: var(--radius);
+        margin: 0 0.2rem;
+      }
+
+      .nav-link:hover {
+        color: var(--primary) !important;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-link.active {
+        color: var(--primary) !important;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .nav-link i {
+        margin-right: 8px;
+        font-size: 1rem;
+        width: 20px;
+        text-align: center;
+      }
+
+      .dropdown-menu {
+        border-radius: var(--radius);
+        border: none;
+        box-shadow: var(--shadow-md);
+        background: white;
+        overflow: hidden;
+      }
+
+      .dropdown-item {
+        padding: 0.7rem 1.2rem;
+        transition: var(--transition);
+        color: var(--dark);
+        font-weight: 500;
+      }
+
+      .dropdown-item:hover {
+        background: var(--highlight);
+        color: var(--dark);
+      }
+
+      .dropdown-item i {
+        margin-right: 8px;
+        color: var(--accent);
+        width: 18px;
+      }
+
+      .dashboard-container {
+        padding: 2rem 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+        background: white;
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .dashboard-title {
+        color: var(--dark);
+        font-weight: 700;
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        margin: 0;
+      }
+
+      .dashboard-title i {
+        color: var(--accent);
+        margin-right: 12px;
+        font-size: 1.5rem;
+        background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .last-updated {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .last-updated i {
+        color: var(--accent);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .card {
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        border: none;
+        transition: var(--transition);
+        background-color: white;
+        overflow: hidden;
+        height: 100%;
+        position: relative;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .card-header {
+        background: transparent;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 1.2rem 1.5rem;
+        font-weight: 600;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+      }
+
+      .card-header i {
+        margin-right: 10px;
+        color: var(--accent);
+        font-size: 1.1rem;
+        background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0.5rem 0;
+        line-height: 1.2;
+      }
+
+      .stat-unit {
+        font-size: 1rem;
+        color: var(--secondary);
+        font-weight: 500;
+      }
+
+      .stat-trend {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        color: var(--secondary);
+      }
+
+      .trend-up {
+        color: #28a745;
+      }
+
+      .trend-down {
+        color: #dc3545;
+      }
+
+      .stat-trend i {
+        margin-right: 5px;
+      }
+
+      .chart-container {
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .chart-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-light));
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+
+      .chart-container:hover {
+        box-shadow: var(--shadow-md);
+      }
+
+      .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .chart-title {
+        color: var(--dark);
+        font-weight: 600;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        margin: 0;
+      }
+
+      .chart-title i {
+        color: var(--accent);
+        margin-right: 10px;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .chart-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .chart-btn {
+        background: var(--light);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        color: var(--secondary);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+      }
+
+      .chart-btn:hover {
+        background: var(--highlight);
+        color: var(--dark);
+      }
+
+      .chart-btn i {
+        margin-right: 5px;
+      }
+
+      canvas {
+        width: 100% !important;
+        max-height: 300px !important;
+      }
+
+      .data-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .gauge-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .gauge-card {
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        padding: 1.5rem;
+        text-align: center;
+        position: relative;
+      }
+
+      .gauge-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-light));
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+
+      .gauge-title {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .gauge-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin: 0.5rem 0;
+      }
+
+      .gauge-unit {
+        font-size: 1rem;
+        color: var(--secondary);
+      }
+
+      .gauge-visual {
+        height: 120px;
+        position: relative;
+        margin: 1rem 0;
+      }
+
+      .gauge-fill {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        background: linear-gradient(to top, var(--accent), var(--accent-light));
+        border-radius: 4px 4px 0 0;
+        transition: height 1s ease;
+      }
+
+      .gauge-marks {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0 10px;
+      }
+
+      .gauge-mark {
+        height: 1px;
+        background: rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      .gauge-mark-label {
+        position: absolute;
+        right: -30px;
+        top: -8px;
+        font-size: 0.7rem;
+        color: var(--secondary);
+      }
+
+      .optimal-range {
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--secondary);
+      }
+
+      .data-table-container {
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        overflow: hidden;
+      }
+
+      .data-table-container h3 {
+        color: var(--dark);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .data-table th {
+        background-color: var(--light);
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--dark);
+        border-bottom: 2px solid var(--highlight);
+      }
+
+      .data-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--light);
+      }
+
+      .data-table tr:hover {
+        background-color: rgba(190, 211, 201, 0.1);
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .status-online {
+        background-color: #28a745;
+      }
+
+      .status-offline {
+        background-color: #dc3545;
+      }
+
+      .dashboard-footer {
+        text-align: center;
+        padding: 1.5rem;
+        color: var(--secondary);
+        font-size: 0.9rem;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        50% {
+          transform: scale(1.05);
         }
-        
-        body {
-            background: linear-gradient(135deg, var(--light) 0%, var(--highlight) 100%);
-            font-family: 'Montserrat', sans-serif;
-            color: var(--dark);
-            min-height: 100vh;
-            padding-bottom: 2rem;
+        100% {
+          transform: scale(1);
         }
-        
-        .navbar {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%) !important;
-            box-shadow: var(--shadow-md);
-            padding: 0.5rem 1rem;
+      }
+
+      .data-updated {
+        animation: pulse 0.5s ease;
+      }
+
+      @media (max-width: 1200px) {
+        .data-grid {
+          grid-template-columns: 1fr;
         }
-        
-        .navbar-brand {
-            color: var(--light) !important;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            font-size: 1.4rem;
-        }
-        
-        .navbar-brand i {
-            color: var(--primary);
-            font-size: 1.8rem;
-            margin-right: 10px;
-            transition: var(--transition);
-        }
-        
-        .navbar-brand:hover i {
-            transform: rotate(-15deg);
-        }
-        
-        .nav-link {
-            color: rgba(255, 255, 255, 0.85) !important;
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            transition: var(--transition);
-            position: relative;
-            border-radius: var(--radius);
-            margin: 0 0.2rem;
-        }
-        
-        .nav-link:hover {
-            color: var(--primary) !important;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .nav-link.active {
-            color: var(--primary) !important;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .nav-link i {
-            margin-right: 8px;
-            font-size: 1rem;
-            width: 20px;
-            text-align: center;
+      }
+
+      @media (max-width: 992px) {
+        .dashboard-title {
+          font-size: 1.6rem;
         }
 
-        .dropdown-menu {
-            border-radius: var(--radius);
-            border: none;
-            box-shadow: var(--shadow-md);
-            background: white;
-            overflow: hidden;
-        }
-        
-        .dropdown-item {
-            padding: 0.7rem 1.2rem;
-            transition: var(--transition);
-            color: var(--dark);
-            font-weight: 500;
-        }
-        
-        .dropdown-item:hover {
-            background: var(--highlight);
-            color: var(--dark);
-        }
-        
-        .dropdown-item i {
-            margin-right: 8px;
-            color: var(--accent);
-            width: 18px;
-        }
-        
-        .dashboard-container {
-            padding: 2rem 1rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-            background: white;
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .dashboard-title {
-            color: var(--dark);
-            font-weight: 700;
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            margin: 0;
-        }
-        
-        .dashboard-title i {
-            color: var(--accent);
-            margin-right: 12px;
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .last-updated {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .last-updated i {
-            color: var(--accent);
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .card {
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            border: none;
-            transition: var(--transition);
-            background-color: white;
-            overflow: hidden;
-            height: 100%;
-            position: relative;
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-light));
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .card-header {
-            background: transparent;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            padding: 1.2rem 1.5rem;
-            font-weight: 600;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-        }
-        
-        .card-header i {
-            margin-right: 10px;
-            color: var(--accent);
-            font-size: 1.1rem;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .card-body {
-            padding: 1.5rem;
-        }
-        
         .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0.5rem 0;
-            line-height: 1.2;
+          font-size: 2.2rem;
         }
-        
-        .stat-unit {
-            font-size: 1rem;
-            color: var(--secondary);
-            font-weight: 500;
-        }
-        
-        .stat-trend {
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            color: var(--secondary);
-        }
-        
-        .trend-up {
-            color: #28a745;
-        }
-        
-        .trend-down {
-            color: #dc3545;
-        }
-        
-        .stat-trend i {
-            margin-right: 5px;
-        }
-        
-        .chart-container {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            transition: var(--transition);
-            position: relative;
-        }
-        
-        .chart-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-light));
-            border-radius: var(--radius) var(--radius) 0 0;
-        }
-        
-        .chart-container:hover {
-            box-shadow: var(--shadow-md);
-        }
-        
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
+
         .chart-title {
-            color: var(--dark);
-            font-weight: 600;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            margin: 0;
+          font-size: 1.2rem;
         }
-        
-        .chart-title i {
-            color: var(--accent);
-            margin-right: 10px;
-            font-size: 1.2rem;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-container {
+          padding: 1rem 0.75rem;
         }
-        
-        .chart-actions {
-            display: flex;
-            gap: 0.5rem;
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
         }
-        
-        .chart-btn {
-            background: var(--light);
-            border: none;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            color: var(--secondary);
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
+
+        .dashboard-title {
+          font-size: 1.5rem;
         }
-        
-        .chart-btn:hover {
-            background: var(--highlight);
-            color: var(--dark);
+
+        .stat-value {
+          font-size: 2rem;
         }
-        
-        .chart-btn i {
-            margin-right: 5px;
+
+        .navbar-nav {
+          padding: 1rem 0;
         }
-        
-        canvas {
-            width: 100% !important;
-            max-height: 300px !important;
+
+        .nav-link {
+          margin: 0.2rem 0;
         }
-        
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+
+        .dashboard-header {
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 1.2rem;
         }
-        
+
         .gauge-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+          grid-template-columns: 1fr;
         }
-        
+
+        .chart-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .chart-actions {
+          width: 100%;
+          justify-content: flex-end;
+          margin-top: 0.5rem;
+        }
+
+        .card-header,
+        .card-body {
+          padding: 1rem;
+        }
+
+        .chart-container,
+        .data-table-container,
         .gauge-card {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            padding: 1.5rem;
-            text-align: center;
-            position: relative;
+          padding: 1.2rem;
         }
-        
-        .gauge-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-light));
-            border-radius: var(--radius) var(--radius) 0 0;
-        }
-        
-        .gauge-title {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .gauge-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 0.5rem 0;
-        }
-        
-        .gauge-unit {
-            font-size: 1rem;
-            color: var(--secondary);
-        }
-        
+
         .gauge-visual {
-            height: 120px;
-            position: relative;
-            margin: 1rem 0;
+          height: 100px;
         }
-        
-        .gauge-fill {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            background: linear-gradient(to top, var(--accent), var(--accent-light));
-            border-radius: 4px 4px 0 0;
-            transition: height 1s ease;
+
+        .gauge-value {
+          font-size: 1.8rem;
         }
-        
+      }
+
+      @media (max-width: 576px) {
+        .dashboard-title {
+          font-size: 1.4rem;
+        }
+
+        .stat-value {
+          font-size: 1.8rem;
+        }
+
+        .chart-title {
+          font-size: 1.1rem;
+        }
+
+        .chart-btn {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.85rem;
+        }
+
         .gauge-marks {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 0 10px;
+          padding: 0 5px;
         }
-        
-        .gauge-mark {
-            height: 1px;
-            background: rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-        
+
         .gauge-mark-label {
-            position: absolute;
-            right: -30px;
-            top: -8px;
-            font-size: 0.7rem;
-            color: var(--secondary);
+          right: -25px;
+          font-size: 0.6rem;
         }
-        
-        .optimal-range {
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--secondary);
-        }
-        
-        .data-table-container {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-        
-        .data-table-container h3 {
-            color: var(--dark);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .data-table th {
-            background-color: var(--light);
-            padding: 0.75rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark);
-            border-bottom: 2px solid var(--highlight);
-        }
-        
+
+        .data-table th,
         .data-table td {
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--light);
+          padding: 0.5rem;
         }
-        
-        .data-table tr:hover {
-            background-color: rgba(190, 211, 201, 0.1);
+
+        .navbar-brand {
+          font-size: 1.2rem;
         }
-        
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
+
+        .navbar-brand i {
+          font-size: 1.5rem;
         }
-        
-        .status-online {
-            background-color: #28a745;
+      }
+
+      @media (max-width: 400px) {
+        .dashboard-title {
+          font-size: 1.3rem;
         }
-        
-        .status-offline {
-            background-color: #dc3545;
+
+        .stat-value {
+          font-size: 1.6rem;
         }
-        
+
+        .gauge-title {
+          font-size: 1rem;
+        }
+
+        .gauge-value {
+          font-size: 1.6rem;
+        }
+
+        .optimal-range {
+          font-size: 0.8rem;
+        }
+      }
+
+      @media print {
+        .navbar,
+        .chart-actions,
         .dashboard-footer {
-            text-align: center;
-            padding: 1.5rem;
-            color: var(--secondary);
-            font-size: 0.9rem;
+          display: none !important;
         }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+
+        body {
+          background: white !important;
         }
-        
-        .data-updated {
-            animation: pulse 0.5s ease;
+
+        .dashboard-container {
+          padding: 0;
         }
-        
-        @media (max-width: 1200px) {
-            .data-grid {
-                grid-template-columns: 1fr;
-            }
+
+        .card,
+        .chart-container,
+        .data-table-container,
+        .gauge-card {
+          box-shadow: none !important;
+          border: 1px solid #ddd !important;
+          page-break-inside: avoid;
         }
-        
-        @media (max-width: 992px) {
-            .dashboard-title {
-                font-size: 1.6rem;
-            }
-            
-            .stat-value {
-                font-size: 2.2rem;
-            }
-            
-            .chart-title {
-                font-size: 1.2rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .dashboard-container {
-                padding: 1rem 0.75rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .dashboard-title {
-                font-size: 1.5rem;
-            }
-            
-            .stat-value {
-                font-size: 2rem;
-            }
-            
-            .navbar-nav {
-                padding: 1rem 0;
-            }
-            
-            .nav-link {
-                margin: 0.2rem 0;
-            }
-            
-            .dashboard-header {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 1.2rem;
-            }
-            
-            .gauge-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .chart-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .chart-actions {
-                width: 100%;
-                justify-content: flex-end;
-                margin-top: 0.5rem;
-            }
-            
-            .card-header, .card-body {
-                padding: 1rem;
-            }
-            
-            .chart-container, .data-table-container, .gauge-card {
-                padding: 1.2rem;
-            }
-            
-            .gauge-visual {
-                height: 100px;
-            }
-            
-            .gauge-value {
-                font-size: 1.8rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .dashboard-title {
-                font-size: 1.4rem;
-            }
-            
-            .stat-value {
-                font-size: 1.8rem;
-            }
-            
-            .chart-title {
-                font-size: 1.1rem;
-            }
-            
-            .chart-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.85rem;
-            }
-            
-            .gauge-marks {
-                padding: 0 5px;
-            }
-            
-            .gauge-mark-label {
-                right: -25px;
-                font-size: 0.6rem;
-            }
-            
-            .data-table th, .data-table td {
-                padding: 0.5rem;
-            }
-            
-            .navbar-brand {
-                font-size: 1.2rem;
-            }
-            
-            .navbar-brand i {
-                font-size: 1.5rem;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .dashboard-title {
-                font-size: 1.3rem;
-            }
-            
-            .stat-value {
-                font-size: 1.6rem;
-            }
-            
-            .gauge-title {
-                font-size: 1rem;
-            }
-            
-            .gauge-value {
-                font-size: 1.6rem;
-            }
-            
-            .optimal-range {
-                font-size: 0.8rem;
-            }
-        }
-        
-        @media print {
-            .navbar, .chart-actions, .dashboard-footer {
-                display: none !important;
-            }
-            
-            body {
-                background: white !important;
-            }
-            
-            .dashboard-container {
-                padding: 0;
-            }
-            
-            .card, .chart-container, .data-table-container, .gauge-card {
-                box-shadow: none !important;
-                border: 1px solid #ddd !important;
-                page-break-inside: avoid;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="fas fa-seedling"></i>SMARTSHROOM</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto"> 
-                    <li class="nav-item"><a class="nav-link active" href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'report' %}"><i class="fas fa-file-alt"></i> Report</a></li>
-                    <li class="nav-item"><a class="nav-link " href="{% url 'scan' %}"><i class="fas fa-qrcode"></i> Scan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'remote' %}"><i class="fas fa-wifi"></i> Remote</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i> 
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"
+          ><i class="fas fa-seedling"></i>SMARTSHROOM</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'dashboard' %}"
+                ><i class="fas fa-chart-line"></i> Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'report' %}"
+                ><i class="fas fa-file-alt"></i> Report</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'scan' %}"
+                ><i class="fas fa-qrcode"></i> Scan</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'remote' %}"
+                ><i class="fas fa-wifi"></i> Remote</a
+              >
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fas fa-user-circle"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{% url 'profile' %}"
+                    ><i class="fas fa-user"></i> Profile</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'logout' %}"
+                    ><i class="fas fa-sign-out-alt"></i> Logout</a
+                  >
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <div class="dashboard-container">
-        <div class="dashboard-header">
-            <h1 class="dashboard-title"><i class="fas fa-chart-line"></i>Dashboard</h1>
-            <div class="last-updated">
-                <i class="fas fa-sync-alt"></i>
-                <small class="text-muted">Last updated: <span id="lastUpdateTime">Just now</span></small>
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">
+          <i class="fas fa-chart-line"></i>Dashboard
+        </h1>
+        <div class="last-updated">
+          <i class="fas fa-sync-alt"></i>
+          <small class="text-muted"
+            >Last updated: <span id="lastUpdateTime">Just now</span></small
+          >
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="card">
+          <div class="card-header">
+            <i class="fas fa-temperature-high"></i> Temperature
+          </div>
+          <div class="card-body text-center">
+            <div class="stat-value" id="temperature">
+              --<span class="stat-unit">°C</span>
             </div>
+          </div>
         </div>
 
-        <div class="stats-grid">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-temperature-high"></i> Temperature
-                </div>
-                <div class="card-body text-center">
-                    <div class="stat-value" id="temperature">--<span class="stat-unit">°C</span></div>
-                </div>
+        <div class="card">
+          <div class="card-header"><i class="fas fa-tint"></i> Humidity</div>
+          <div class="card-body text-center">
+            <div class="stat-value" id="humidity">
+              --<span class="stat-unit">%</span>
             </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-tint"></i> Humidity
-                </div>
-                <div class="card-body text-center">
-                    <div class="stat-value" id="humidity">--<span class="stat-unit">%</span></div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-weight-hanging"></i> Total Harvest
-                </div>
-                <div class="card-body text-center">
-                    <div class="stat-value" id="totalHarvest">--<span class="stat-unit">kg</span></div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-shield-alt"></i> System Status
-                </div>
-                <div class="card-body text-center">
-                    <div class="stat-value"><span class="status-indicator status-online"></span>Online</div>
-                    <div class="stat-trend">
-                        <i class="fas fa-check-circle trend-up"></i> <span>All systems normal</span>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
 
-
-        <div class="chart-container">
-            <div class="chart-header">
-                <h2 class="chart-title"><i class="fas fa-thermometer-half"></i> Sensor Data: Temperature & Humidity Trend</h2>
-                <div class="chart-actions">
-                </div>
+        <div class="card">
+          <div class="card-header">
+            <i class="fas fa-weight-hanging"></i> Total Harvest
+          </div>
+          <div class="card-body text-center">
+            <div class="stat-value" id="totalHarvest">
+              --<span class="stat-unit">kg</span>
             </div>
-            <canvas id="sensorDataChart"></canvas>
+          </div>
         </div>
 
-        <div class="chart-container">
-            <div class="chart-header">
-                <h2 class="chart-title"><i class="fas fa-chart-area"></i> Oyster Mushroom Harvest Trend</h2>
-                <div class="chart-actions">
-                    <button class="chart-btn" onclick="exportChartData()"><i class="fas fa-download"></i> Export</button>
-                    <button class="chart-btn" onclick="toggleChartView()"><i class="fas fa-exchange-alt"></i> Toggle View</button>
-                </div>
+        <div class="card">
+          <div class="card-header">
+            <i class="fas fa-shield-alt"></i> System Status
+          </div>
+          <div class="card-body text-center">
+            <div class="stat-value">
+              <span class="status-indicator status-online"></span>Online
             </div>
-            <canvas id="harvestChart"></canvas>
+            <div class="stat-trend">
+              <i class="fas fa-check-circle trend-up"></i>
+              <span>All systems normal</span>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div class="data-table-container">
-            <h3><i class="fas fa-table"></i> Recent Harvest Data</h3>
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Harvest (kg)</th>
-                            <th>Growth Rate</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="harvestTableBody">
-                        <tr>
-                            <td colspan="4" class="text-center">Loading data...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+      <div class="chart-container">
+        <div class="chart-header">
+          <h2 class="chart-title">
+            <i class="fas fa-thermometer-half"></i> Sensor Data: Temperature &
+            Humidity Trend
+          </h2>
+          <div class="chart-actions"></div>
         </div>
+        <canvas id="sensorDataChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <h2 class="chart-title">
+            <i class="fas fa-chart-area"></i> Oyster Mushroom Harvest Trend
+          </h2>
+          <div class="chart-actions">
+            <button class="chart-btn" onclick="exportChartData()">
+              <i class="fas fa-download"></i> Export
+            </button>
+            <button class="chart-btn" onclick="toggleChartView()">
+              <i class="fas fa-exchange-alt"></i> Toggle View
+            </button>
+          </div>
+        </div>
+        <canvas id="harvestChart"></canvas>
+      </div>
+
+      <div class="data-table-container">
+        <h3><i class="fas fa-table"></i> Recent Harvest Data</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Harvest (kg)</th>
+                <th>Growth Rate</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="harvestTableBody">
+              <tr>
+                <td colspan="4" class="text-center">Loading data...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <footer class="dashboard-footer">
-        <p>SmartShroom Dashboard &copy; 2023 | Real-time Mushroom Farming Analytics</p>
+      <p>
+        SmartShroom Dashboard &copy; 2023 | Real-time Mushroom Farming Analytics
+      </p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        function updateLastUpdatedTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString();
-            document.getElementById('lastUpdateTime').textContent = timeString;
-        }
-        
-        let ctx = document.getElementById('harvestChart').getContext('2d');
-        let harvestChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Harvest (kg)',
-                    data: [],
-                    borderColor: '#4D6A6D',
-                    backgroundColor: 'rgba(190, 211, 201, 0.2)',
-                    tension: 0.4,
-                    borderWidth: 2,
-                    pointBackgroundColor: '#8B786D',
-                    pointBorderColor: 'white',
-                    pointHoverRadius: 6,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Harvest Amount (kg)',
-                            font: {
-                                family: 'Montserrat'
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(214, 193, 177, 0.2)'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Date',
-                            font: {
-                                family: 'Montserrat'
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(214, 193, 177, 0.2)'
-                        }
-                    }
-                },
-                plugins: {
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        backgroundColor: 'rgba(58, 50, 56, 0.8)',
-                        titleColor: 'white',
-                        bodyColor: 'white',
-                        titleFont: {
-                            family: 'Montserrat'
-                        },
-                        bodyFont: {
-                            family: 'Montserrat'
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Harvest Trends',
-                        color: '#8B786D',
-                        font: {
-                            size: 16,
-                            family: 'Montserrat',
-                            weight: 'bold'
-                        }
-                    },
-                    legend: {
-                        labels: {
-                            font: {
-                                family: 'Montserrat'
-                            }
-                        }
-                    }
-                },
-                interaction: {
-                    mode: 'nearest',
-                    axis: 'x',
-                    intersect: false
-                }
-            }
-        });
-        
-        function toggleChartView() {
-            if (harvestChart.config.type === 'line') {
-                harvestChart.config.type = 'bar';
-                harvestChart.config.data.datasets[0].backgroundColor = 'rgba(77, 106, 109, 0.7)';
-            } else {
-                harvestChart.config.type = 'line';
-                harvestChart.config.data.datasets[0].backgroundColor = 'rgba(190, 211, 201, 0.2)';
-            }
-            harvestChart.update();
-        }
-        
-        function exportChartData() {
-            const labels = harvestChart.data.labels;
-            const data = harvestChart.data.datasets[0].data;
-            
-            if (labels.length === 0) {
-                alert('No data available to export');
-                return;
-            }
-            
-            let csvContent = "Date,Harvest (kg)\n";
-            labels.forEach((label, i) => {
-                csvContent += `${label},${data[i]}\n`;
-            });
-            
-            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "harvest_data.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-        
-        function updateGauges(temperature, humidity) {
-            const tempHeight = Math.min(Math.max((temperature / 40) * 100, 0), 100);
-            document.getElementById('temperature-gauge').style.height = `${tempHeight}%`;
-            document.getElementById('temperature-gauge-value').textContent = `${temperature}°C`;
-            
-            const humidityHeight = Math.min(Math.max(humidity, 0), 100);
-            document.getElementById('humidity-gauge').style.height = `${humidityHeight}%`;
-            document.getElementById('humidity-gauge-value').textContent = `${humidity}%`;
-            
-            const tempGauge = document.getElementById('temperature-gauge');
-            const humidityGauge = document.getElementById('humidity-gauge');
-            
-            if (temperature >= 20 && temperature <= 25) {
-                tempGauge.style.background = 'linear-gradient(to top, #28a745, #20c997)';
-            } else {
-                tempGauge.style.background = 'linear-gradient(to top, var(--accent), var(--accent-light))';
-            }
-            
-            if (humidity >= 80 && humidity <= 90) {
-                humidityGauge.style.background = 'linear-gradient(to top, #28a745, #20c997)';
-            } else {
-                humidityGauge.style.background = 'linear-gradient(to top, var(--accent), var(--accent-light))';
-            }
-        }
-        
-        function fetchHarvestData() {
-            fetch('{% url "get_harvest_data" %}')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("API Response:", data);
-                
-                    if (data.harvest && data.harvest.length > 0) {
-                        const sortedHarvest = data.harvest.sort((a, b) => 
-                            new Date(b.date) - new Date(a.date)
-                        );
-                
-                        const labels = sortedHarvest.map(item => item.date);
-                        const values = sortedHarvest.map(item => item.kilograms);
-                
-                        harvestChart.data.labels = labels;
-                        harvestChart.data.datasets[0].data = values;
-                        harvestChart.update();
-                
-                        let totalHarvestElement = document.getElementById('totalHarvest');
-                        if (totalHarvestElement) {
-                            totalHarvestElement.textContent = `${data.total_harvest.toFixed(2)}`;
-                            totalHarvestElement.classList.add('data-updated');
-                            setTimeout(() => {
-                                totalHarvestElement.classList.remove('data-updated');
-                            }, 500);
-                        }
-                
-                        let tableBody = document.getElementById("harvestTableBody");
-                        if (tableBody) {
-                            tableBody.innerHTML = "";
-                            
-                            const recentHarvest = sortedHarvest.slice(0, 5);
-                            
-                            recentHarvest.forEach((item, index) => {
-                                let growthRate = "N/A";
-                                if (index > 0) {
-                                    const prevValue = sortedHarvest[index].kilograms;
-                                    const currentValue = sortedHarvest[index-1].kilograms;
-                                    if (prevValue > 0) {
-                                        const rate = ((currentValue - prevValue) / prevValue) * 100;
-                                        growthRate = `${rate > 0 ? '+' : ''}${rate.toFixed(1)}%`;
-                                    }
-                                }
-                                
-                                let status = "Steady";
-                                let statusClass = "text-primary";
-                                if (growthRate !== "N/A") {
-                                    const rateValue = parseFloat(growthRate);
-                                    if (rateValue > 5) {
-                                        status = "Rapid Growth";
-                                        statusClass = "text-success";
-                                    } else if (rateValue < -5) {
-                                        status = "Declining";
-                                        statusClass = "text-danger";
-                                    }
-                                }
-                                
-                                let row = `<tr>
-                                    <td>${item.date}</td>
-                                    <td>${item.kilograms.toFixed(2)}</td>
-                                    <td>${growthRate}</td>
-                                    <td class="${statusClass}">${status}</td>
-                                </tr>`;
-                                tableBody.innerHTML += row;
-                            });
-                        }
-                    } else {
-                        console.warn("No harvest data available.");
-                    }
-                    
-                    updateLastUpdatedTime();
-                })
-                .catch(error => {
-                    console.error('Error fetching harvest data:', error);
-                });
-        }
-        
-        fetchHarvestData();
-        setInterval(fetchHarvestData, 300000);
+      // Initialize charts first
+      let harvestChart = null;
+      let sensorDataChart = null;
 
-// Replace the entire sensor data chart section with this:
-
-let sensorDataChart = null;
-
-function initializeSensorChart() {
-    let sensorCtx = document.getElementById('sensorDataChart').getContext('2d');
-    
-    // Initialize with empty data that will be populated from real data
-    sensorDataChart = new Chart(sensorCtx, {
-        type: 'line',
-        data: {
-            labels: [], // Will be populated with timestamps
+      function initializeCharts() {
+        // Harvest Chart
+        let ctx = document.getElementById("harvestChart").getContext("2d");
+        harvestChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [],
             datasets: [
-                {
-                    label: 'Temperature (°C)',
-                    data: [],
-                    borderColor: '#dc3545',
-                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                    tension: 0.4,
-                    borderWidth: 2,
-                    pointRadius: 4,
-                    yAxisID: 'yTemp',
-                    fill: true 
-                },
-                {
-                    label: 'Humidity (%)',
-                    data: [],
-                    borderColor: '#007bff',
-                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                    tension: 0.4,
-                    borderWidth: 2,
-                    pointRadius: 4,
-                    yAxisID: 'yHumidity',
-                    fill: false
-                }
-            ]
-        },
-        options: {
+              {
+                label: "Harvest (kg)",
+                data: [],
+                borderColor: "#4D6A6D",
+                backgroundColor: "rgba(190, 211, 201, 0.2)",
+                tension: 0.4,
+                borderWidth: 2,
+                pointBackgroundColor: "#8B786D",
+                pointBorderColor: "white",
+                pointHoverRadius: 6,
+                fill: true,
+              },
+            ],
+          },
+          options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Harvest Amount (kg)",
+                },
+                grid: {
+                  color: "rgba(214, 193, 177, 0.2)",
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Date",
+                },
+                grid: {
+                  color: "rgba(214, 193, 177, 0.2)",
+                },
+              },
             },
             plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        font: {
-                            family: 'Montserrat'
-                        }
-                    }
-                },
-                title: {
-                    display: true,
-                    text: 'Temperature and Humidity Over Time',
-                    color: '#8B786D',
-                    font: {
-                        size: 16,
-                        family: 'Montserrat',
-                        weight: 'bold'
-                    }
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: 'rgba(58, 50, 56, 0.8)',
-                    titleColor: 'white',
-                    bodyColor: 'white',
-                    titleFont: { family: 'Montserrat' },
-                    bodyFont: { family: 'Montserrat' }
-                }
+              legend: {
+                display: true,
+              },
             },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Time',
-                        font: { family: 'Montserrat' }
-                    },
-                    grid: {
-                        color: 'rgba(214, 193, 177, 0.2)'
-                    }
-                },
-                yTemp: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Temperature (°C)',
-                        font: { family: 'Montserrat' }
-                    },
-                    min: 15, // Adjusted range for mushroom farming
-                    max: 35,
-                    grid: {
-                        color: 'rgba(214, 193, 177, 0.2)'
-                    }
-                },
-                yHumidity: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    title: {
-                        display: true,
-                        text: 'Humidity (%)',
-                        font: { family: 'Montserrat' }
-                    },
-                    min: 60, // Adjusted range for mushroom farming
-                    max: 100,
-                    grid: {
-                        drawOnChartArea: false,
-                    }
-                }
-            }
-        }
-    });
-}
-
-// Array to store historical sensor data
-let sensorHistory = {
-    timestamps: [],
-    temperatures: [],
-    humidities: []
-};
-
-// Maximum number of data points to show on chart
-const MAX_DATA_POINTS = 20;
-
-function updateSensorChart(temperature, humidity) {
-    if (!sensorDataChart) return;
-    
-    const now = new Date();
-    const timeString = now.toLocaleTimeString();
-    
-    // Add new data
-    sensorHistory.timestamps.push(timeString);
-    sensorHistory.temperatures.push(temperature);
-    sensorHistory.humidities.push(humidity);
-    
-    // Limit the number of data points to prevent chart from getting too crowded
-    if (sensorHistory.timestamps.length > MAX_DATA_POINTS) {
-        sensorHistory.timestamps.shift();
-        sensorHistory.temperatures.shift();
-        sensorHistory.humidities.shift();
-    }
-    
-    // Update chart data
-    sensorDataChart.data.labels = sensorHistory.timestamps;
-    sensorDataChart.data.datasets[0].data = sensorHistory.temperatures;
-    sensorDataChart.data.datasets[1].data = sensorHistory.humidities;
-    
-    sensorDataChart.update('none'); // 'none' for smoother updates
-}
-
-// Modified fetchSensorData function to also update the chart
-function fetchSensorData() {
-    fetch("/get-sensor-data/")
-        .then((response) => response.json())
-        .then((data) => {
-            const tempElement = document.getElementById("temperature");
-            const humidityElement = document.getElementById("humidity");
-            
-            // Handle null/undefined values from Firebase
-            const temperature = (data.temperature !== undefined && data.temperature !== null) ? 
-                parseFloat(data.temperature) : null;
-            const humidity = (data.humidity !== undefined && data.humidity !== null) ? 
-                parseFloat(data.humidity) : null;
-            
-            // Update main display cards
-            tempElement.textContent = temperature !== null ? temperature.toFixed(1) : "--";
-            humidityElement.textContent = humidity !== null ? humidity.toFixed(1) : "--";
-            
-            // Update gauge visualization
-            if (temperature !== null && humidity !== null) {
-                updateGauges(temperature, humidity);
-                
-                // Update the sensor chart with real data
-                updateSensorChart(temperature, humidity);
-            }
-            
-            // Add animation for data updates
-            tempElement.classList.add('data-updated');
-            humidityElement.classList.add('data-updated');
-            
-            setTimeout(() => {
-                tempElement.classList.remove('data-updated');
-                humidityElement.classList.remove('data-updated');
-            }, 500);
-            
-            // Update the last updated time
-            updateLastUpdatedTime();
-        })
-        .catch((error) => {
-            console.error("Error fetching sensor data:", error);
-            document.getElementById("temperature").textContent = "--";
-            document.getElementById("humidity").textContent = "--";
+          },
         });
-}
 
-// Initialize the sensor chart when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    initializeSensorChart();
-    
-    // Fetch initial data
-    fetchSensorData();
-    
-    // Set up interval for continuous updates
-    setInterval(fetchSensorData, 5000);
-});
+        // Sensor Data Chart
+        let sensorCtx = document
+          .getElementById("sensorDataChart")
+          .getContext("2d");
+        sensorDataChart = new Chart(sensorCtx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Temperature (°C)",
+                data: [],
+                borderColor: "#dc3545",
+                backgroundColor: "rgba(220, 53, 69, 0.1)",
+                tension: 0.4,
+                borderWidth: 2,
+                yAxisID: "yTemp",
+                fill: true,
+              },
+              {
+                label: "Humidity (%)",
+                data: [],
+                borderColor: "#007bff",
+                backgroundColor: "rgba(0, 123, 255, 0.1)",
+                tension: 0.4,
+                borderWidth: 2,
+                yAxisID: "yHumidity",
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              yTemp: {
+                type: "linear",
+                position: "left",
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Temperature (°C)",
+                },
+              },
+              yHumidity: {
+                type: "linear",
+                position: "right",
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Humidity (%)",
+                },
+                grid: {
+                  drawOnChartArea: false,
+                },
+              },
+            },
+          },
+        });
+      }
 
-// Update the window resize event to include sensorDataChart
-window.addEventListener('resize', function() {
-    if (harvestChart) harvestChart.resize();
-    if (sensorDataChart) sensorDataChart.resize();
-});
+      function fetchHarvestData() {
+        console.log("Fetching harvest data...");
+
+        fetch("{% url 'get_harvest_data' %}") // Use absolute path to avoid URL template issues
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Harvest data received:", data);
+
+            if (data.error) {
+              console.error("Server error:", data.error);
+              document.getElementById("harvestTableBody").innerHTML =
+                '<tr><td colspan="4" class="text-center text-danger">Error loading data</td></tr>';
+              return;
+            }
+
+            if (data.harvest && data.harvest.length > 0) {
+              // Update harvest chart
+              const labels = data.harvest.map((item) => item.date);
+              const values = data.harvest.map(
+                (item) => parseFloat(item.kilograms) || 0
+              );
+
+              harvestChart.data.labels = labels;
+              harvestChart.data.datasets[0].data = values;
+              harvestChart.update();
+
+              // Update total harvest
+              const totalHarvestElement =
+                document.getElementById("totalHarvest");
+              if (totalHarvestElement && data.total_harvest) {
+                totalHarvestElement.innerHTML = `${parseFloat(
+                  data.total_harvest
+                ).toFixed(2)}<span class="stat-unit">kg</span>`;
+              }
+
+              // Update table
+              const tableBody = document.getElementById("harvestTableBody");
+              tableBody.innerHTML = "";
+
+              data.harvest.slice(0, 5).forEach((item, index) => {
+                const row = `
+              <tr>
+                <td>${item.date || "N/A"}</td>
+                <td>${parseFloat(item.kilograms || 0).toFixed(2)}</td>
+                <td>${calculateGrowthRate(data.harvest, index)}</td>
+                <td>${getStatus(parseFloat(item.kilograms || 0))}</td>
+              </tr>
+            `;
+                tableBody.innerHTML += row;
+              });
+            } else {
+              document.getElementById("harvestTableBody").innerHTML =
+                '<tr><td colspan="4" class="text-center">No harvest data available</td></tr>';
+              document.getElementById("totalHarvest").innerHTML =
+                '0<span class="stat-unit">kg</span>';
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching harvest data:", error);
+            document.getElementById("harvestTableBody").innerHTML =
+              '<tr><td colspan="4" class="text-center text-danger">Failed to load data</td></tr>';
+          });
+      }
+
+      function calculateGrowthRate(harvests, index) {
+        if (index === 0 || harvests.length <= 1) return "N/A";
+
+        const current = parseFloat(harvests[index].kilograms || 0);
+        const previous = parseFloat(harvests[index - 1].kilograms || 0);
+
+        if (previous === 0) return "N/A";
+
+        const growth = ((current - previous) / previous) * 100;
+        return `${growth > 0 ? "+" : ""}${growth.toFixed(1)}%`;
+      }
+
+      function getStatus(kilograms) {
+        if (kilograms > 5) return '<span class="text-success">Excellent</span>';
+        if (kilograms > 2) return '<span class="text-primary">Good</span>';
+        return '<span class="text-warning">Low</span>';
+      }
+
+      function fetchSensorData() {
+        console.log("Fetching sensor data...");
+
+       fetch("{% url 'get_sensor_data' %}") // Use absolute path
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Sensor data received:", data);
+
+            if (data.sensor_data && data.sensor_data.length > 0) {
+              const latest = data.sensor_data[0];
+
+              // Update temperature and humidity displays
+              if (latest.temperature) {
+                document.getElementById(
+                  "temperature"
+                ).innerHTML = `${latest.temperature}<span class="stat-unit">°C</span>`;
+              }
+
+              if (latest.humidity) {
+                document.getElementById(
+                  "humidity"
+                ).innerHTML = `${latest.humidity}<span class="stat-unit">%</span>`;
+              }
+
+              // Update sensor chart with latest data
+              const now = new Date().toLocaleTimeString();
+              if (sensorDataChart) {
+                sensorDataChart.data.labels.push(now);
+                sensorDataChart.data.datasets[0].data.push(
+                  latest.temperature || 0
+                );
+                sensorDataChart.data.datasets[1].data.push(
+                  latest.humidity || 0
+                );
+
+                // Keep only last 10 data points
+                if (sensorDataChart.data.labels.length > 10) {
+                  sensorDataChart.data.labels.shift();
+                  sensorDataChart.data.datasets[0].data.shift();
+                  sensorDataChart.data.datasets[1].data.shift();
+                }
+
+                sensorDataChart.update();
+              }
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching sensor data:", error);
+          });
+      }
+
+      function updateLastUpdatedTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        document.getElementById("lastUpdateTime").textContent = timeString;
+      }
+
+      // Initialize everything when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("Initializing dashboard...");
+        initializeCharts();
+        fetchHarvestData();
+        fetchSensorData();
+        updateLastUpdatedTime();
+
+        // Refresh data every 30 seconds
+        setInterval(fetchHarvestData, 30000);
+        setInterval(fetchSensorData, 10000);
+        setInterval(updateLastUpdatedTime, 60000);
+      });
+
+      // Utility functions
+      function toggleChartView() {
+        if (harvestChart.config.type === "line") {
+          harvestChart.config.type = "bar";
+        } else {
+          harvestChart.config.type = "line";
+        }
+        harvestChart.update();
+      }
+
+      function exportChartData() {
+        const labels = harvestChart.data.labels;
+        const data = harvestChart.data.datasets[0].data;
+
+        if (labels.length === 0) {
+          alert("No data available to export");
+          return;
+        }
+
+        let csvContent = "Date,Harvest (kg)\n";
+        labels.forEach((label, i) => {
+          csvContent += `${label},${data[i]}\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "harvest_data.csv";
+        link.click();
+        window.URL.revokeObjectURL(url);
+      }
     </script>
-</body>
+  </body>
 </html>

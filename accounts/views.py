@@ -37,7 +37,8 @@ from django.views.decorators.http import require_http_methods
 db = firestore.client()
 
 # Initialize Firebase
-config = settings.CONFIG
+from django.conf import settings
+config = getattr(settings, 'CONFIG', getattr(settings, 'FIREBASE_CONFIG', {}))
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 database = firebase.database()
@@ -254,13 +255,21 @@ def add_harvest(request):
 
     if request.method == "POST":
         action = request.POST.get("action", "add")
+        user_id = request.session['user']['localId']  # Get current user ID
         
         if action == "delete":
             harvest_id = request.POST.get("harvest_id")
             try:
-                # Delete from Firestore
-                db.collection("harvests").document(harvest_id).delete()
-                messages.success(request, "Harvest deleted successfully!")
+                # Delete from Firestore - verify ownership first
+                harvest_ref = db.collection("harvests").document(harvest_id)
+                harvest_data = harvest_ref.get().to_dict()
+                
+                if harvest_data and harvest_data.get('userId') == user_id:
+                    harvest_ref.delete()
+                    messages.success(request, "Harvest deleted successfully!")
+                else:
+                    messages.error(request, "You can only delete your own harvests.")
+                    
             except Exception as e:
                 messages.error(request, f"Error deleting harvest: {str(e)}")
                 
@@ -269,13 +278,20 @@ def add_harvest(request):
             date = request.POST.get("date")
             kilograms = request.POST.get("kilograms")
             try:
-                # Update in Firestore
-                db.collection("harvests").document(harvest_id).update({
-                    "date": date,
-                    "kilograms": float(kilograms),
-                    "timestamp": datetime.utcnow()
-                })
-                messages.success(request, "Harvest updated successfully!")
+                # Update in Firestore - verify ownership first
+                harvest_ref = db.collection("harvests").document(harvest_id)
+                harvest_data = harvest_ref.get().to_dict()
+                
+                if harvest_data and harvest_data.get('userId') == user_id:
+                    harvest_ref.update({
+                        "date": date,
+                        "kilograms": float(kilograms),
+                        "timestamp": datetime.utcnow()
+                    })
+                    messages.success(request, "Harvest updated successfully!")
+                else:
+                    messages.error(request, "You can only edit your own harvests.")
+                    
             except Exception as e:
                 messages.error(request, f"Error updating harvest: {str(e)}")
                 
@@ -283,11 +299,12 @@ def add_harvest(request):
             date = request.POST.get("date")
             kilograms = request.POST.get("kilograms")
             try:
-                # Save data to Firestore
+                # Save data to Firestore with user ID
                 db.collection("harvests").add({
                     "date": date,
                     "kilograms": float(kilograms),
-                    "timestamp": datetime.utcnow()
+                    "timestamp": datetime.utcnow(),
+                    "userId": user_id  # Add user ID to track ownership
                 })
                 messages.success(request, "Harvest added successfully!")
             except Exception as e:
@@ -299,9 +316,13 @@ def report(request):
     if 'user' not in request.session:
         messages.error(request, "You need to log in first.")
         return redirect('login')
+    
     try:
-        # Fetch all harvest records from Firestore
-        harvests = db.collection("harvests").order_by("timestamp", direction=firestore.Query.DESCENDING).stream()
+        user_id = request.session['user']['localId']
+        
+        # Fetch only the current user's harvest records from Firestore
+        harvests = db.collection("harvests").where("userId", "==", user_id).stream()
+        
         # Convert Firestore documents to a list
         harvest_list = []
         total_kg = 0
@@ -311,7 +332,8 @@ def report(request):
             harvest_data = {
                 "id": doc.id,
                 "date": data.get("date"),
-                "kilograms": data.get("kilograms", 0)
+                "kilograms": data.get("kilograms", 0),
+                "timestamp": data.get("timestamp")  # Make sure we have timestamp
             }
             harvest_list.append(harvest_data)
             
@@ -323,13 +345,34 @@ def report(request):
                 # Skip invalid values
                 pass
         
+        # Sort manually by timestamp (descending)
+        harvest_list.sort(key=lambda x: x.get('timestamp') or datetime.min, reverse=True)
+        
         # Calculate average harvest
         average_kg = round(total_kg / len(harvest_list), 2) if harvest_list else 0
+        
+        # Fetch mushroom bags for the current user
+        mushroom_bags = db.collection("mushroom_bags").where("user_id", "==", user_id).stream()
+        
+        bag_list = []
+        for doc in mushroom_bags:
+            data = doc.to_dict()
+            bag_data = {
+                "id": doc.id,
+                "bag_name": data.get("bag_name", "Unnamed Bag"),
+                "bag_type": data.get("bag_type", "oyster"),
+                "weight": data.get("weight", 0),
+                "status": data.get("status", "active"),
+                "notes": data.get("notes", ""),
+                "created_at": data.get("created_at")
+            }
+            bag_list.append(bag_data)
         
         context = {
             "harvests": harvest_list,
             "total_harvest": round(total_kg, 2),
-            "average_harvest": average_kg
+            "average_harvest": average_kg,
+            "mushroom_bags": bag_list  # Add mushroom bags to context
         }
         
     except Exception as e:
@@ -337,41 +380,76 @@ def report(request):
         context = {
             "harvests": harvest_list,
             "total_harvest": 0,
-            "average_harvest": 0
+            "average_harvest": 0,
+            "mushroom_bags": []  # Empty list if error
         }
         messages.error(request, f"Error fetching data: {str(e)}")
     
     return render(request, "accounts/report.html", context)
 
-
-def get_harvest_data(request):
+def add_mushroom_bag(request):
+    """Add a new mushroom bag entry"""
     if 'user' not in request.session:
         messages.error(request, "You need to log in first.")
         return redirect('login')
+
+    if request.method == "POST":
+        try:
+            user_id = request.session['user']['localId']
+            bag_name = request.POST.get("bag_name")
+            bag_type = request.POST.get("bag_type", "oyster")
+            weight = float(request.POST.get("weight", 0))
+            status = request.POST.get("status", "active")
+            notes = request.POST.get("notes", "")
+            
+            # Save data to Firestore with user ID
+            bag_data = {
+                "bag_name": bag_name,
+                "bag_type": bag_type,
+                "weight": weight,
+                "status": status,
+                "notes": notes,
+                "user_id": user_id,
+                "created_at": firestore.SERVER_TIMESTAMP,
+                "updated_at": firestore.SERVER_TIMESTAMP
+            }
+            
+            db.collection("mushroom_bags").add(bag_data)
+            messages.success(request, "Mushroom bag added successfully!")
+            
+        except Exception as e:
+            messages.error(request, f"Error adding mushroom bag: {str(e)}")
+    
+    return redirect("report")  # Redirect back to report page
+
+def get_harvest_data(request):
+    if 'user' not in request.session:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+    
     try:
-        # Fetch all harvest records from Firestore, ordered by timestamp
-        harvests = db.collection("harvests").order_by("timestamp", direction=firestore.Query.DESCENDING).stream()
-        # Convert Firestore documents to a list
+        user_id = request.session['user']['localId']
+        print(f"Fetching harvest data for user: {user_id}")
+        
+        # Try without order_by first to avoid index issues
+        harvests = db.collection("harvests").where("userId", "==", user_id).stream()
+        
         harvest_list = []
         total_kg = 0
         
         for doc in harvests:
             data = doc.to_dict()
-            kg_value = data.get("kilograms", 0)
+            print(f"Harvest data: {data}")
             
+            kg_value = data.get("kilograms", 0)
             harvest_data = {
-                "date": data.get("date"),
-                "kilograms": kg_value
+                "date": data.get("date", "Unknown"),
+                "kilograms": float(kg_value) if kg_value else 0
             }
             harvest_list.append(harvest_data)
-            
-            # Add to total (ensure kilograms is a number)
-            try:
-                total_kg += float(kg_value)
-            except (ValueError, TypeError):
-                pass
+            total_kg += float(kg_value) if kg_value else 0
         
-        # Calculate average
+        print(f"Found {len(harvest_list)} harvest records")
+        
         average_kg = round(total_kg / len(harvest_list), 2) if harvest_list else 0
         
         return JsonResponse({
@@ -382,8 +460,9 @@ def get_harvest_data(request):
         })
         
     except Exception as e:
+        print(f"Error in get_harvest_data: {str(e)}")
         return JsonResponse({'error': str(e)}, status=500)
-
+    
 
 # Optional: Add a separate function to get just statistics if needed
 def get_harvest_statistics(request):
@@ -392,7 +471,11 @@ def get_harvest_statistics(request):
         return JsonResponse({'error': 'Not authenticated'}, status=401)
     
     try:
-        harvests = db.collection("harvests").stream()
+        user_id = request.session['user']['localId']
+        
+        # No order_by needed for statistics
+        harvests = db.collection("harvests").where("userId", "==", user_id).stream()
+        
         total_kg = 0
         count = 0
         
@@ -547,28 +630,40 @@ def remote(request):
 def get_sensor_data(request):
     if 'user' not in request.session:
         messages.error(request, "You need to log in first.")
-        return redirect('login') 
+        return redirect('login')
 
     try:
-        # Adjust this path based on your Firebase structure
-        sensor_data = database.child("sensors").get().val()
+        # Adjust this based on your Firebase path
+        sensor_data_snapshot = db.reference("historical_data").get()
 
-        print("Fetched data from Firebase:", sensor_data)
+        print("Fetched data from Firebase:", sensor_data_snapshot)
 
-        if isinstance(sensor_data, dict):
-            temperature = sensor_data.get('temperature')
-            humidity = sensor_data.get('humidity')
+        # Handle case where data might be None
+        if not sensor_data_snapshot:
+            return JsonResponse({'sensor_data': []})
+
+        # If it's a dict of multiple records, convert to list
+        if isinstance(sensor_data_snapshot, dict):
+            formatted_data = []
+            for key, value in sensor_data_snapshot.items():
+                formatted_data.append({
+                    "timestamp": value.get("timestamp") or key,
+                    "temperature": value.get("temperature"),
+                    "humidity": value.get("humidity")
+                })
         else:
-            temperature = humidity = None
+            # Single entry (not dict)
+            formatted_data = [{
+                "timestamp": "N/A",
+                "temperature": sensor_data_snapshot.get("temperature"),
+                "humidity": sensor_data_snapshot.get("humidity")
+            }]
 
-        return JsonResponse({
-            'temperature': temperature,
-            'humidity': humidity
-        })
+        return JsonResponse({'sensor_data': formatted_data})
 
     except Exception as e:
         print(f"Error fetching sensor data: {e}")
-        return JsonResponse({'error': 'Error fetching sensor data'}, status=500)
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 def update_control_settings(request):
@@ -599,7 +694,33 @@ MODEL_PATH = os.path.join(settings.BASE_DIR, 'static/models/mushroom_mobilenetv2
 # Model will be loaded lazily when needed
 model = None
 _tf_loaded = False
-
+def save_scan_result_to_firebase(user_id, result, image_name, confidence=0, analysis_type='upload'):
+    """Enhanced function to save scan results with additional metadata"""
+    try:
+        now = datetime.now(pytz.UTC)
+        
+        scan_data = {
+            'user_id': user_id,
+            'result': result,
+            'image_name': image_name,
+            'confidence': confidence,
+            'analysis_type': analysis_type,  # 'upload', 'camera_capture', 'realtime'
+            'timestamp': now.isoformat(),
+            'created_at': now.strftime('%Y-%m-%d %H:%M:%S UTC'),
+            'date': now.strftime('%Y-%m-%d'),
+            'time': now.strftime('%H:%M:%S')
+        }
+        
+        # Save to Firestore
+        db.collection("scans").add(scan_data)
+        
+        print(f"Saved scan result to Firebase: {scan_data}")
+        return True
+        
+    except Exception as e:
+        print(f"Error saving scan result to Firebase: {str(e)}")
+        return False
+    
 def load_model():
     """Load the ML model lazily."""
     global model, _tf_loaded
@@ -708,35 +829,25 @@ def process_image_with_model(img):
     except Exception as e:
         raise Exception(f"Error processing image: {str(e)}")
 
-def save_scan_result_to_firebase(user_id, result, image_name, confidence=0, analysis_type='upload'):
-    """Enhanced function to save scan results with additional metadata"""
+def get_user_scans(request):
+    """Get only the current user's scan results"""
+    if 'user' not in request.session:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+    
     try:
-        # We already imported datetime and pytz at the top
-        now = datetime.now(pytz.UTC)
+        user_id = request.session['user']['localId']
+        scans = db.collection("scans").where("user_id", "==", user_id).order_by("timestamp", direction=firestore.Query.DESCENDING).stream()
         
-        scan_data = {
-            'user_id': user_id,
-            'result': result,
-            'image_name': image_name,
-            'confidence': confidence,
-            'analysis_type': analysis_type,  # 'upload', 'camera_capture', 'realtime'
-            'timestamp': now.isoformat(),
-            'created_at': now.strftime('%Y-%m-%d %H:%M:%S UTC'),
-            'date': now.strftime('%Y-%m-%d'),
-            'time': now.strftime('%H:%M:%S')
-        }
+        scan_list = []
+        for doc in scans:
+            data = doc.to_dict()
+            data['id'] = doc.id
+            scan_list.append(data)
         
-        # Add your Firebase saving logic here
-        # Example:
-        # firebase_db.child('scans').push(scan_data)
-        db.collection("scans").add(scan_data)
-        
-        print(f"Saved scan result to Firebase: {scan_data}")
-        return True
+        return JsonResponse({'scans': scan_list})
         
     except Exception as e:
-        print(f"Error saving scan result to Firebase: {str(e)}")
-        return False
+        return JsonResponse({'error': str(e)}, status=500)
 
 def optimize_image_for_realtime(image, max_size=(640, 640)):
     """Optimize image for faster real-time processing"""

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import json
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,11 +24,11 @@ load_dotenv(BASE_DIR / ".env")  # load .env file
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-b#)yfyb6pz9o9$_x4ngth@r)9qsc_t0ljehxix1-x7*r9b8j36'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-b#)yfyb6pz9o9$_x4ngth@r)9qsc_t0ljehxix1-x7*r9b8j36')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 
 # Application definition
@@ -136,68 +137,107 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-import os
-import json
-from pathlib import Path
-
-# ... other settings ...
-
-# 1. Get the JSON content from the environment variable
-firebase_credentials_json_str = os.environ.get('FIREBASE_CREDENTIALS_JSON')
-
-if firebase_credentials_json_str:
-    # 2. Define the path where the temporary file will be created
-    temp_dir = Path('/tmp')  # Use /tmp for writable storage on Render
-    firebase_temp_path = temp_dir / 'firebase_credentials.json'
-
+# --- Firebase Configuration ---
+def initialize_firebase():
+    """Initialize Firebase Admin SDK with proper error handling"""
     try:
-        # 3. Write the JSON string content to the temporary file
-        with open(firebase_temp_path, 'w') as f:
-            # Ensure the content is valid JSON before writing
-            credentials = json.loads(firebase_credentials_json_str)
-            json.dump(credentials, f)
+        import firebase_admin
+        from firebase_admin import credentials
         
-        # 4. Use the temporary file path for initialization
-        FIREBASE_CREDENTIALS_PATH = str(firebase_temp_path)
+        # Check if Firebase is already initialized
+        if firebase_admin._apps:
+            print("✅ Firebase already initialized")
+            return True
+            
+        # Method 1: Try service account file from FIREBASE_SERVICE_ACCOUNT_PATH
+        service_account_path = os.getenv('FIREBASE_SERVICE_ACCOUNT_PATH')
+        if service_account_path:
+            # Try as relative path from BASE_DIR
+            cred_path = BASE_DIR / service_account_path
+            if cred_path.exists():
+                cred = credentials.Certificate(str(cred_path))
+                firebase_admin.initialize_app(cred)
+                print(f"✅ Firebase initialized from: {cred_path}")
+                return True
+            # Try as absolute path
+            elif os.path.exists(service_account_path):
+                cred = credentials.Certificate(service_account_path)
+                firebase_admin.initialize_app(cred)
+                print(f"✅ Firebase initialized from: {service_account_path}")
+                return True
+            else:
+                print(f"⚠️  Service account path not found: {service_account_path}")
         
-    except json.JSONDecodeError:
-        raise ValueError("FIREBASE_CREDENTIALS_JSON environment variable is not valid JSON.")
+        # Method 2: Try common credential file locations
+        common_paths = [
+            BASE_DIR / "firebase_credentials.json",
+            BASE_DIR / "serviceAccountKey.json",
+            BASE_DIR / "final_smartshroom" / "firebase_credentials.json",
+            BASE_DIR / "accounts" / "firebase_credentials.json",
+        ]
+        
+        for cred_path in common_paths:
+            if cred_path.exists():
+                cred = credentials.Certificate(str(cred_path))
+                firebase_admin.initialize_app(cred)
+                print(f"✅ Firebase initialized from: {cred_path}")
+                return True
+        
+        # Method 3: Try FIREBASE_CREDENTIALS_JSON environment variable (if exists)
+        firebase_credentials_json_str = os.environ.get('FIREBASE_CREDENTIALS_JSON', '').strip()
+        if firebase_credentials_json_str:
+            try:
+                # Clean the JSON string
+                cleaned_json = firebase_credentials_json_str
+                if (cleaned_json.startswith('"') and cleaned_json.endswith('"')):
+                    cleaned_json = cleaned_json[1:-1]
+                cleaned_json = cleaned_json.replace('\\"', '"').replace('\\n', '\n').replace('\\\\', '\\')
+                
+                cred_dict = json.loads(cleaned_json)
+                cred = credentials.Certificate(cred_dict)
+                firebase_admin.initialize_app(cred)
+                print("✅ Firebase initialized from FIREBASE_CREDENTIALS_JSON environment variable")
+                return True
+            except json.JSONDecodeError as e:
+                print(f"❌ Invalid JSON in FIREBASE_CREDENTIALS_JSON: {e}")
+            except Exception as e:
+                print(f"❌ Error initializing Firebase from env var: {e}")
+        
+        # If no method worked
+        print("❌ Firebase not initialized: No valid credentials found")
+        print("💡 Please ensure you have one of the following:")
+        print("   - firebase_credentials.json file in your project root")
+        print("   - FIREBASE_SERVICE_ACCOUNT_PATH set to a valid credentials file")
+        print("   - FIREBASE_CREDENTIALS_JSON environment variable with valid JSON")
+        return False
+        
+    except ImportError:
+        print("❌ Firebase Admin SDK not installed. Run: pip install firebase-admin")
+        return False
     except Exception as e:
-        raise RuntimeError(f"Could not create temporary Firebase credentials file: {e}")
+        print(f"❌ Unexpected error during Firebase initialization: {e}")
+        return False
 
-else:
-    # Handle case where the environment variable is missing (e.g., local development or a fallback)
-    # You might keep the FileNotFoundError here for development if you still use a local file
-    # Or set a default for local development.
-    local_path = os.path.join(BASE_DIR, "final_smartshroom/firebase_credentials.json")
-    if os.path.exists(local_path):
-        FIREBASE_CREDENTIALS_PATH = local_path
-    else:
-        # If running on Render without the env var, raise an error
-        raise FileNotFoundError("Firebase credentials not found. Set FIREBASE_CREDENTIALS_JSON environment variable.")
+# Initialize Firebase
+firebase_initialized = initialize_firebase()
 
+# Firebase Frontend Config (for JavaScript client) - KEEP BOTH FOR COMPATIBILITY
+CONFIG = {
+    "apiKey": os.getenv("FIREBASE_API_KEY", "AIzaSyDbQpy2qSjPN7c316KhNT1hfNMDnwGK6IE"),
+    "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN", "smartshroom-597b2.firebaseapp.com"),
+    "databaseURL": os.getenv("FIREBASE_DB_URL", "https://smartshroom-597b2-default-rtdb.firebaseio.com"),
+    "projectId": os.getenv("FIREBASE_PROJECT_ID", "smartshroom-597b2"),
+    "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET", "smartshroom-597b2.firebasestorage.app"),
+    "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID", "625325732992"),
+    "appId": os.getenv("FIREBASE_APP_ID", "1:625325732992:web:9057838a9f2e766e3a2265"),
+    "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID", "G-HDFM5GQX16"),
+}
 
-# Then, use `FIREBASE_CREDENTIALS_PATH` when initializing Firebase
-# e.g., service_account.Credentials.from_service_account_file(FIREBASE_CREDENTIALS_PATH)
+# Also keep FIREBASE_CONFIG for consistency
+FIREBASE_CONFIG = CONFIG
 
-
-
-
-
-
+# Session settings
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 86400  # 1 day
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-
-CONFIG = {
-            "apiKey": "AIzaSyDbQpy2qSjPN7c316KhNT1hfNMDnwGK6IE",
-            "authDomain" : "smartshroom-597b2.firebaseapp.com",
-            "databaseURL" : "https://smartshroom-597b2-default-rtdb.firebaseio.com",
-            "projectId" : "smartshroom-597b2",
-            "storageBucket" : "smartshroom-597b2.firebasestorage.app",
-            "messagingSenderId" : "625325732992",
-            "appId": "1:625325732992:web:9057838a9f2e766e3a2265",
-            "measurementId": "G-HDFM5GQX16",
-        }
-
