@@ -694,6 +694,7 @@ MODEL_PATH = os.path.join(settings.BASE_DIR, 'static/models/mushroom_mobilenetv2
 # Model will be loaded lazily when needed
 model = None
 _tf_loaded = False
+
 def save_scan_result_to_firebase(user_id, result, image_name, confidence=0, analysis_type='upload'):
     """Enhanced function to save scan results with additional metadata"""
     try:
@@ -733,6 +734,11 @@ def load_model():
         import tensorflow as tf
         # Configure TensorFlow for lower memory usage
         tf.config.set_visible_devices([], 'GPU')  # Disable GPU if not needed
+        
+        # Limit CPU threads to reduce memory usage
+        tf.config.threading.set_intra_op_parallelism_threads(1)
+        tf.config.threading.set_inter_op_parallelism_threads(1)
+        
         physical_devices = tf.config.list_physical_devices('CPU')
         if physical_devices:
             try:
@@ -808,8 +814,8 @@ def process_image_with_model(img):
         # Normalize pixel values to [0,1] range
         img_array = img_array / 255.0
         
-        # Make prediction
-        predictions = model.predict(img_array, verbose=0)  # verbose=0 to reduce logging
+        # Make prediction with minimal memory usage
+        predictions = model.predict(img_array, verbose=0, batch_size=1)  # Reduced batch size
         
         # Get the predicted class and confidence
         class_labels = ['Healthy Mushroom', 'Trichoderma']
@@ -829,6 +835,7 @@ def process_image_with_model(img):
     except Exception as e:
         raise Exception(f"Error processing image: {str(e)}")
 
+# REST OF YOUR CODE REMAINS EXACTLY THE SAME - NO CHANGES BELOW THIS LINE
 def get_user_scans(request):
     """Get only the current user's scan results"""
     if 'user' not in request.session:
@@ -1185,10 +1192,6 @@ def analyze_image(request):
             return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-
-
-
 
 def profile(request):
     
