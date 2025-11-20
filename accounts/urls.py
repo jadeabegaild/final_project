@@ -20,7 +20,6 @@ urlpatterns = [
     path('add_mushroom_bag/', views.add_mushroom_bag, name='add_mushroom_bag'),
     path('logout/', views.logout, name='logout'),
     path('signup/', views.signup, name='signup'),
-    path('get_mushroom_bags_data/', views.get_mushroom_bags_data, name='get_mushroom_bags_data'),
     path('analyze/', views.analyze_image, name='analyze_image'),
     path('get-sensor-data/', views.get_sensor_data, name='get_sensor_data'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
