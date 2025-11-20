@@ -387,6 +387,8 @@ def report(request):
     
     return render(request, "accounts/report.html", context)
 
+
+        
 def add_mushroom_bag(request):
     """Add a new mushroom bag entry"""
     if 'user' not in request.session:
@@ -421,6 +423,8 @@ def add_mushroom_bag(request):
             messages.error(request, f"Error adding mushroom bag: {str(e)}")
     
     return redirect("report")  # Redirect back to report page
+
+
 
 def get_harvest_data(request):
     if 'user' not in request.session:
