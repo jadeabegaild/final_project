@@ -19,15 +19,15 @@ from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-import torch
-import torch.nn as nn
-from torch.serialization import add_safe_globals
+# import torch
+# import torch.nn as nn
+# from torch.serialization import add_safe_globals
 import requests
 import time
 import pytz
 from io import BytesIO
 from PIL import Image
-from torchvision import models, transforms
+# from torchvision import models, transforms
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
