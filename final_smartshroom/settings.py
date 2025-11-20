@@ -178,6 +178,24 @@ def initialize_firebase():
         print(f"❌ Unexpected error during Firebase initialization: {e}")
         return False
 
+
+# Render configuration
+if 'RENDER' in os.environ:
+    ALLOWED_HOSTS.extend([
+        os.environ.get('RENDER_EXTERNAL_HOSTNAME', ''),
+        'smartshroom.onrender.com'
+    ])
+    DEBUG = False
+    
+    # Security settings
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+else:
+    # Local development settings
+    DEBUG = True
+    
+    
 # Initialize Firebase
 firebase_initialized = initialize_firebase()
 
@@ -192,6 +210,8 @@ CONFIG = {
     "appId": os.getenv("FIREBASE_APP_ID", "1:625325732992:web:9057838a9f2e766e3a2265"),
     "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID", "G-HDFM5GQX16"),
 }
+
+
 
 # Also keep FIREBASE_CONFIG for consistency
 FIREBASE_CONFIG = CONFIG
