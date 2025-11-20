@@ -994,8 +994,8 @@
                 <th><i class="fas fa-seedling me-2"></i>Type</th>
                 <th><i class="fas fa-weight-scale me-2"></i>Weight (kg)</th>
                 <th><i class="fas fa-info-circle me-2"></i>Status</th>
-                <th><i class="fas fa-sticky-note me-2"></i>Notes</th>
-                <th><i class="fas fa-calendar me-2"></i>Created</th>
+                <!-- <th><i class="fas fa-sticky-note me-2"></i>Notes</th> -->
+                <!-- <th><i class="fas fa-calendar me-2"></i>Created</th> -->
                 <th class="no-print"><i class="fas fa-cog me-2"></i>Actions</th>
               </tr>
             </thead>
@@ -1022,15 +1022,15 @@
                   <span class="badge bg-secondary">{{ bag.status|title }}</span>
                   {% endif %}
                 </td>
-                <td class="notes-cell">{{ bag.notes|default:"-" }}</td>
-                <td>
+                <!-- <td class="notes-cell">{{ bag.notes|default:"-" }}</td> -->
+                <!-- <td>
                   {% if bag.created_at %} {{ bag.created_at|date:"M d, Y" }} {%
                   else %} - {% endif %}
-                </td>
+                </td> -->
                 <td class="action-buttons-cell no-print">
                   <button
                     class="btn btn-warning btn-sm"
-                    onclick="editBag('{{ bag.id }}', '{{ bag.bag_name }}', '{{ bag.bag_type }}', '{{ bag.weight }}', '{{ bag.status }}', '{{ bag.notes }}')"
+                    onclick="editBag('{{ bag.id }}', '{{ bag.bag_name }}', '{{ bag.bag_type }}', '{{ bag.weight }}', '{{ bag.status }}')"
                   >
                     <i class="fas fa-edit"></i> Edit
                   </button>
@@ -1190,7 +1190,7 @@
                   </select>
                 </div>
               </div>
-              <div class="mb-4">
+              <!-- <div class="mb-4">
                 <label class="form-label">Notes (Optional)</label>
                 <div class="input-group">
                   <span class="input-group-text">
@@ -1203,7 +1203,7 @@
                     placeholder="Any additional notes about this bag..."
                   ></textarea>
                 </div>
-              </div>
+              </div> -->
               <button type="submit" class="btn btn-primary w-100">
                 <i class="fas fa-save me-2"></i>Save Bag
               </button>
