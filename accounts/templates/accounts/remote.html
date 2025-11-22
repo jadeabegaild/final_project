@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remote Climate Control | Smart Shroom</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts - Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -42,13 +39,51 @@
             background: linear-gradient(135deg, var(--light) 0%, var(--highlight) 100%);
             color: var(--dark);
             min-height: 100vh;
+            position: relative; /* Context for z-index */
         }
+
+        /* --- NEW BACKGROUND ANIMATION STYLES --- */
+        .background-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Behind everything */
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.05; /* Very subtle opacity */
+            color: var(--accent);
+        }
+
+        /* Animation Keyframes */
+        .drift-slow { animation: drift 35s ease-in-out infinite alternate; }
+        .drift-medium { animation: drift 25s ease-in-out infinite alternate; }
+        .drift-fast { animation: drift 18s ease-in-out infinite alternate; }
+        .drift-reverse { animation: drift-rev 30s ease-in-out infinite alternate; }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50px, -30px) rotate(10deg); }
+        }
+
+        @keyframes drift-rev {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-40px, 40px) rotate(-10deg); }
+        }
+        /* --------------------------------------- */
         
         /* Modern navbar styling */
         .navbar {
             background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%) !important;
             box-shadow: var(--shadow-md);
             padding: 0.5rem 1rem;
+            position: relative;
+            z-index: 10;
         }
         
         .navbar-brand {
@@ -131,6 +166,8 @@
             padding: 2rem 1rem;
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1; /* Ensures content is above background animation */
         }
         
         .page-header {
@@ -387,8 +424,14 @@
     </style>
 </head>
 <body>
+    <div class="background-shapes">
+        <i class="fas fa-fan shape drift-medium" style="top: 10%; left: 5%; font-size: 60px;"></i>
+        <i class="fas fa-cloud shape drift-slow" style="top: 20%; right: 15%; font-size: 100px;"></i>
+        <i class="fas fa-tint shape drift-reverse" style="bottom: 15%; left: 10%; font-size: 80px;"></i>
+        <i class="fas fa-temperature-high shape drift-fast" style="bottom: 30%; right: 5%; font-size: 70px;"></i>
+        <i class="fas fa-wind shape drift-medium" style="top: 50%; left: 50%; font-size: 120px; opacity: 0.03;"></i>
+    </div>
 
-    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="fas fa-seedling"></i>SMARTSHROOM</a>
@@ -416,13 +459,8 @@
     </nav>
     
     <div class="control-container">
-        <div class="page-header">
-            <h1 class="page-title"><i class="fas fa-cloud"></i> Remote Climate Control</h1>
-            <p class="page-subtitle">Manage your mushroom farm's climate conditions remotely with real-time control</p>
-        </div>
         
         <div class="devices-grid">
-            <!-- Mist Maker Card -->
             <div class="device-card">
                 <div class="card-header mistmaker-header">
                     <i class="fas fa-droplet"></i> Mist Maker
@@ -455,7 +493,6 @@
                 </div>
             </div>
             
-            <!-- Fan Heater Card -->
             <div class="device-card">
                 <div class="card-header heater-header">
                     <i class="fas fa-fan"></i> Fan Heater
@@ -495,7 +532,6 @@
                 </div>
             </div>
             
-            <!-- Temperature Control Card -->
             <div class="device-card">
                 <div class="card-header temp-header">
                     <i class="fas fa-temperature-arrow-up"></i> Temperature Control
@@ -536,7 +572,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>

@@ -248,6 +248,64 @@ def dashboard(request):
     
     return render(request, 'accounts/dashboard.html')
 
+# In your views.py
+
+# In backend/views.py
+
+def get_scan_dashboard_data(request):
+    """Aggregates scan data: Counts healthy/diseased and gets recent scans."""
+    if 'user' not in request.session:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+    
+    try:
+        user_id = request.session['user']['localId']
+        # Fetch scans from Firebase
+        scans_ref = db.collection("scans").where("user_id", "==", user_id).order_by("timestamp", direction=firestore.Query.DESCENDING).stream()
+        
+        total_scans = 0
+        healthy_count = 0
+        disease_count = 0
+        recent_scans = []
+        
+        for doc in scans_ref:
+            data = doc.to_dict()
+            total_scans += 1
+            
+            # Simple text check for health status
+            result_str = str(data.get('result', '')).lower()
+            if 'healthy' in result_str:
+                healthy_count += 1
+            else:
+                disease_count += 1
+            
+            # Keep only the latest 5 scans for the list
+            if len(recent_scans) < 5:
+                # Format the date cleanly
+                created_at = data.get('created_at', '')
+                # If created_at is a timestamp object, convert it, otherwise string slice
+                display_date = created_at[:16] if isinstance(created_at, str) and len(created_at) > 16 else created_at
+                
+                recent_scans.append({
+                    'result': data.get('result', 'Unknown'),
+                    'confidence': data.get('confidence', 0),
+                    'date': display_date,
+                    'image_name': data.get('image_name', '')
+                })
+
+        return JsonResponse({
+            'stats': {
+                'total': total_scans,
+                'healthy': healthy_count,
+                'disease': disease_count
+            },
+            'recent_scans': recent_scans
+        })
+        
+    except Exception as e:
+        print(f"Error getting scan dashboard data: {e}")
+        return JsonResponse({'error': str(e)}, status=500)
+    
+
 def add_harvest(request):
     if 'user' not in request.session:
         messages.error(request, "You need to log in first.")
@@ -320,10 +378,9 @@ def report(request):
     try:
         user_id = request.session['user']['localId']
         
-        # Fetch only the current user's harvest records from Firestore
+        # --- 1. HARVESTS ---
         harvests = db.collection("harvests").where("userId", "==", user_id).stream()
         
-        # Convert Firestore documents to a list
         harvest_list = []
         total_kg = 0
         
@@ -333,25 +390,21 @@ def report(request):
                 "id": doc.id,
                 "date": data.get("date"),
                 "kilograms": data.get("kilograms", 0),
-                "timestamp": data.get("timestamp")  # Make sure we have timestamp
+                "timestamp": data.get("timestamp")
             }
             harvest_list.append(harvest_data)
             
-            # Add to total (ensure kilograms is a number)
+            # Add to total
             try:
                 kg_value = float(data.get("kilograms", 0))
                 total_kg += kg_value
             except (ValueError, TypeError):
-                # Skip invalid values
                 pass
         
-        # Sort manually by timestamp (descending)
+        # Sort by timestamp descending
         harvest_list.sort(key=lambda x: x.get('timestamp') or datetime.min, reverse=True)
         
-        # Calculate average harvest
-        average_kg = round(total_kg / len(harvest_list), 2) if harvest_list else 0
-        
-        # Fetch mushroom bags for the current user
+        # --- 2. MUSHROOM BAGS ---
         mushroom_bags = db.collection("mushroom_bags").where("user_id", "==", user_id).stream()
         
         bag_list = []
@@ -359,70 +412,162 @@ def report(request):
             data = doc.to_dict()
             bag_data = {
                 "id": doc.id,
+                "date": data.get("date", "-"),
                 "bag_name": data.get("bag_name", "Unnamed Bag"),
                 "bag_type": data.get("bag_type", "oyster"),
-                "weight": data.get("weight", 0),
+                "quantity": data.get("quantity", 0), 
                 "status": data.get("status", "active"),
                 "notes": data.get("notes", ""),
                 "created_at": data.get("created_at")
             }
             bag_list.append(bag_data)
+            
+        # --- 3. SCANS ---
+        # Fixed indentation: This must be OUTSIDE the bag loop
+        scans_ref = db.collection("scans").where("user_id", "==", user_id).order_by("timestamp", direction=firestore.Query.DESCENDING).stream()
         
+        scan_list = []
+        for doc in scans_ref:
+            scan_data = doc.to_dict()
+            scan_data['id'] = doc.id
+            # Format date for display
+            if 'created_at' in scan_data:
+                # Simplify date string (first 16 chars usually covers YYYY-MM-DD HH:MM)
+                scan_data['date'] = str(scan_data['created_at'])[:16] 
+            scan_list.append(scan_data)
+
+        # --- CONTEXT ---
         context = {
-            "harvests": harvest_list,
-            "total_harvest": round(total_kg, 2),
-            "average_harvest": average_kg,
-            "mushroom_bags": bag_list  # Add mushroom bags to context
+            # Use the LISTS we created, not the raw Firestore streams
+            'harvests': harvest_list,       
+            'mushroom_bags': bag_list,      
+            'scans': scan_list,             
         }
+        
+        # --- MISSING RETURN STATEMENT ADDED HERE ---
+        return render(request, 'accounts/report.html', context)
         
     except Exception as e:
-        harvest_list = []
-        context = {
-            "harvests": harvest_list,
-            "total_harvest": 0,
-            "average_harvest": 0,
-            "mushroom_bags": []  # Empty list if error
-        }
-        messages.error(request, f"Error fetching data: {str(e)}")
-    
-    return render(request, "accounts/report.html", context)
+        print(f"Error in report view: {e}")
+        messages.error(request, "Error loading report data.")
+        # Only render the empty page if there was an error
+        return render(request, 'accounts/report.html', {})
 
 
-        
 def add_mushroom_bag(request):
-    """Add a new mushroom bag entry"""
+    """Handle Add, Edit, and Delete for Mushroom Bags"""
     if 'user' not in request.session:
         messages.error(request, "You need to log in first.")
         return redirect('login')
 
     if request.method == "POST":
-        try:
-            user_id = request.session['user']['localId']
-            bag_name = request.POST.get("bag_name")
-            bag_type = request.POST.get("bag_type", "oyster")
-            weight = float(request.POST.get("weight", 0))
-            status = request.POST.get("status", "active")
-            notes = request.POST.get("notes", "")
-            
-            # Save data to Firestore with user ID
-            bag_data = {
-                "bag_name": bag_name,
-                "bag_type": bag_type,
-                "weight": weight,
-                "status": status,
-                "notes": notes,
-                "user_id": user_id,
-                "created_at": firestore.SERVER_TIMESTAMP,
-                "updated_at": firestore.SERVER_TIMESTAMP
-            }
-            
-            db.collection("mushroom_bags").add(bag_data)
-            messages.success(request, "Mushroom bag added successfully!")
-            
-        except Exception as e:
-            messages.error(request, f"Error adding mushroom bag: {str(e)}")
+        action = request.POST.get("action", "add")
+        user_id = request.session['user']['localId']
+        
+        # --- DELETE ACTION ---
+        if action == "delete":
+            bag_id = request.POST.get("bag_id")
+            try:
+                bag_ref = db.collection("mushroom_bags").document(bag_id)
+                bag_data = bag_ref.get().to_dict()
+                
+                if bag_data and bag_data.get('user_id') == user_id:
+                    bag_ref.delete()
+                    messages.success(request, "Mushroom bag deleted successfully!")
+                else:
+                    messages.error(request, "You can only delete your own bags.")
+            except Exception as e:
+                messages.error(request, f"Error deleting bag: {str(e)}")
+
+        # --- EDIT ACTION ---
+        elif action == "edit":
+            bag_id = request.POST.get("bag_id")
+            try:
+                bag_ref = db.collection("mushroom_bags").document(bag_id)
+                bag_data = bag_ref.get().to_dict()
+                
+                if bag_data and bag_data.get('user_id') == user_id:
+                    bag_ref.update({
+                        "date": request.POST.get("date"),
+                        "bag_name": request.POST.get("bag_name"),
+                        "bag_type": request.POST.get("bag_type"),
+                        "quantity": int(request.POST.get("quantity", 0)),
+                        "status": request.POST.get("status"),
+                        "updated_at": firestore.SERVER_TIMESTAMP
+                    })
+                    messages.success(request, "Mushroom bag updated successfully!")
+                else:
+                    messages.error(request, "You can only edit your own bags.")
+            except Exception as e:
+                messages.error(request, f"Error updating bag: {str(e)}")
+
+        # --- ADD ACTION (Default) ---
+        else: 
+            try:
+                date = request.POST.get("date")
+                if not date:
+                    date = datetime.now().strftime("%Y-%m-%d")
+
+                bag_data = {
+                    "date": date,
+                    "bag_name": request.POST.get("bag_name"),
+                    "bag_type": request.POST.get("bag_type", "oyster"),
+                    "quantity": int(request.POST.get("quantity", 0)),
+                    "status": request.POST.get("status", "active"),
+                    "notes": request.POST.get("notes", ""),
+                    "user_id": user_id,
+                    "created_at": firestore.SERVER_TIMESTAMP,
+                    "updated_at": firestore.SERVER_TIMESTAMP
+                }
+                
+                db.collection("mushroom_bags").add(bag_data)
+                messages.success(request, "Mushroom bag added successfully!")
+                
+            except Exception as e:
+                messages.error(request, f"Error adding mushroom bag: {str(e)}")
     
-    return redirect("report")  # Redirect back to report page
+    return redirect("report")
+
+def get_bag_data(request):
+    if 'user' not in request.session:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+        
+    user_id = request.session['user']['localId']
+    
+    try:
+        # Initialize counts
+        status_counts = {
+            'active': 0, 'incubating': 0, 'fruiting': 0, 
+            'harvested': 0, 'discarded': 0
+        }
+        type_counts = {
+            'oyster': 0, 'shiitake': 0, 'button': 0, 
+            'portobello': 0, 'other': 0
+        }
+        
+        # Fetch all bags for this user
+        bags = db.collection("mushroom_bags").where("user_id", "==", user_id).stream()
+        
+        for doc in bags:
+            data = doc.to_dict()
+            status = data.get('status', 'active').lower()
+            bag_type = data.get('bag_type', 'oyster').lower()
+            quantity = int(data.get('quantity', 0))
+            
+            # Update counts based on quantity (not just document count)
+            if status in status_counts:
+                status_counts[status] += quantity
+                
+            if bag_type in type_counts:
+                type_counts[bag_type] += quantity
+                
+        return JsonResponse({
+            'status_counts': status_counts,
+            'type_counts': type_counts
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 

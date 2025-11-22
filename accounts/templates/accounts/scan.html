@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mushroom Disease Scanner</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Montserrat Font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <style>
@@ -46,13 +42,51 @@
             font-family: 'Montserrat', sans-serif;
             color: var(--dark);
             min-height: 100vh;
+            position: relative; /* Context for z-index */
         }
+
+        /* --- NEW BACKGROUND ANIMATION STYLES --- */
+        .background-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Behind everything */
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.05; /* Very subtle */
+            color: var(--accent);
+        }
+
+        /* Animation Keyframes */
+        .drift-slow { animation: drift 35s ease-in-out infinite alternate; }
+        .drift-medium { animation: drift 25s ease-in-out infinite alternate; }
+        .drift-fast { animation: drift 18s ease-in-out infinite alternate; }
+        .drift-reverse { animation: drift-rev 30s ease-in-out infinite alternate; }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50px, -30px) rotate(10deg); }
+        }
+
+        @keyframes drift-rev {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-40px, 40px) rotate(-10deg); }
+        }
+        /* --------------------------------------- */
         
         /* Modern navbar styling */
         .navbar {
             background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%) !important;
             box-shadow: var(--shadow-md);
             padding: 0.5rem 1rem;
+            position: relative;
+            z-index: 10;
         }
         
         .navbar-brand {
@@ -135,6 +169,8 @@
             padding: 2rem 1rem;
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         
         .section-title {
@@ -314,6 +350,19 @@
             background: linear-gradient(135deg, var(--danger), #D67B6A);
             color: white;
         }
+
+        /* New Style for Analysis Loading State */
+        .result-analyzing {
+            background: linear-gradient(135deg, #8B786D, #D6C1B1);
+            color: white;
+            animation: pulse-badge 1.5s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0% { box-shadow: 0 0 0 0 rgba(139, 120, 109, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(139, 120, 109, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 120, 109, 0); }
+        }
         
         .recommendation-list {
             list-style: none;
@@ -451,6 +500,58 @@
             object-fit: contain;
             width: 100%;
             border-radius: var(--radius);
+        }
+
+        /* --- NEW: SCANNING ANIMATION CSS --- */
+        .scan-wrapper {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+            border-radius: var(--radius);
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--accent);
+            box-shadow: 0 0 15px 2px var(--accent);
+            z-index: 10;
+            display: none; /* Hidden by default */
+        }
+
+        .scan-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(77, 106, 109, 0.2), transparent 40%);
+            z-index: 9;
+            display: none; /* Hidden by default */
+            transform: translateY(-100%);
+        }
+
+        .scanning .scan-line {
+            display: block;
+            animation: scan-move 2s linear infinite;
+        }
+
+        .scanning .scan-overlay {
+            display: block;
+            animation: scan-overlay-move 2s linear infinite;
+        }
+
+        @keyframes scan-move {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        @keyframes scan-overlay-move {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
         }
         
         /* Toast notifications */
@@ -629,7 +730,13 @@
     </style>
 </head>
 <body>
-    <!-- Toast container for messages -->
+    <div class="background-shapes">
+        <i class="fas fa-leaf shape drift-medium" style="top: 10%; left: 5%; font-size: 60px;"></i>
+        <i class="fas fa-cloud shape drift-slow" style="top: 20%; right: 15%; font-size: 100px;"></i>
+        <i class="fas fa-microscope shape drift-reverse" style="bottom: 15%; left: 10%; font-size: 80px;"></i> <i class="fas fa-temperature-low shape drift-fast" style="bottom: 30%; right: 5%; font-size: 70px;"></i>
+        <i class="fas fa-tint shape drift-medium" style="top: 50%; left: 50%; font-size: 120px; opacity: 0.03;"></i>
+    </div>
+
     <div class="toast-container">
         {% if messages %}
             {% for message in messages %}
@@ -646,10 +753,8 @@
         {% endif %}
     </div>
 
-    <!-- Notification container -->
     <div class="notification-container" id="notification-container"></div>
 
-    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="fas fa-seedling"></i>SMARTSHROOM</a>
@@ -676,13 +781,8 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="content-container">
-        <h2 class="section-title animate__animated animate__fadeInDown">
-            <i class="fas fa-microscope"></i>Mushroom Disease Detection System
-        </h2>
 
-        <!-- Real-time Camera Section -->
         <div class="row mb-4">
             <div class="col-lg-8">
                 <div class="card border-0 animate__animated animate__fadeInLeft">
@@ -692,23 +792,19 @@
                         </h5>
                     </div>
                     <div class="card-body text-center">
-                        <!-- Camera Placeholder -->
                         <div id="camera-placeholder" class="camera-placeholder">
                             <i class="fas fa-video"></i>
                             <h5 class="text-muted mt-3">Click to Start Real-time Analysis</h5>
                             <p class="text-muted mb-0">Camera will analyze mushrooms continuously</p>
                         </div>
                         
-                        <!-- Video Element -->
                         <video id="camera" class="d-none" autoplay playsinline muted></video>
                         
-                        <!-- Camera Error Message -->
                         <div id="camera-error" class="alert alert-danger d-none mt-3">
                             <i class="fas fa-exclamation-circle me-2"></i>
                             <span id="error-message"></span>
                         </div>
                         
-                        <!-- Camera Controls -->
                         <div class="mt-4 d-flex justify-content-center gap-3">
                             <button type="button" id="start-camera" class="btn btn-success">
                                 <i class="fas fa-video me-2"></i>Start Real-time Analysis
@@ -718,7 +814,6 @@
                             </button>
                         </div>
                         
-                        <!-- Status Indicator -->
                         <div class="mt-3">
                             <small class="text-muted">
                                 <i class="fas fa-info-circle me-1"></i>
@@ -729,7 +824,6 @@
                 </div>
             </div>
             
-            <!-- Real-time Results Panel -->
             <div class="col-lg-4">
                 <div id="result-container" class="d-none animate__animated animate__fadeInRight">
                     <div class="card border-0">
@@ -739,16 +833,13 @@
                             </h6>
                         </div>
                         <div class="card-body p-0">
-                            <!-- Real-time results will be inserted here -->
                             <div id="real-time-result"></div>
                             
-                            <!-- Analysis History -->
                             <div class="p-3 border-top">
                                 <h6 class="text-muted mb-3">
                                     <i class="fas fa-history me-2"></i>Recent Detections
                                 </h6>
                                 <div id="analysis-history" class="small">
-                                    <!-- History items will be added here -->
                                     <div class="text-center text-muted py-3">
                                         <i class="fas fa-clock me-2"></i>No recent analyses
                                     </div>
@@ -757,7 +848,6 @@
                         </div>
                     </div>
                     
-                    <!-- Performance Metrics -->
                     <div class="card border-0 mt-4">
                         <div class="card-body">
                             <h6 class="card-title text-muted mb-3">
@@ -783,7 +873,6 @@
             </div>
         </div>
 
-        <!-- Traditional Upload Section -->
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card border-0 animate__animated animate__fadeInUp">
@@ -823,7 +912,6 @@
         </div>
     </div>
 
-    <!-- Analysis Result Modal -->
     <div class="modal fade" id="analysisModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -834,7 +922,9 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="text-center mb-3">
+                            <div class="text-center mb-3 scan-wrapper" id="scan-image-container">
+                                <div class="scan-line"></div>
+                                <div class="scan-overlay"></div>
                                 <img id="modal-image" src="" class="img-fluid rounded" style="max-height: 300px;" alt="Analyzed mushroom">
                             </div>
                         </div>
@@ -856,15 +946,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="downloadReport()">
-                        <i class="fas fa-download me-2"></i>Download Report
-                    </button>
-                </div>
+                    </div>
             </div>
         </div>
     </div>
 
-    <!-- Image Preview Modal -->
     <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -886,7 +972,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -1154,8 +1239,8 @@
                 <div class="progress mt-2" style="height: 8px; border-radius: 10px;">
                     <div class="progress-bar" role="progressbar" 
                          style="width: ${result.confidence}%; 
-                                background: ${result.status === 'Healthy Mushroom' ? 'var(--accent)' : 'var(--danger)'}; 
-                                border-radius: 10px;"></div>
+                               background: ${result.status === 'Healthy Mushroom' ? 'var(--accent)' : 'var(--danger)'}; 
+                               border-radius: 10px;"></div>
                 </div>
                 <small class="text-muted d-block mt-2">
                     <i class="fas fa-clock me-1"></i>${new Date().toLocaleTimeString()}
@@ -1258,11 +1343,18 @@
         // Show loading state in analysis modal
         const analysisModal = new bootstrap.Modal(document.getElementById('analysisModal'));
         document.getElementById('modal-image').src = currentUploadedImage;
-        document.getElementById('result-badge').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
-        document.getElementById('result-badge').className = 'result-badge';
-        document.getElementById('confidence-text').textContent = '';
+        
+        // Start Scanning Effect
+        document.getElementById('scan-image-container').classList.add('scanning');
+        
+        // Update Text for Processing
+        document.getElementById('result-badge').innerHTML = '<i class="fas fa-brain me-2"></i>Processing Image...';
+        document.getElementById('result-badge').className = 'result-badge result-analyzing';
+        
+        document.getElementById('confidence-text').textContent = 'Analyzing features...';
         document.getElementById('confidence-bar').style.width = '0%';
         document.getElementById('recommendation-list').innerHTML = '';
+        document.getElementById('recommendations').className = 'alert alert-secondary';
         
         analysisModal.show();
 
@@ -1297,6 +1389,9 @@
         })
         .then(data => {
             console.log('Response data:', data);
+            // Stop Scanning Effect
+            document.getElementById('scan-image-container').classList.remove('scanning');
+
             if (data.status === 'success') {
                 updateResultModal(data.result);
                 
@@ -1313,6 +1408,7 @@
         })
         .catch(error => {
             console.error('Upload failed:', error);
+            document.getElementById('scan-image-container').classList.remove('scanning');
             document.getElementById('result-badge').innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Error';
             document.getElementById('result-badge').className = 'result-badge result-disease';
             document.getElementById('confidence-text').textContent = 'Analysis failed: ' + error.message;
@@ -1320,18 +1416,18 @@
     }
 
     function updateResultModal(result) {
-        const badgeClass = result.status === 'Healthy Mushroom' ? 'result-health极' : 'result-disease';
+        const badgeClass = result.status === 'Healthy Mushroom' ? 'result-healthy' : 'result-disease';
         const icon = result.status === 'Healthy Mushroom' ? 'fa-check-circle' : 'fa-exclamation-triangle';
         const alertClass = result.status === 'Healthy Mushroom' ? 'alert-success' : 'alert-danger';
 
         document.getElementById('result-badge').innerHTML = `<i class="fas ${icon} me-2"></i>${result.class}`;
-        document.getElementById('result-badge').className = `result-badge ${badgeClass} mb-3`;
+        document.getElementById('result-badge').className = `result-badge ${badgeClass} mb-3 animate__animated animate__pulse`;
         
         document.getElementById('confidence-text').textContent = `Confidence Level: ${result.confidence.toFixed(1)}%`;
         document.getElementById('confidence-bar').style.width = `${result.confidence}%`;
         document.getElementById('confidence-bar').className = `progress-bar ${result.status === 'Healthy Mushroom' ? 'bg-success' : 'bg-danger'}`;
         
-        document.getElementById('recommendations').className = `alert ${alertClass}`;
+        document.getElementById('recommendations').className = `alert ${alertClass} animate__animated animate__fadeIn`;
         
         const recommendations = getRecommendations(result.class);
         const recommendationList = document.getElementById('recommendation-list');

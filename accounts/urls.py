@@ -23,6 +23,8 @@ urlpatterns = [
     path('analyze/', views.analyze_image, name='analyze_image'),
     path('get-sensor-data/', views.get_sensor_data, name='get_sensor_data'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('get-bag-data/', views.get_bag_data, name='get_bag_data'),
+    path('api/get-scan-dashboard-data/', views.get_scan_dashboard_data, name='get_scan_dashboard_data'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

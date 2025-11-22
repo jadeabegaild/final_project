@@ -52,8 +52,45 @@
         color: var(--dark);
         min-height: 100vh;
         padding-bottom: 2rem;
+        position: relative; /* For z-index context */
       }
 
+      /* --- NEW BACKGROUND ANIMATION STYLES --- */
+      .background-shapes {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* Behind everything */
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .shape {
+        position: absolute;
+        opacity: 0.05; /* Very subtle */
+        color: var(--accent);
+      }
+
+      /* Animation Keyframes */
+      .drift-slow { animation: drift 35s ease-in-out infinite alternate; }
+      .drift-medium { animation: drift 25s ease-in-out infinite alternate; }
+      .drift-fast { animation: drift 18s ease-in-out infinite alternate; }
+      .drift-reverse { animation: drift-rev 30s ease-in-out infinite alternate; }
+
+      @keyframes drift {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        100% { transform: translate(50px, -30px) rotate(10deg); }
+      }
+
+      @keyframes drift-rev {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        100% { transform: translate(-40px, 40px) rotate(-10deg); }
+      }
+      /* --------------------------------------- */
+
+      /* Navigation */
       .navbar {
         background: linear-gradient(
           135deg,
@@ -62,6 +99,8 @@
         ) !important;
         box-shadow: var(--shadow-md);
         padding: 0.5rem 1rem;
+        position: relative;
+        z-index: 10;
       }
 
       .navbar-brand {
@@ -139,53 +178,16 @@
         width: 18px;
       }
 
+      /* Dashboard Layout */
       .dashboard-container {
         padding: 2rem 1rem;
         max-width: 1400px;
         margin: 0 auto;
+        position: relative;
+        z-index: 1; /* Ensures content is above background animation */
       }
 
-      .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-        gap: 1rem;
-        background: white;
-        padding: 1.5rem;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow-sm);
-      }
-
-      .dashboard-title {
-        color: var(--dark);
-        font-weight: 700;
-        font-size: 1.8rem;
-        display: flex;
-        align-items: center;
-        margin: 0;
-      }
-
-      .dashboard-title i {
-        color: var(--accent);
-        margin-right: 12px;
-        font-size: 1.5rem;
-        background: linear-gradient(135deg, var(--accent), var(--accent-light));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-
-      .last-updated {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .last-updated i {
-        color: var(--accent);
-      }
-
+      /* Stats Cards */
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -202,6 +204,8 @@
         overflow: hidden;
         height: 100%;
         position: relative;
+        display: flex;
+        flex-direction: column;
       }
 
       .card::before {
@@ -240,6 +244,7 @@
 
       .card-body {
         padding: 1.5rem;
+        flex: 1;
       }
 
       .stat-value {
@@ -264,20 +269,14 @@
         font-size: 0.9rem;
         margin-top: 0.5rem;
         color: var(--secondary);
+        justify-content: center;
       }
 
-      .trend-up {
-        color: #28a745;
-      }
+      .trend-up { color: #28a745; }
+      .trend-down { color: #dc3545; }
+      .stat-trend i { margin-right: 5px; }
 
-      .trend-down {
-        color: #dc3545;
-      }
-
-      .stat-trend i {
-        margin-right: 5px;
-      }
-
+      /* Chart Containers */
       .chart-container {
         background: white;
         border-radius: var(--radius);
@@ -352,120 +351,22 @@
         color: var(--dark);
       }
 
-      .chart-btn i {
-        margin-right: 5px;
-      }
+      .chart-btn i { margin-right: 5px; }
 
       canvas {
         width: 100% !important;
         max-height: 300px !important;
       }
 
-      .data-grid {
+      /* Grids */
+      .chart-row {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        grid-template-columns: 1fr 1fr;
         gap: 1.5rem;
         margin-bottom: 2rem;
       }
 
-      .gauge-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-      }
-
-      .gauge-card {
-        background: white;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow-sm);
-        padding: 1.5rem;
-        text-align: center;
-        position: relative;
-      }
-
-      .gauge-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, var(--accent), var(--accent-light));
-        border-radius: var(--radius) var(--radius) 0 0;
-      }
-
-      .gauge-title {
-        font-weight: 600;
-        color: var(--dark);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-      }
-
-      .gauge-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--accent);
-        margin: 0.5rem 0;
-      }
-
-      .gauge-unit {
-        font-size: 1rem;
-        color: var(--secondary);
-      }
-
-      .gauge-visual {
-        height: 120px;
-        position: relative;
-        margin: 1rem 0;
-      }
-
-      .gauge-fill {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 30px;
-        background: linear-gradient(to top, var(--accent), var(--accent-light));
-        border-radius: 4px 4px 0 0;
-        transition: height 1s ease;
-      }
-
-      .gauge-marks {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 0 10px;
-      }
-
-      .gauge-mark {
-        height: 1px;
-        background: rgba(0, 0, 0, 0.1);
-        position: relative;
-      }
-
-      .gauge-mark-label {
-        position: absolute;
-        right: -30px;
-        top: -8px;
-        font-size: 0.7rem;
-        color: var(--secondary);
-      }
-
-      .optimal-range {
-        margin-top: 0.5rem;
-        font-size: 0.85rem;
-        color: var(--secondary);
-      }
-
+      /* Tables */
       .data-table-container {
         background: white;
         border-radius: var(--radius);
@@ -506,6 +407,7 @@
         background-color: rgba(190, 211, 201, 0.1);
       }
 
+      /* Status Indicators */
       .status-indicator {
         display: inline-block;
         width: 10px;
@@ -513,271 +415,77 @@
         border-radius: 50%;
         margin-right: 8px;
       }
+      .status-online { background-color: #28a745; }
+      .status-offline { background-color: #dc3545; }
 
-      .status-online {
-        background-color: #28a745;
-      }
-
-      .status-offline {
-        background-color: #dc3545;
-      }
-
+      /* Footer */
       .dashboard-footer {
         text-align: center;
         padding: 1.5rem;
         color: var(--secondary);
         font-size: 0.9rem;
+        position: relative;
+        z-index: 1;
       }
 
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
-        }
-        100% {
-          transform: scale(1);
-        }
+      /* List Group for Scans */
+      .list-group-item {
+        border-left: none;
+        border-right: none;
+        padding: 1rem 1.25rem;
       }
+      .list-group-item:first-child { border-top: none; }
+      .list-group-item:last-child { border-bottom: none; }
 
-      .data-updated {
-        animation: pulse 0.5s ease;
-      }
-
-      @media (max-width: 1200px) {
-        .data-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
+      /* Responsive */
       @media (max-width: 992px) {
-        .dashboard-title {
-          font-size: 1.6rem;
-        }
-
-        .stat-value {
-          font-size: 2.2rem;
-        }
-
-        .chart-title {
-          font-size: 1.2rem;
-        }
+        .chart-row { grid-template-columns: 1fr; }
       }
-
-      @media (max-width: 768px) {
-        .dashboard-container {
-          padding: 1rem 0.75rem;
-        }
-
-        .stats-grid {
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
-
-        .dashboard-title {
-          font-size: 1.5rem;
-        }
-
-        .stat-value {
-          font-size: 2rem;
-        }
-
-        .navbar-nav {
-          padding: 1rem 0;
-        }
-
-        .nav-link {
-          margin: 0.2rem 0;
-        }
-
-        .dashboard-header {
-          flex-direction: column;
-          align-items: flex-start;
-          padding: 1.2rem;
-        }
-
-        .gauge-container {
-          grid-template-columns: 1fr;
-        }
-
-        .chart-header {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .chart-actions {
-          width: 100%;
-          justify-content: flex-end;
-          margin-top: 0.5rem;
-        }
-
-        .card-header,
-        .card-body {
-          padding: 1rem;
-        }
-
-        .chart-container,
-        .data-table-container,
-        .gauge-card {
-          padding: 1.2rem;
-        }
-
-        .gauge-visual {
-          height: 100px;
-        }
-
-        .gauge-value {
-          font-size: 1.8rem;
-        }
-      }
-
+      
       @media (max-width: 576px) {
-        .dashboard-title {
-          font-size: 1.4rem;
-        }
-
-        .stat-value {
-          font-size: 1.8rem;
-        }
-
-        .chart-title {
-          font-size: 1.1rem;
-        }
-
-        .chart-btn {
-          padding: 0.4rem 0.8rem;
-          font-size: 0.85rem;
-        }
-
-        .gauge-marks {
-          padding: 0 5px;
-        }
-
-        .gauge-mark-label {
-          right: -25px;
-          font-size: 0.6rem;
-        }
-
-        .data-table th,
-        .data-table td {
-          padding: 0.5rem;
-        }
-
-        .navbar-brand {
-          font-size: 1.2rem;
-        }
-
-        .navbar-brand i {
-          font-size: 1.5rem;
-        }
-      }
-
-      @media (max-width: 400px) {
-        .dashboard-title {
-          font-size: 1.3rem;
-        }
-
-        .stat-value {
-          font-size: 1.6rem;
-        }
-
-        .gauge-title {
-          font-size: 1rem;
-        }
-
-        .gauge-value {
-          font-size: 1.6rem;
-        }
-
-        .optimal-range {
-          font-size: 0.8rem;
-        }
-      }
-
-      @media print {
-        .navbar,
-        .chart-actions,
-        .dashboard-footer {
-          display: none !important;
-        }
-
-        body {
-          background: white !important;
-        }
-
-        .dashboard-container {
-          padding: 0;
-        }
-
-        .card,
-        .chart-container,
-        .data-table-container,
-        .gauge-card {
-          box-shadow: none !important;
-          border: 1px solid #ddd !important;
-          page-break-inside: avoid;
-        }
+        .dashboard-container { padding: 1rem 0.75rem; }
+        .stat-value { font-size: 2rem; }
       }
     </style>
   </head>
   <body>
+    <div class="background-shapes">
+        <i class="fas fa-leaf shape drift-medium" style="top: 10%; left: 5%; font-size: 60px;"></i>
+        <i class="fas fa-cloud shape drift-slow" style="top: 20%; right: 15%; font-size: 100px;"></i>
+        <i class="fas fa-seedling shape drift-reverse" style="bottom: 15%; left: 10%; font-size: 80px;"></i>
+        <i class="fas fa-temperature-low shape drift-fast" style="bottom: 30%; right: 5%; font-size: 70px;"></i>
+        <i class="fas fa-tint shape drift-medium" style="top: 50%; left: 50%; font-size: 120px; opacity: 0.03;"></i>
+    </div>
+
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#"
-          ><i class="fas fa-seedling"></i>SMARTSHROOM</a
-        >
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-seedling"></i>SMARTSHROOM
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link active" href="{% url 'dashboard' %}"
-                ><i class="fas fa-chart-line"></i> Dashboard</a
-              >
+              <a class="nav-link active" href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'report' %}"
-                ><i class="fas fa-file-alt"></i> Report</a
-              >
+              <a class="nav-link" href="{% url 'report' %}"><i class="fas fa-file-alt"></i> Report</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'scan' %}"
-                ><i class="fas fa-qrcode"></i> Scan</a
-              >
+              <a class="nav-link" href="{% url 'scan' %}"><i class="fas fa-qrcode"></i> Scan</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'remote' %}"
-                ><i class="fas fa-wifi"></i> Remote</a
-              >
+              <a class="nav-link" href="{% url 'remote' %}"><i class="fas fa-wifi"></i> Remote</a>
             </li>
             <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-              >
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                 <i class="fas fa-user-circle"></i>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                  <a class="dropdown-item" href="{% url 'profile' %}"
-                    ><i class="fas fa-user"></i> Profile</a
-                  >
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{% url 'logout' %}"
-                    ><i class="fas fa-sign-out-alt"></i> Logout</a
-                  >
-                </li>
+                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
               </ul>
             </li>
           </ul>
@@ -786,55 +494,32 @@
     </nav>
 
     <div class="dashboard-container">
-      <div class="dashboard-header">
-        <h1 class="dashboard-title">
-          <i class="fas fa-chart-line"></i>Dashboard
-        </h1>
-        <div class="last-updated">
-          <i class="fas fa-sync-alt"></i>
-          <small class="text-muted"
-            >Last updated: <span id="lastUpdateTime">Just now</span></small
-          >
-        </div>
-      </div>
-
+      
       <div class="stats-grid">
         <div class="card">
-          <div class="card-header">
-            <i class="fas fa-temperature-high"></i> Temperature
-          </div>
-          <div class="card-body text-center">
-            <div class="stat-value" id="temperature">
-              --<span class="stat-unit">°C</span>
-            </div>
+          <div class="card-header"><i class="fas fa-temperature-high"></i> Temperature</div>
+          <div class="card-body text-center d-flex flex-column justify-content-center">
+            <div class="stat-value" id="temperature">--<span class="stat-unit">°C</span></div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header"><i class="fas fa-tint"></i> Humidity</div>
-          <div class="card-body text-center">
-            <div class="stat-value" id="humidity">
-              --<span class="stat-unit">%</span>
-            </div>
+          <div class="card-body text-center d-flex flex-column justify-content-center">
+            <div class="stat-value" id="humidity">--<span class="stat-unit">%</span></div>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <i class="fas fa-weight-hanging"></i> Total Harvest
-          </div>
-          <div class="card-body text-center">
-            <div class="stat-value" id="totalHarvest">
-              --<span class="stat-unit">kg</span>
-            </div>
+          <div class="card-header"><i class="fas fa-weight-hanging"></i> Total Harvest</div>
+          <div class="card-body text-center d-flex flex-column justify-content-center">
+            <div class="stat-value" id="totalHarvest">--<span class="stat-unit">kg</span></div>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <i class="fas fa-shield-alt"></i> System Status
-          </div>
-          <div class="card-body text-center">
+          <div class="card-header"><i class="fas fa-shield-alt"></i> System Status</div>
+          <div class="card-body text-center d-flex flex-column justify-content-center">
             <div class="stat-value">
               <span class="status-indicator status-online"></span>Online
             </div>
@@ -846,13 +531,53 @@
         </div>
       </div>
 
+      <div class="chart-row">
+        <div class="chart-container h-100 mb-0">
+          <div class="chart-header">
+            <h2 class="chart-title"><i class="fas fa-microscope"></i> Crop Health Analysis</h2>
+          </div>
+          <div style="position: relative; height: 200px;">
+            <canvas id="scanHealthChart"></canvas>
+          </div>
+          <div class="text-center mt-3">
+              <span class="badge rounded-pill bg-success me-2">Healthy</span>
+              <span class="badge rounded-pill bg-danger">Trichoderma</span>
+          </div>
+        </div>
+
+        <div class="card h-100 mb-0">
+            <div class="card-header">
+                <i class="fas fa-history"></i> Recent Scans
+            </div>
+            <div class="card-body p-0" style="max-height: 300px; overflow-y: auto;">
+                <div class="list-group list-group-flush" id="recentScansList">
+                    <div class="text-center p-4 text-muted">Loading recent scans...</div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="chart-row">
+        <div class="chart-container">
+          <div class="chart-header">
+            <h2 class="chart-title"><i class="fas fa-chart-pie"></i> Bag Status Distribution</h2>
+          </div>
+          <canvas id="bagStatusChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+          <div class="chart-header">
+            <h2 class="chart-title"><i class="fas fa-cubes"></i> Quantity by Type</h2>
+          </div>
+          <canvas id="bagTypeChart"></canvas>
+        </div>
+      </div>
+
       <div class="chart-container">
         <div class="chart-header">
           <h2 class="chart-title">
-            <i class="fas fa-thermometer-half"></i> Sensor Data: Temperature &
-            Humidity Trend
+            <i class="fas fa-thermometer-half"></i> Sensor Data: Temperature & Humidity Trend
           </h2>
-          <div class="chart-actions"></div>
         </div>
         <canvas id="sensorDataChart"></canvas>
       </div>
@@ -863,12 +588,12 @@
             <i class="fas fa-chart-area"></i> Oyster Mushroom Harvest Trend
           </h2>
           <div class="chart-actions">
-            <button class="chart-btn" onclick="exportChartData()">
+            <!-- <button class="chart-btn" onclick="exportChartData()">
               <i class="fas fa-download"></i> Export
-            </button>
-            <button class="chart-btn" onclick="toggleChartView()">
+            </button> -->
+            <!-- <button class="chart-btn" onclick="toggleChartView()">
               <i class="fas fa-exchange-alt"></i> Toggle View
-            </button>
+            </button> -->
           </div>
         </div>
         <canvas id="harvestChart"></canvas>
@@ -882,13 +607,12 @@
               <tr>
                 <th>Date</th>
                 <th>Harvest (kg)</th>
-                <th>Growth Rate</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody id="harvestTableBody">
               <tr>
-                <td colspan="4" class="text-center">Loading data...</td>
+                <td colspan="3" class="text-center">Loading data...</td>
               </tr>
             </tbody>
           </table>
@@ -897,17 +621,18 @@
     </div>
 
     <footer class="dashboard-footer">
-      <p>
-        SmartShroom Dashboard &copy; 2023 | Real-time Mushroom Farming Analytics
-      </p>
+      <p>SmartShroom Dashboard &copy; 2023 | Real-time Mushroom Farming Analytics</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-      // Initialize charts first
+      // Initialize variables
       let harvestChart = null;
       let sensorDataChart = null;
+      let bagStatusChart = null;
+      let bagTypeChart = null;
+      let scanHealthChart = null; // NEW: Health chart variable
 
       function initializeCharts() {
         // Harvest Chart
@@ -916,304 +641,230 @@
           type: "line",
           data: {
             labels: [],
-            datasets: [
-              {
-                label: "Harvest (kg)",
-                data: [],
-                borderColor: "#4D6A6D",
-                backgroundColor: "rgba(190, 211, 201, 0.2)",
-                tension: 0.4,
-                borderWidth: 2,
-                pointBackgroundColor: "#8B786D",
-                pointBorderColor: "white",
-                pointHoverRadius: 6,
-                fill: true,
-              },
-            ],
+            datasets: [{
+              label: "Harvest (kg)",
+              data: [],
+              borderColor: "#4D6A6D",
+              backgroundColor: "rgba(190, 211, 201, 0.2)",
+              tension: 0.4,
+              borderWidth: 2,
+              pointBackgroundColor: "#8B786D",
+              fill: true,
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: "Harvest Amount (kg)",
-                },
-                grid: {
-                  color: "rgba(214, 193, 177, 0.2)",
-                },
-              },
-              x: {
-                title: {
-                  display: true,
-                  text: "Date",
-                },
-                grid: {
-                  color: "rgba(214, 193, 177, 0.2)",
-                },
-              },
-            },
-            plugins: {
-              legend: {
-                display: true,
-              },
-            },
+              y: { beginAtZero: true }
+            }
           },
         });
 
-        // Sensor Data Chart
-        let sensorCtx = document
-          .getElementById("sensorDataChart")
-          .getContext("2d");
+        // Sensor Chart
+        let sensorCtx = document.getElementById("sensorDataChart").getContext("2d");
         sensorDataChart = new Chart(sensorCtx, {
           type: "line",
           data: {
             labels: [],
             datasets: [
-              {
-                label: "Temperature (°C)",
-                data: [],
-                borderColor: "#dc3545",
-                backgroundColor: "rgba(220, 53, 69, 0.1)",
-                tension: 0.4,
-                borderWidth: 2,
-                yAxisID: "yTemp",
-                fill: true,
-              },
-              {
-                label: "Humidity (%)",
-                data: [],
-                borderColor: "#007bff",
-                backgroundColor: "rgba(0, 123, 255, 0.1)",
-                tension: 0.4,
-                borderWidth: 2,
-                yAxisID: "yHumidity",
-                fill: true,
-              },
+              { label: "Temperature (°C)", data: [], borderColor: "#dc3545", backgroundColor: "rgba(220, 53, 69, 0.1)", yAxisID: "yTemp", fill: true },
+              { label: "Humidity (%)", data: [], borderColor: "#007bff", backgroundColor: "rgba(0, 123, 255, 0.1)", yAxisID: "yHumidity", fill: true },
             ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              yTemp: {
-                type: "linear",
-                position: "left",
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: "Temperature (°C)",
-                },
-              },
-              yHumidity: {
-                type: "linear",
-                position: "right",
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: "Humidity (%)",
-                },
-                grid: {
-                  drawOnChartArea: false,
-                },
-              },
+              yTemp: { type: "linear", position: "left", beginAtZero: true },
+              yHumidity: { type: "linear", position: "right", beginAtZero: true, grid: { drawOnChartArea: false } },
             },
           },
         });
+
+        // Bag Status Chart
+        let bagStatusCtx = document.getElementById("bagStatusChart").getContext("2d");
+        bagStatusChart = new Chart(bagStatusCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Active', 'Incubating', 'Fruiting', 'Harvested', 'Discarded'],
+            datasets: [{
+              data: [0, 0, 0, 0, 0],
+              backgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#6c757d', '#dc3545'],
+              borderWidth: 1
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+        });
+
+        // Bag Type Chart
+        let bagTypeCtx = document.getElementById("bagTypeChart").getContext("2d");
+        bagTypeChart = new Chart(bagTypeCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Oyster', 'Shiitake', 'Button', 'Portobello', 'Other'],
+            datasets: [{
+              label: 'Quantity (bags)',
+              data: [0, 0, 0, 0, 0],
+              backgroundColor: ['#d6c1b1', '#8b786d', '#4d6a6d', '#bed3c9', '#3a3238'],
+              borderWidth: 1
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+        });
+      }
+
+      // NEW: Fetch Scan Dashboard Data
+      function fetchScanDashboardData() {
+        console.log("Fetching scan analytics...");
+        
+        fetch("{% url 'get_scan_dashboard_data' %}") 
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error("Scan API Error:", data.error);
+                    return;
+                }
+
+                // 1. Update Health Chart
+                const ctx = document.getElementById('scanHealthChart').getContext('2d');
+                if (scanHealthChart) scanHealthChart.destroy();
+
+                scanHealthChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Healthy Mushroom', 'Trichoderma (Disease)'],
+                        datasets: [{
+                            data: [data.stats.healthy, data.stats.disease],
+                            backgroundColor: ['#28a745', '#dc3545'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff',
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                // 2. Update Recent Scans List
+                const listContainer = document.getElementById('recentScansList');
+                listContainer.innerHTML = '';
+
+                if (data.recent_scans.length === 0) {
+                    listContainer.innerHTML = '<div class="text-center p-4 text-muted">No scans recorded yet.</div>';
+                } else {
+                    data.recent_scans.forEach(scan => {
+                        const isHealthy = scan.result.toLowerCase().includes('healthy');
+                        const iconClass = isHealthy ? 'fa-check-circle text-success' : 'fa-exclamation-triangle text-danger';
+                        const bgClass = isHealthy ? 'bg-success-subtle' : 'bg-danger-subtle';
+                        
+                        const itemHtml = `
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle p-2 me-3 ${bgClass}" style="background-color: ${isHealthy ? '#e6f4ea' : '#fce8e6'}">
+                                        <i class="fas ${iconClass}"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold" style="font-size: 0.9rem;">${scan.result}</h6>
+                                        <small class="text-muted"><i class="far fa-clock me-1"></i>${scan.date}</small>
+                                    </div>
+                                </div>
+                                <span class="badge bg-secondary rounded-pill" style="font-weight:400; font-size: 0.75rem;">${parseFloat(scan.confidence).toFixed(1)}%</span>
+                            </div>
+                        `;
+                        listContainer.innerHTML += itemHtml;
+                    });
+                }
+            })
+            .catch(error => console.error("Error loading scan data:", error));
+      }
+
+      function fetchBagData() {
+        fetch("{% url 'get_bag_data' %}")
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status_counts && bagStatusChart) {
+              bagStatusChart.data.datasets[0].data = [
+                data.status_counts.active || 0, data.status_counts.incubating || 0,
+                data.status_counts.fruiting || 0, data.status_counts.harvested || 0, data.status_counts.discarded || 0
+              ];
+              bagStatusChart.update();
+            }
+            if (data.type_counts && bagTypeChart) {
+              bagTypeChart.data.datasets[0].data = [
+                data.type_counts.oyster || 0, data.type_counts.shiitake || 0,
+                data.type_counts.button || 0, data.type_counts.portobello || 0, data.type_counts.other || 0
+              ];
+              bagTypeChart.update();
+            }
+          });
       }
 
       function fetchHarvestData() {
-        console.log("Fetching harvest data...");
-
-        fetch("{% url 'get_harvest_data' %}") // Use absolute path to avoid URL template issues
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log("Harvest data received:", data);
-
-            if (data.error) {
-              console.error("Server error:", data.error);
-              document.getElementById("harvestTableBody").innerHTML =
-                '<tr><td colspan="4" class="text-center text-danger">Error loading data</td></tr>';
-              return;
-            }
-
+        fetch("{% url 'get_harvest_data' %}")
+          .then(res => res.json())
+          .then(data => {
             if (data.harvest && data.harvest.length > 0) {
-              // Update harvest chart
-              const labels = data.harvest.map((item) => item.date);
-              const values = data.harvest.map(
-                (item) => parseFloat(item.kilograms) || 0
-              );
-
-              harvestChart.data.labels = labels;
-              harvestChart.data.datasets[0].data = values;
+              harvestChart.data.labels = data.harvest.map(i => i.date);
+              harvestChart.data.datasets[0].data = data.harvest.map(i => parseFloat(i.kilograms) || 0);
               harvestChart.update();
-
-              // Update total harvest
-              const totalHarvestElement =
-                document.getElementById("totalHarvest");
-              if (totalHarvestElement && data.total_harvest) {
-                totalHarvestElement.innerHTML = `${parseFloat(
-                  data.total_harvest
-                ).toFixed(2)}<span class="stat-unit">kg</span>`;
+              if (document.getElementById("totalHarvest") && data.total_harvest) {
+                document.getElementById("totalHarvest").innerHTML = `${parseFloat(data.total_harvest).toFixed(2)}<span class="stat-unit">kg</span>`;
               }
-
-              // Update table
-              const tableBody = document.getElementById("harvestTableBody");
-              tableBody.innerHTML = "";
-
-              data.harvest.slice(0, 5).forEach((item, index) => {
-                const row = `
-              <tr>
-                <td>${item.date || "N/A"}</td>
-                <td>${parseFloat(item.kilograms || 0).toFixed(2)}</td>
-                <td>${calculateGrowthRate(data.harvest, index)}</td>
-                <td>${getStatus(parseFloat(item.kilograms || 0))}</td>
-              </tr>
-            `;
-                tableBody.innerHTML += row;
+              const tbody = document.getElementById("harvestTableBody");
+              tbody.innerHTML = "";
+              data.harvest.slice(0, 5).forEach((item) => {
+                let status = parseFloat(item.kilograms) > 5 ? '<span class="text-success">Excellent</span>' : '<span class="text-warning">Low</span>';
+                // Column logic modified here to remove Growth Rate cell
+                tbody.innerHTML += `<tr><td>${item.date}</td><td>${parseFloat(item.kilograms).toFixed(2)}</td><td>${status}</td></tr>`;
               });
-            } else {
-              document.getElementById("harvestTableBody").innerHTML =
-                '<tr><td colspan="4" class="text-center">No harvest data available</td></tr>';
-              document.getElementById("totalHarvest").innerHTML =
-                '0<span class="stat-unit">kg</span>';
             }
-          })
-          .catch((error) => {
-            console.error("Error fetching harvest data:", error);
-            document.getElementById("harvestTableBody").innerHTML =
-              '<tr><td colspan="4" class="text-center text-danger">Failed to load data</td></tr>';
           });
-      }
-
-      function calculateGrowthRate(harvests, index) {
-        if (index === 0 || harvests.length <= 1) return "N/A";
-
-        const current = parseFloat(harvests[index].kilograms || 0);
-        const previous = parseFloat(harvests[index - 1].kilograms || 0);
-
-        if (previous === 0) return "N/A";
-
-        const growth = ((current - previous) / previous) * 100;
-        return `${growth > 0 ? "+" : ""}${growth.toFixed(1)}%`;
-      }
-
-      function getStatus(kilograms) {
-        if (kilograms > 5) return '<span class="text-success">Excellent</span>';
-        if (kilograms > 2) return '<span class="text-primary">Good</span>';
-        return '<span class="text-warning">Low</span>';
       }
 
       function fetchSensorData() {
-        console.log("Fetching sensor data...");
-
-       fetch("{% url 'get_sensor_data' %}") // Use absolute path
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("Sensor data received:", data);
-
+       fetch("{% url 'get_sensor_data' %}")
+          .then(res => res.json())
+          .then(data => {
             if (data.sensor_data && data.sensor_data.length > 0) {
               const latest = data.sensor_data[0];
-
-              // Update temperature and humidity displays
-              if (latest.temperature) {
-                document.getElementById(
-                  "temperature"
-                ).innerHTML = `${latest.temperature}<span class="stat-unit">°C</span>`;
-              }
-
-              if (latest.humidity) {
-                document.getElementById(
-                  "humidity"
-                ).innerHTML = `${latest.humidity}<span class="stat-unit">%</span>`;
-              }
-
-              // Update sensor chart with latest data
+              document.getElementById("temperature").innerHTML = `${latest.temperature}<span class="stat-unit">°C</span>`;
+              document.getElementById("humidity").innerHTML = `${latest.humidity}<span class="stat-unit">%</span>`;
+              
               const now = new Date().toLocaleTimeString();
               if (sensorDataChart) {
                 sensorDataChart.data.labels.push(now);
-                sensorDataChart.data.datasets[0].data.push(
-                  latest.temperature || 0
-                );
-                sensorDataChart.data.datasets[1].data.push(
-                  latest.humidity || 0
-                );
-
-                // Keep only last 10 data points
+                sensorDataChart.data.datasets[0].data.push(latest.temperature);
+                sensorDataChart.data.datasets[1].data.push(latest.humidity);
                 if (sensorDataChart.data.labels.length > 10) {
-                  sensorDataChart.data.labels.shift();
-                  sensorDataChart.data.datasets[0].data.shift();
-                  sensorDataChart.data.datasets[1].data.shift();
+                    sensorDataChart.data.labels.shift();
+                    sensorDataChart.data.datasets[0].data.shift();
+                    sensorDataChart.data.datasets[1].data.shift();
                 }
-
                 sensorDataChart.update();
               }
             }
-          })
-          .catch((error) => {
-            console.error("Error fetching sensor data:", error);
           });
       }
 
-      function updateLastUpdatedTime() {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString();
-        document.getElementById("lastUpdateTime").textContent = timeString;
-      }
-
-      // Initialize everything when page loads
+      // Initialize
       document.addEventListener("DOMContentLoaded", function () {
-        console.log("Initializing dashboard...");
         initializeCharts();
         fetchHarvestData();
         fetchSensorData();
-        updateLastUpdatedTime();
+        fetchBagData();
+        fetchScanDashboardData(); // NEW: Initial fetch
 
-        // Refresh data every 30 seconds
+        // Refresh Intervals
         setInterval(fetchHarvestData, 30000);
         setInterval(fetchSensorData, 10000);
-        setInterval(updateLastUpdatedTime, 60000);
+        setInterval(fetchBagData, 30000);
+        setInterval(fetchScanDashboardData, 30000); // NEW: Refresh every 30s
       });
-
-      // Utility functions
-      function toggleChartView() {
-        if (harvestChart.config.type === "line") {
-          harvestChart.config.type = "bar";
-        } else {
-          harvestChart.config.type = "line";
-        }
-        harvestChart.update();
-      }
-
-      function exportChartData() {
-        const labels = harvestChart.data.labels;
-        const data = harvestChart.data.datasets[0].data;
-
-        if (labels.length === 0) {
-          alert("No data available to export");
-          return;
-        }
-
-        let csvContent = "Date,Harvest (kg)\n";
-        labels.forEach((label, i) => {
-          csvContent += `${label},${data[i]}\n`;
-        });
-
-        const blob = new Blob([csvContent], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "harvest_data.csv";
-        link.click();
-        window.URL.revokeObjectURL(url);
-      }
     </script>
   </body>
 </html>
