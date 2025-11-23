@@ -31,6 +31,7 @@ from PIL import Image
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
+from firebase_admin import db as realtime_db
 
 
 # Initialize Firestore client
@@ -777,41 +778,69 @@ def remote(request):
     })
 
 def get_sensor_data(request):
+    # 1. Authorization Check
     if 'user' not in request.session:
-        messages.error(request, "You need to log in first.")
-        return redirect('login')
+        return JsonResponse({'error': 'unauthorized'}, status=401)
 
     try:
-        # Adjust this based on your Firebase path
-        sensor_data_snapshot = db.reference("historical_data").get()
+        # 2. Fetch Data using the renamed module
+        # Note: We use 'realtime_db', NOT just 'db'
+        ref = realtime_db.reference("historical_data") 
+        snapshot = ref.get()
 
-        print("Fetched data from Firebase:", sensor_data_snapshot)
+        print("--- DEBUGGING FIREBASE DATA ---")
+        print(f"Raw Data from Firebase: {snapshot}")
 
-        # Handle case where data might be None
-        if not sensor_data_snapshot:
+        if not snapshot:
             return JsonResponse({'sensor_data': []})
 
-        # If it's a dict of multiple records, convert to list
-        if isinstance(sensor_data_snapshot, dict):
-            formatted_data = []
-            for key, value in sensor_data_snapshot.items():
-                formatted_data.append({
-                    "timestamp": value.get("timestamp") or key,
-                    "temperature": value.get("temperature"),
-                    "humidity": value.get("humidity")
-                })
+        formatted_data = []
+
+        # 3. Handle Data (List vs Dict)
+        if isinstance(snapshot, list):
+            iterable = enumerate(filter(None, snapshot))
         else:
-            # Single entry (not dict)
-            formatted_data = [{
-                "timestamp": "N/A",
-                "temperature": sensor_data_snapshot.get("temperature"),
-                "humidity": sensor_data_snapshot.get("humidity")
-            }]
+            iterable = snapshot.items()
+
+        # 4. Extract Data
+        for key, val in iterable:
+            if not isinstance(val, dict):
+                continue
+
+            try:
+                # Safely get values
+                temp = float(val.get('temperature', 0))
+                humid = float(val.get('humidity', 0))
+                
+                # Get timestamp safely
+                ts = val.get('timestamp')
+                if not ts:
+                    # If timestamp missing, try using the Key (if it's a timestamp)
+                    # or default to 0
+                    try:
+                        ts = float(key)
+                    except:
+                        ts = 0
+                else:
+                    ts = float(ts)
+
+                formatted_data.append({
+                    "timestamp": ts,
+                    "date_str": datetime.fromtimestamp(ts).strftime('%H:%M:%S'),
+                    "temperature": temp,
+                    "humidity": humid,
+                })
+            except Exception as e:
+                print(f"Skipping bad row: {e}")
+                continue
+
+        # 5. Sort Newest -> Oldest
+        formatted_data.sort(key=lambda x: x['timestamp'], reverse=True)
 
         return JsonResponse({'sensor_data': formatted_data})
 
     except Exception as e:
-        print(f"Error fetching sensor data: {e}")
+        print(f"CRITICAL ERROR: {e}")
         return JsonResponse({'error': str(e)}, status=500)
 
 

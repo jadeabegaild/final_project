@@ -130,15 +130,22 @@ def initialize_firebase():
         if firebase_admin._apps:
             print("✅ Firebase already initialized")
             return True
+
+        # --- THIS IS THE MISSING PIECE ---
+        # We must tell Firebase where the Realtime Database is located
+        firebase_options = {
+            'databaseURL': 'https://smartshroom-597b2-default-rtdb.firebaseio.com'
+        }
+        # --------------------------------
             
         # Method 1: Try service account file from FIREBASE_SERVICE_ACCOUNT_PATH
         service_account_path = os.getenv('FIREBASE_SERVICE_ACCOUNT_PATH')
         if service_account_path:
-            # Try as relative path from BASE_DIR
             cred_path = BASE_DIR / service_account_path
             if cred_path.exists():
                 cred = credentials.Certificate(str(cred_path))
-                firebase_admin.initialize_app(cred)
+                # Pass firebase_options here
+                firebase_admin.initialize_app(cred, firebase_options)
                 print(f"✅ Firebase initialized from: {cred_path}")
                 return True
             else:
@@ -148,18 +155,20 @@ def initialize_firebase():
         cred_path = BASE_DIR / "firebase_credentials.json"
         if cred_path.exists():
             cred = credentials.Certificate(str(cred_path))
-            firebase_admin.initialize_app(cred)
+            # Pass firebase_options here
+            firebase_admin.initialize_app(cred, firebase_options)
             print(f"✅ Firebase initialized from: {cred_path}")
             return True
         
-        # Method 3: Try FIREBASE_CREDENTIALS_JSON environment variable (simplified)
+        # Method 3: Try FIREBASE_CREDENTIALS_JSON environment variable
         firebase_credentials_json_str = os.environ.get('FIREBASE_CREDENTIALS_JSON')
         if firebase_credentials_json_str:
             try:
                 cred_dict = json.loads(firebase_credentials_json_str)
                 cred = credentials.Certificate(cred_dict)
-                firebase_admin.initialize_app(cred)
-                print("✅ Firebase initialized from FIREBASE_CREDENTIALS_JSON environment variable")
+                # Pass firebase_options here
+                firebase_admin.initialize_app(cred, firebase_options)
+                print("✅ Firebase initialized from FIREBASE_CREDENTIALS_JSON")
                 return True
             except json.JSONDecodeError as e:
                 print(f"❌ Invalid JSON in FIREBASE_CREDENTIALS_JSON: {e}")
@@ -168,7 +177,6 @@ def initialize_firebase():
         
         # If no method worked
         print("❌ Firebase not initialized: No valid credentials found")
-        print("💡 Please ensure you have firebase_credentials.json in your project root")
         return False
         
     except ImportError:
@@ -177,7 +185,6 @@ def initialize_firebase():
     except Exception as e:
         print(f"❌ Unexpected error during Firebase initialization: {e}")
         return False
-
 
 # Render configuration
 if 'RENDER' in os.environ:

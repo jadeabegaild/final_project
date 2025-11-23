@@ -74,19 +74,35 @@
       }
 
       /* Animation Keyframes */
-      .drift-slow { animation: drift 35s ease-in-out infinite alternate; }
-      .drift-medium { animation: drift 25s ease-in-out infinite alternate; }
-      .drift-fast { animation: drift 18s ease-in-out infinite alternate; }
-      .drift-reverse { animation: drift-rev 30s ease-in-out infinite alternate; }
+      .drift-slow {
+        animation: drift 35s ease-in-out infinite alternate;
+      }
+      .drift-medium {
+        animation: drift 25s ease-in-out infinite alternate;
+      }
+      .drift-fast {
+        animation: drift 18s ease-in-out infinite alternate;
+      }
+      .drift-reverse {
+        animation: drift-rev 30s ease-in-out infinite alternate;
+      }
 
       @keyframes drift {
-        0% { transform: translate(0, 0) rotate(0deg); }
-        100% { transform: translate(50px, -30px) rotate(10deg); }
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        100% {
+          transform: translate(50px, -30px) rotate(10deg);
+        }
       }
 
       @keyframes drift-rev {
-        0% { transform: translate(0, 0) rotate(0deg); }
-        100% { transform: translate(-40px, 40px) rotate(-10deg); }
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        100% {
+          transform: translate(-40px, 40px) rotate(-10deg);
+        }
       }
       /* --------------------------------------- */
 
@@ -272,9 +288,15 @@
         justify-content: center;
       }
 
-      .trend-up { color: #28a745; }
-      .trend-down { color: #dc3545; }
-      .stat-trend i { margin-right: 5px; }
+      .trend-up {
+        color: #28a745;
+      }
+      .trend-down {
+        color: #dc3545;
+      }
+      .stat-trend i {
+        margin-right: 5px;
+      }
 
       /* Chart Containers */
       .chart-container {
@@ -351,7 +373,9 @@
         color: var(--dark);
       }
 
-      .chart-btn i { margin-right: 5px; }
+      .chart-btn i {
+        margin-right: 5px;
+      }
 
       canvas {
         width: 100% !important;
@@ -415,8 +439,12 @@
         border-radius: 50%;
         margin-right: 8px;
       }
-      .status-online { background-color: #28a745; }
-      .status-offline { background-color: #dc3545; }
+      .status-online {
+        background-color: #28a745;
+      }
+      .status-offline {
+        background-color: #dc3545;
+      }
 
       /* Footer */
       .dashboard-footer {
@@ -434,193 +462,262 @@
         border-right: none;
         padding: 1rem 1.25rem;
       }
-      .list-group-item:first-child { border-top: none; }
-      .list-group-item:last-child { border-bottom: none; }
+      .list-group-item:first-child {
+        border-top: none;
+      }
+      .list-group-item:last-child {
+        border-bottom: none;
+      }
 
       /* Responsive */
       @media (max-width: 992px) {
-        .chart-row { grid-template-columns: 1fr; }
+        .chart-row {
+          grid-template-columns: 1fr;
+        }
       }
-      
+
       @media (max-width: 576px) {
-        .dashboard-container { padding: 1rem 0.75rem; }
-        .stat-value { font-size: 2rem; }
+        .dashboard-container {
+          padding: 1rem 0.75rem;
+        }
+        .stat-value {
+          font-size: 2rem;
+        }
       }
 
       /* --- CHATBOT STYLES --- */
       .chat-widget {
-          position: fixed;
-          bottom: 30px;
-          right: 30px;
-          z-index: 1000;
-          font-family: 'Montserrat', sans-serif;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+        font-family: "Montserrat", sans-serif;
       }
 
       .chat-toggle {
-          width: 60px;
-          height: 60px;
-          background: linear-gradient(135deg, var(--accent), var(--dark));
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-size: 24px;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-          cursor: pointer;
-          transition: all 0.3s ease;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--accent), var(--dark));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
       }
 
       .chat-toggle:hover {
-          transform: scale(1.1);
-          box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
       }
 
       .chat-window {
-          position: absolute;
-          bottom: 80px;
-          right: 0;
-          width: 350px;
-          height: 500px;
-          background: white;
-          border-radius: 16px;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          opacity: 0;
-          transform: translateY(20px);
-          pointer-events: none;
-          transition: all 0.3s ease;
-          z-index: 1001;
+        position: absolute;
+        bottom: 80px;
+        right: 0;
+        width: 350px;
+        height: 500px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none;
+        transition: all 0.3s ease;
+        z-index: 1001;
       }
 
       .chat-window.active {
-          opacity: 1;
-          transform: translateY(0);
-          pointer-events: all;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
       }
 
       .chat-header {
-          background: linear-gradient(135deg, var(--accent), var(--dark));
-          padding: 15px 20px;
-          color: white;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+        background: linear-gradient(135deg, var(--accent), var(--dark));
+        padding: 15px 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
 
-      .chat-header h3 { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; margin: 0;}
-      
-      .chat-close { cursor: pointer; opacity: 0.8; transition: 0.2s; }
-      .chat-close:hover { opacity: 1; }
+      .chat-header h3 {
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+      }
+
+      .chat-close {
+        cursor: pointer;
+        opacity: 0.8;
+        transition: 0.2s;
+      }
+      .chat-close:hover {
+        opacity: 1;
+      }
 
       .chat-body {
-          flex: 1;
-          padding: 15px;
-          overflow-y: auto;
-          background-color: #f9f9f9;
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
       }
 
       .message {
-          max-width: 80%;
-          padding: 10px 15px;
-          border-radius: 12px;
-          font-size: 14px;
-          line-height: 1.4;
+        max-width: 80%;
+        padding: 10px 15px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.4;
       }
 
       .message.bot {
-          background-color: #e9e9e9;
-          color: var(--dark);
-          align-self: flex-start;
-          border-bottom-left-radius: 2px;
+        background-color: #e9e9e9;
+        color: var(--dark);
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
       }
 
       .message.user {
-          background-color: var(--accent);
-          color: white;
-          align-self: flex-end;
-          border-bottom-right-radius: 2px;
+        background-color: var(--accent);
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
       }
 
       .chat-footer {
-          padding: 15px;
-          background: white;
-          border-top: 1px solid #eee;
-          display: flex;
-          gap: 10px;
+        padding: 15px;
+        background: white;
+        border-top: 1px solid #eee;
+        display: flex;
+        gap: 10px;
       }
 
       .chat-input {
-          flex: 1;
-          padding: 10px 15px;
-          border: 1px solid #ddd;
-          border-radius: 25px;
-          outline: none;
-          font-family: inherit;
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        outline: none;
+        font-family: inherit;
       }
 
-      .chat-input:focus { border-color: var(--accent); }
+      .chat-input:focus {
+        border-color: var(--accent);
+      }
 
       .chat-send {
-          background: var(--accent);
-          color: white;
-          border: none;
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: 0.2s;
+        background: var(--accent);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
       }
 
-      .chat-send:hover { background: var(--dark); }
+      .chat-send:hover {
+        background: var(--dark);
+      }
     </style>
   </head>
   <body>
     <div class="background-shapes">
-        <i class="fas fa-leaf shape drift-medium" style="top: 10%; left: 5%; font-size: 60px;"></i>
-        <i class="fas fa-cloud shape drift-slow" style="top: 20%; right: 15%; font-size: 100px;"></i>
-        <i class="fas fa-seedling shape drift-reverse" style="bottom: 15%; left: 10%; font-size: 80px;"></i>
-        <i class="fas fa-temperature-low shape drift-fast" style="bottom: 30%; right: 5%; font-size: 70px;"></i>
-        <i class="fas fa-tint shape drift-medium" style="top: 50%; left: 50%; font-size: 120px; opacity: 0.03;"></i>
+      <i
+        class="fas fa-leaf shape drift-medium"
+        style="top: 10%; left: 5%; font-size: 60px"
+      ></i>
+      <i
+        class="fas fa-cloud shape drift-slow"
+        style="top: 20%; right: 15%; font-size: 100px"
+      ></i>
+      <i
+        class="fas fa-seedling shape drift-reverse"
+        style="bottom: 15%; left: 10%; font-size: 80px"
+      ></i>
+      <i
+        class="fas fa-temperature-low shape drift-fast"
+        style="bottom: 30%; right: 5%; font-size: 70px"
+      ></i>
+      <i
+        class="fas fa-tint shape drift-medium"
+        style="top: 50%; left: 50%; font-size: 120px; opacity: 0.03"
+      ></i>
     </div>
 
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
-            <i class="fas fa-seedling"></i>SMARTSHROOM
+          <i class="fas fa-seedling"></i>SMARTSHROOM
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link active" href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
+              <a class="nav-link active" href="{% url 'dashboard' %}"
+                ><i class="fas fa-chart-line"></i> Dashboard</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'report' %}"><i class="fas fa-file-alt"></i> Report</a>
+              <a class="nav-link" href="{% url 'report' %}"
+                ><i class="fas fa-file-alt"></i> Report</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'scan' %}"><i class="fas fa-qrcode"></i> Scan</a>
+              <a class="nav-link" href="{% url 'scan' %}"
+                ><i class="fas fa-qrcode"></i> Scan</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'remote' %}"><i class="fas fa-wifi"></i> Remote</a>
+              <a class="nav-link" href="{% url 'remote' %}"
+                ><i class="fas fa-wifi"></i> Remote</a
+              >
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
                 <i class="fas fa-user-circle"></i>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
-                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'profile' %}"
+                    ><i class="fas fa-user"></i> Profile</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'logout' %}"
+                    ><i class="fas fa-sign-out-alt"></i> Logout</a
+                  >
+                </li>
               </ul>
             </li>
           </ul>
@@ -629,32 +726,51 @@
     </nav>
 
     <div class="dashboard-container">
-      
       <div class="stats-grid">
         <div class="card">
-          <div class="card-header"><i class="fas fa-temperature-high"></i> Temperature</div>
-          <div class="card-body text-center d-flex flex-column justify-content-center">
-            <div class="stat-value" id="temperature">--<span class="stat-unit">°C</span></div>
+          <div class="card-header">
+            <i class="fas fa-temperature-high"></i> Temperature
+          </div>
+          <div
+            class="card-body text-center d-flex flex-column justify-content-center"
+          >
+            <div class="stat-value" id="temperature">
+              --<span class="stat-unit">°C</span>
+            </div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header"><i class="fas fa-tint"></i> Humidity</div>
-          <div class="card-body text-center d-flex flex-column justify-content-center">
-            <div class="stat-value" id="humidity">--<span class="stat-unit">%</span></div>
+          <div
+            class="card-body text-center d-flex flex-column justify-content-center"
+          >
+            <div class="stat-value" id="humidity">
+              --<span class="stat-unit">%</span>
+            </div>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-header"><i class="fas fa-weight-hanging"></i> Total Harvest</div>
-          <div class="card-body text-center d-flex flex-column justify-content-center">
-            <div class="stat-value" id="totalHarvest">--<span class="stat-unit">kg</span></div>
+          <div class="card-header">
+            <i class="fas fa-weight-hanging"></i> Total Harvest
+          </div>
+          <div
+            class="card-body text-center d-flex flex-column justify-content-center"
+          >
+            <div class="stat-value" id="totalHarvest">
+              --<span class="stat-unit">kg</span>
+            </div>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-header"><i class="fas fa-shield-alt"></i> System Status</div>
-          <div class="card-body text-center d-flex flex-column justify-content-center">
+          <div class="card-header">
+            <i class="fas fa-shield-alt"></i> System Status
+          </div>
+          <div
+            class="card-body text-center d-flex flex-column justify-content-center"
+          >
             <div class="stat-value">
               <span class="status-indicator status-online"></span>Online
             </div>
@@ -669,40 +785,51 @@
       <div class="chart-row">
         <div class="chart-container h-100 mb-0">
           <div class="chart-header">
-            <h2 class="chart-title"><i class="fas fa-microscope"></i> Crop Health Analysis</h2>
+            <h2 class="chart-title">
+              <i class="fas fa-microscope"></i> Crop Health Analysis
+            </h2>
           </div>
-          <div style="position: relative; height: 200px;">
+          <div style="position: relative; height: 200px">
             <canvas id="scanHealthChart"></canvas>
           </div>
           <div class="text-center mt-3">
-              <span class="badge rounded-pill bg-success me-2">Healthy</span>
-              <span class="badge rounded-pill bg-danger">Trichoderma</span>
+            <span class="badge rounded-pill bg-success me-2">Healthy</span>
+            <span class="badge rounded-pill bg-danger">Trichoderma</span>
           </div>
         </div>
 
         <div class="card h-100 mb-0">
-            <div class="card-header">
-                <i class="fas fa-history"></i> Recent Scans
+          <div class="card-header">
+            <i class="fas fa-history"></i> Recent Scans
+          </div>
+          <div
+            class="card-body p-0"
+            style="max-height: 300px; overflow-y: auto"
+          >
+            <div class="list-group list-group-flush" id="recentScansList">
+              <div class="text-center p-4 text-muted">
+                Loading recent scans...
+              </div>
             </div>
-            <div class="card-body p-0" style="max-height: 300px; overflow-y: auto;">
-                <div class="list-group list-group-flush" id="recentScansList">
-                    <div class="text-center p-4 text-muted">Loading recent scans...</div>
-                </div>
-            </div>
+          </div>
         </div>
       </div>
 
       <div class="chart-row">
         <div class="chart-container">
           <div class="chart-header">
-            <h2 class="chart-title"><i class="fas fa-chart-pie"></i> Bag Status Distribution</h2>
+            <h2 class="chart-title">
+              <i class="fas fa-chart-pie"></i> Bag Status Distribution
+            </h2>
           </div>
           <canvas id="bagStatusChart"></canvas>
         </div>
 
         <div class="chart-container">
           <div class="chart-header">
-            <h2 class="chart-title"><i class="fas fa-cubes"></i> Quantity by Type</h2>
+            <h2 class="chart-title">
+              <i class="fas fa-cubes"></i> Quantity by Type
+            </h2>
           </div>
           <canvas id="bagTypeChart"></canvas>
         </div>
@@ -711,7 +838,8 @@
       <div class="chart-container">
         <div class="chart-header">
           <h2 class="chart-title">
-            <i class="fas fa-thermometer-half"></i> Sensor Data: Temperature & Humidity Trend
+            <i class="fas fa-thermometer-half"></i> Sensor Data: Temperature &
+            Humidity Trend
           </h2>
         </div>
         <canvas id="sensorDataChart"></canvas>
@@ -722,8 +850,7 @@
           <h2 class="chart-title">
             <i class="fas fa-chart-area"></i> Oyster Mushroom Harvest Trend
           </h2>
-          <div class="chart-actions">
-          </div>
+          <div class="chart-actions"></div>
         </div>
         <canvas id="harvestChart"></canvas>
       </div>
@@ -750,30 +877,45 @@
     </div>
 
     <footer class="dashboard-footer">
-      <p>SmartShroom Dashboard &copy; 2023 | Real-time Mushroom Farming Analytics</p>
+      <p>
+        SmartShroom Dashboard &copy; 2023 | Real-time Mushroom Farming Analytics
+      </p>
     </footer>
 
     <div class="chat-widget">
-        <div class="chat-window" id="chatWindow">
-            <div class="chat-header">
-                <h3><i class="fas fa-robot"></i> SmartShroom Assistant</h3>
-                <span class="chat-close" onclick="toggleChat()"><i class="fas fa-times"></i></span>
-            </div>
-            <div class="chat-body" id="chatBody">
-                <div class="message bot">
-                    Hello! I am your SmartShroom Guide. I can answer questions about mushroom farming and diseases in English or Tagalog.
-                    <br><br>
-                    <i>Kumusta! Ako ang iyong SmartShroom Guide. Maaari akong sumagot tungkol sa pagtatanim ng mushroom at mga sakit nito.</i>
-                </div>
-            </div>
-            <div class="chat-footer">
-                <input type="text" class="chat-input" id="chatInput" placeholder="Ask about diseases, temp, etc...">
-                <button class="chat-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
-            </div>
+      <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+          <h3><i class="fas fa-robot"></i> SmartShroom Assistant</h3>
+          <span class="chat-close" onclick="toggleChat()"
+            ><i class="fas fa-times"></i
+          ></span>
         </div>
-        <div class="chat-toggle" onclick="toggleChat()">
-            <i class="fas fa-comments"></i>
+        <div class="chat-body" id="chatBody">
+          <div class="message bot">
+            Hello! I am your SmartShroom Guide. I can answer questions about
+            mushroom farming and diseases in English or Tagalog.
+            <br /><br />
+            <i
+              >Kumusta! Ako ang iyong SmartShroom Guide. Maaari akong sumagot
+              tungkol sa pagtatanim ng mushroom at mga sakit nito.</i
+            >
+          </div>
         </div>
+        <div class="chat-footer">
+          <input
+            type="text"
+            class="chat-input"
+            id="chatInput"
+            placeholder="Ask about diseases, temp, etc..."
+          />
+          <button class="chat-send" onclick="sendMessage()">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+      <div class="chat-toggle" onclick="toggleChat()">
+        <i class="fas fa-comments"></i>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -793,35 +935,53 @@
           type: "line",
           data: {
             labels: [],
-            datasets: [{
-              label: "Harvest (kg)",
-              data: [],
-              borderColor: "#4D6A6D",
-              backgroundColor: "rgba(190, 211, 201, 0.2)",
-              tension: 0.4,
-              borderWidth: 2,
-              pointBackgroundColor: "#8B786D",
-              fill: true,
-            }],
+            datasets: [
+              {
+                label: "Harvest (kg)",
+                data: [],
+                borderColor: "#4D6A6D",
+                backgroundColor: "rgba(190, 211, 201, 0.2)",
+                tension: 0.4,
+                borderWidth: 2,
+                pointBackgroundColor: "#8B786D",
+                fill: true,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              y: { beginAtZero: true }
-            }
+              y: { beginAtZero: true },
+            },
           },
         });
 
         // Sensor Chart
-        let sensorCtx = document.getElementById("sensorDataChart").getContext("2d");
+        let sensorCtx = document
+          .getElementById("sensorDataChart")
+          .getContext("2d");
         sensorDataChart = new Chart(sensorCtx, {
           type: "line",
           data: {
             labels: [],
             datasets: [
-              { label: "Temperature (°C)", data: [], borderColor: "#dc3545", backgroundColor: "rgba(220, 53, 69, 0.1)", yAxisID: "yTemp", fill: true },
-              { label: "Humidity (%)", data: [], borderColor: "#007bff", backgroundColor: "rgba(0, 123, 255, 0.1)", yAxisID: "yHumidity", fill: true },
+              {
+                label: "Temperature (°C)",
+                data: [],
+                borderColor: "#dc3545",
+                backgroundColor: "rgba(220, 53, 69, 0.1)",
+                yAxisID: "yTemp",
+                fill: true,
+              },
+              {
+                label: "Humidity (%)",
+                data: [],
+                borderColor: "#007bff",
+                backgroundColor: "rgba(0, 123, 255, 0.1)",
+                yAxisID: "yHumidity",
+                fill: true,
+              },
             ],
           },
           options: {
@@ -829,110 +989,167 @@
             maintainAspectRatio: false,
             scales: {
               yTemp: { type: "linear", position: "left", beginAtZero: true },
-              yHumidity: { type: "linear", position: "right", beginAtZero: true, grid: { drawOnChartArea: false } },
+              yHumidity: {
+                type: "linear",
+                position: "right",
+                beginAtZero: true,
+                grid: { drawOnChartArea: false },
+              },
             },
           },
         });
 
         // Bag Status Chart
-        let bagStatusCtx = document.getElementById("bagStatusChart").getContext("2d");
+        let bagStatusCtx = document
+          .getElementById("bagStatusChart")
+          .getContext("2d");
         bagStatusChart = new Chart(bagStatusCtx, {
-          type: 'doughnut',
+          type: "doughnut",
           data: {
-            labels: ['Active', 'Incubating', 'Fruiting', 'Harvested', 'Discarded'],
-            datasets: [{
-              data: [0, 0, 0, 0, 0],
-              backgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#6c757d', '#dc3545'],
-              borderWidth: 1
-            }]
+            labels: [
+              "Active",
+              "Incubating",
+              "Fruiting",
+              "Harvested",
+              "Discarded",
+            ],
+            datasets: [
+              {
+                data: [0, 0, 0, 0, 0],
+                backgroundColor: [
+                  "#28a745",
+                  "#17a2b8",
+                  "#ffc107",
+                  "#6c757d",
+                  "#dc3545",
+                ],
+                borderWidth: 1,
+              },
+            ],
           },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: "right" } },
+          },
         });
 
         // Bag Type Chart
-        let bagTypeCtx = document.getElementById("bagTypeChart").getContext("2d");
+        let bagTypeCtx = document
+          .getElementById("bagTypeChart")
+          .getContext("2d");
         bagTypeChart = new Chart(bagTypeCtx, {
-          type: 'bar',
+          type: "bar",
           data: {
-            labels: ['Oyster', 'Shiitake', 'Button', 'Portobello', 'Other'],
-            datasets: [{
-              label: 'Quantity (bags)',
-              data: [0, 0, 0, 0, 0],
-              backgroundColor: ['#d6c1b1', '#8b786d', '#4d6a6d', '#bed3c9', '#3a3238'],
-              borderWidth: 1
-            }]
+            labels: ["Oyster", "Shiitake", "Button", "Portobello", "Other"],
+            datasets: [
+              {
+                label: "Quantity (bags)",
+                data: [0, 0, 0, 0, 0],
+                backgroundColor: [
+                  "#d6c1b1",
+                  "#8b786d",
+                  "#4d6a6d",
+                  "#bed3c9",
+                  "#3a3238",
+                ],
+                borderWidth: 1,
+              },
+            ],
           },
-          options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } },
+          },
         });
       }
 
       // NEW: Fetch Scan Dashboard Data
       function fetchScanDashboardData() {
         console.log("Fetching scan analytics...");
-        
-        fetch("{% url 'get_scan_dashboard_data' %}") 
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error("Scan API Error:", data.error);
-                    return;
-                }
 
-                // 1. Update Health Chart
-                const ctx = document.getElementById('scanHealthChart').getContext('2d');
-                if (scanHealthChart) scanHealthChart.destroy();
+        fetch("{% url 'get_scan_dashboard_data' %}")
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              console.error("Scan API Error:", data.error);
+              return;
+            }
 
-                scanHealthChart = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Healthy Mushroom', 'Trichoderma (Disease)'],
-                        datasets: [{
-                            data: [data.stats.healthy, data.stats.disease],
-                            backgroundColor: ['#28a745', '#dc3545'],
-                            borderWidth: 2,
-                            borderColor: '#ffffff',
-                            hoverOffset: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '70%',
-                        plugins: { legend: { display: false } }
-                    }
-                });
+            // 1. Update Health Chart
+            const ctx = document
+              .getElementById("scanHealthChart")
+              .getContext("2d");
+            if (scanHealthChart) scanHealthChart.destroy();
 
-                // 2. Update Recent Scans List
-                const listContainer = document.getElementById('recentScansList');
-                listContainer.innerHTML = '';
+            scanHealthChart = new Chart(ctx, {
+              type: "doughnut",
+              data: {
+                labels: ["Healthy Mushroom", "Trichoderma (Disease)"],
+                datasets: [
+                  {
+                    data: [data.stats.healthy, data.stats.disease],
+                    backgroundColor: ["#28a745", "#dc3545"],
+                    borderWidth: 2,
+                    borderColor: "#ffffff",
+                    hoverOffset: 4,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "70%",
+                plugins: { legend: { display: false } },
+              },
+            });
 
-                if (data.recent_scans.length === 0) {
-                    listContainer.innerHTML = '<div class="text-center p-4 text-muted">No scans recorded yet.</div>';
-                } else {
-                    data.recent_scans.forEach(scan => {
-                        const isHealthy = scan.result.toLowerCase().includes('healthy');
-                        const iconClass = isHealthy ? 'fa-check-circle text-success' : 'fa-exclamation-triangle text-danger';
-                        const bgClass = isHealthy ? 'bg-success-subtle' : 'bg-danger-subtle';
-                        
-                        const itemHtml = `
+            // 2. Update Recent Scans List
+            const listContainer = document.getElementById("recentScansList");
+            listContainer.innerHTML = "";
+
+            if (data.recent_scans.length === 0) {
+              listContainer.innerHTML =
+                '<div class="text-center p-4 text-muted">No scans recorded yet.</div>';
+            } else {
+              data.recent_scans.forEach((scan) => {
+                const isHealthy = scan.result.toLowerCase().includes("healthy");
+                const iconClass = isHealthy
+                  ? "fa-check-circle text-success"
+                  : "fa-exclamation-triangle text-danger";
+                const bgClass = isHealthy
+                  ? "bg-success-subtle"
+                  : "bg-danger-subtle";
+
+                const itemHtml = `
                             <div class="list-group-item d-flex justify-content-between align-items-center">
                                 <div class="d-flex align-items-center">
-                                    <div class="rounded-circle p-2 me-3 ${bgClass}" style="background-color: ${isHealthy ? '#e6f4ea' : '#fce8e6'}">
+                                    <div class="rounded-circle p-2 me-3 ${bgClass}" style="background-color: ${
+                  isHealthy ? "#e6f4ea" : "#fce8e6"
+                }">
                                         <i class="fas ${iconClass}"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0 fw-bold" style="font-size: 0.9rem;">${scan.result}</h6>
-                                        <small class="text-muted"><i class="far fa-clock me-1"></i>${scan.date}</small>
+                                        <h6 class="mb-0 fw-bold" style="font-size: 0.9rem;">${
+                                          scan.result
+                                        }</h6>
+                                        <small class="text-muted"><i class="far fa-clock me-1"></i>${
+                                          scan.date
+                                        }</small>
                                     </div>
                                 </div>
-                                <span class="badge bg-secondary rounded-pill" style="font-weight:400; font-size: 0.75rem;">${parseFloat(scan.confidence).toFixed(1)}%</span>
+                                <span class="badge bg-secondary rounded-pill" style="font-weight:400; font-size: 0.75rem;">${parseFloat(
+                                  scan.confidence
+                                ).toFixed(1)}%</span>
                             </div>
                         `;
-                        listContainer.innerHTML += itemHtml;
-                    });
-                }
-            })
-            .catch(error => console.error("Error loading scan data:", error));
+                listContainer.innerHTML += itemHtml;
+              });
+            }
+          })
+          .catch((error) => console.error("Error loading scan data:", error));
       }
 
       function fetchBagData() {
@@ -941,15 +1158,21 @@
           .then((data) => {
             if (data.status_counts && bagStatusChart) {
               bagStatusChart.data.datasets[0].data = [
-                data.status_counts.active || 0, data.status_counts.incubating || 0,
-                data.status_counts.fruiting || 0, data.status_counts.harvested || 0, data.status_counts.discarded || 0
+                data.status_counts.active || 0,
+                data.status_counts.incubating || 0,
+                data.status_counts.fruiting || 0,
+                data.status_counts.harvested || 0,
+                data.status_counts.discarded || 0,
               ];
               bagStatusChart.update();
             }
             if (data.type_counts && bagTypeChart) {
               bagTypeChart.data.datasets[0].data = [
-                data.type_counts.oyster || 0, data.type_counts.shiitake || 0,
-                data.type_counts.button || 0, data.type_counts.portobello || 0, data.type_counts.other || 0
+                data.type_counts.oyster || 0,
+                data.type_counts.shiitake || 0,
+                data.type_counts.button || 0,
+                data.type_counts.portobello || 0,
+                data.type_counts.other || 0,
               ];
               bagTypeChart.update();
             }
@@ -958,51 +1181,98 @@
 
       function fetchHarvestData() {
         fetch("{% url 'get_harvest_data' %}")
-          .then(res => res.json())
-          .then(data => {
+          .then((res) => res.json())
+          .then((data) => {
             if (data.harvest && data.harvest.length > 0) {
-              harvestChart.data.labels = data.harvest.map(i => i.date);
-              harvestChart.data.datasets[0].data = data.harvest.map(i => parseFloat(i.kilograms) || 0);
+              harvestChart.data.labels = data.harvest.map((i) => i.date);
+              harvestChart.data.datasets[0].data = data.harvest.map(
+                (i) => parseFloat(i.kilograms) || 0
+              );
               harvestChart.update();
-              if (document.getElementById("totalHarvest") && data.total_harvest) {
-                document.getElementById("totalHarvest").innerHTML = `${parseFloat(data.total_harvest).toFixed(2)}<span class="stat-unit">kg</span>`;
+              if (
+                document.getElementById("totalHarvest") &&
+                data.total_harvest
+              ) {
+                document.getElementById(
+                  "totalHarvest"
+                ).innerHTML = `${parseFloat(data.total_harvest).toFixed(
+                  2
+                )}<span class="stat-unit">kg</span>`;
               }
               const tbody = document.getElementById("harvestTableBody");
               tbody.innerHTML = "";
               data.harvest.slice(0, 5).forEach((item) => {
-                let status = parseFloat(item.kilograms) > 5 ? '<span class="text-success">Excellent</span>' : '<span class="text-warning">Low</span>';
+                let status =
+                  parseFloat(item.kilograms) > 5
+                    ? '<span class="text-success">Excellent</span>'
+                    : '<span class="text-warning">Low</span>';
                 // Column logic modified here to remove Growth Rate cell
-                tbody.innerHTML += `<tr><td>${item.date}</td><td>${parseFloat(item.kilograms).toFixed(2)}</td><td>${status}</td></tr>`;
+                tbody.innerHTML += `<tr><td>${item.date}</td><td>${parseFloat(
+                  item.kilograms
+                ).toFixed(2)}</td><td>${status}</td></tr>`;
               });
             }
           });
       }
 
       function fetchSensorData() {
-       fetch("{% url 'get_sensor_data' %}")
-          .then(res => res.json())
-          .then(data => {
-            if (data.sensor_data && data.sensor_data.length > 0) {
-              const latest = data.sensor_data[0];
-              document.getElementById("temperature").innerHTML = `${latest.temperature}<span class="stat-unit">°C</span>`;
-              document.getElementById("humidity").innerHTML = `${latest.humidity}<span class="stat-unit">%</span>`;
-              
-              const now = new Date().toLocaleTimeString();
-              if (sensorDataChart) {
-                sensorDataChart.data.labels.push(now);
-                sensorDataChart.data.datasets[0].data.push(latest.temperature);
-                sensorDataChart.data.datasets[1].data.push(latest.humidity);
-                if (sensorDataChart.data.labels.length > 10) {
-                    sensorDataChart.data.labels.shift();
-                    sensorDataChart.data.datasets[0].data.shift();
-                    sensorDataChart.data.datasets[1].data.shift();
-                }
-                sensorDataChart.update();
-              }
-            }
-          });
-      }
+        fetch("{% url 'get_sensor_data' %}")
+          .then((res) => res.json())
+          .then((data) => {
+            // LOG THE DATA TO BROWSER CONSOLE (Press F12 to see)
+            console.log("Received Sensor Data:", data);
 
+            if (data.error) {
+              console.error("Server Error:", data.error);
+              return;
+            }
+
+            if (!data.sensor_data || data.sensor_data.length === 0) {
+              console.warn("Database is empty or path is wrong.");
+              document.getElementById("temperature").innerText = "--";
+              document.getElementById("humidity").innerText = "--";
+              return;
+            }
+
+            // --- 1. UPDATE CARDS (Latest Data is at index 0) ---
+            const latest = data.sensor_data[0];
+
+            document.getElementById(
+              "temperature"
+            ).innerHTML = `${latest.temperature.toFixed(
+              1
+            )}<span class="stat-unit">°C</span>`;
+
+            document.getElementById(
+              "humidity"
+            ).innerHTML = `${latest.humidity.toFixed(
+              1
+            )}<span class="stat-unit">%</span>`;
+
+            // --- 2. UPDATE CHART (Needs Oldest -> Newest) ---
+            if (sensorDataChart) {
+              // Clone the array and reverse it so graph draws Left to Right
+              let history = [...data.sensor_data].reverse();
+
+              // Optional: Show only last 20 readings to keep chart clean
+              if (history.length > 20) {
+                history = history.slice(history.length - 20);
+              }
+
+              // Map data using the pre-formatted string from Python
+              sensorDataChart.data.labels = history.map((d) => d.date_str);
+              sensorDataChart.data.datasets[0].data = history.map(
+                (d) => d.temperature
+              );
+              sensorDataChart.data.datasets[1].data = history.map(
+                (d) => d.humidity
+              );
+
+              sensorDataChart.update();
+            }
+          })
+          .catch((err) => console.error("Fetch Logic Error:", err));
+      }
       // Initialize
       document.addEventListener("DOMContentLoaded", function () {
         initializeCharts();
@@ -1020,60 +1290,78 @@
 
       /* --- CHATBOT LOGIC (MOCK API) --- */
       function toggleChat() {
-          document.getElementById('chatWindow').classList.toggle('active');
+        document.getElementById("chatWindow").classList.toggle("active");
       }
 
-      const chatInput = document.getElementById('chatInput');
-      chatInput.addEventListener("keypress", function(event) {
-          if (event.key === "Enter") {
-              sendMessage();
-          }
+      const chatInput = document.getElementById("chatInput");
+      chatInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          sendMessage();
+        }
       });
 
       function sendMessage() {
-          const input = document.getElementById('chatInput');
-          const message = input.value.trim();
-          if (message === "") return;
+        const input = document.getElementById("chatInput");
+        const message = input.value.trim();
+        if (message === "") return;
 
-          // Add User Message
-          addMessage(message, 'user');
-          input.value = '';
+        // Add User Message
+        addMessage(message, "user");
+        input.value = "";
 
-          // Simulate API Typing Delay
-          setTimeout(() => {
-              const response = getBotResponse(message);
-              addMessage(response, 'bot');
-          }, 800);
+        // Simulate API Typing Delay
+        setTimeout(() => {
+          const response = getBotResponse(message);
+          addMessage(response, "bot");
+        }, 800);
       }
 
       function addMessage(text, sender) {
-          const chatBody = document.getElementById('chatBody');
-          const div = document.createElement('div');
-          div.classList.add('message', sender);
-          div.innerHTML = text;
-          chatBody.appendChild(div);
-          chatBody.scrollTop = chatBody.scrollHeight;
+        const chatBody = document.getElementById("chatBody");
+        const div = document.createElement("div");
+        div.classList.add("message", sender);
+        div.innerHTML = text;
+        chatBody.appendChild(div);
+        chatBody.scrollTop = chatBody.scrollHeight;
       }
 
       // SIMULATED API LOGIC FOR MUSHROOM FARMING (English & Tagalog)
       function getBotResponse(input) {
-          input = input.toLowerCase();
+        input = input.toLowerCase();
 
-          // English Keywords
-          if (input.includes('hello') || input.includes('hi')) return "Hello! How can I help with your mushroom farm today?";
-          if (input.includes('temp') || input.includes('heat')) return "Oyster mushrooms thrive in temperatures between 24°C to 28°C.";
-          if (input.includes('humid') || input.includes('moist')) return "Maintain humidity levels between 80% to 90% for optimal fruiting.";
-          if (input.includes('disease') || input.includes('mold') || input.includes('green')) return "Common disease: **Trichoderma (Green Mold)**. It thrives in unsterilized substrate. Remove infected bags immediately!";
-          if (input.includes('harvest')) return "Harvest mushrooms when the caps are fully uncurled but before they release spores.";
+        // English Keywords
+        if (input.includes("hello") || input.includes("hi"))
+          return "Hello! How can I help with your mushroom farm today?";
+        if (input.includes("temp") || input.includes("heat"))
+          return "Oyster mushrooms thrive in temperatures between 24°C to 28°C.";
+        if (input.includes("humid") || input.includes("moist"))
+          return "Maintain humidity levels between 80% to 90% for optimal fruiting.";
+        if (
+          input.includes("disease") ||
+          input.includes("mold") ||
+          input.includes("green")
+        )
+          return "Common disease: **Trichoderma (Green Mold)**. It thrives in unsterilized substrate. Remove infected bags immediately!";
+        if (input.includes("harvest"))
+          return "Harvest mushrooms when the caps are fully uncurled but before they release spores.";
 
-          // Tagalog Keywords
-          if (input.includes('kamusta') || input.includes('tao po')) return "Kamusta! Ano ang maitutulong ko sa iyong farm?";
-          if (input.includes('init') || input.includes('temperatura')) return "Ang Oyster mushrooms ay nabubuhay nang maayos sa temperaturang 24°C hanggang 28°C.";
-          if (input.includes('umido') || input.includes('basa')) return "Panatilihin ang humidity o halumigmig sa pagitan ng 80% hanggang 90%.";
-          if (input.includes('sakit') || input.includes('amag') || input.includes('lunti')) return "Karaniwang sakit: **Trichoderma (Green Mold)**. Ito ay dahil sa maruming substrate. Itapon agad ang mga infected na bag!";
-          if (input.includes('ani') || input.includes('pitas')) return "Maaari nang pitasin ang mushroom kapag ang payong nito ay bumuka na, bago pa ito maglabas ng spores.";
+        // Tagalog Keywords
+        if (input.includes("kamusta") || input.includes("tao po"))
+          return "Kamusta! Ano ang maitutulong ko sa iyong farm?";
+        if (input.includes("init") || input.includes("temperatura"))
+          return "Ang Oyster mushrooms ay nabubuhay nang maayos sa temperaturang 24°C hanggang 28°C.";
+        if (input.includes("umido") || input.includes("basa"))
+          return "Panatilihin ang humidity o halumigmig sa pagitan ng 80% hanggang 90%.";
+        if (
+          input.includes("sakit") ||
+          input.includes("amag") ||
+          input.includes("lunti")
+        )
+          return "Karaniwang sakit: **Trichoderma (Green Mold)**. Ito ay dahil sa maruming substrate. Itapon agad ang mga infected na bag!";
+        if (input.includes("ani") || input.includes("pitas"))
+          return "Maaari nang pitasin ang mushroom kapag ang payong nito ay bumuka na, bago pa ito maglabas ng spores.";
 
-          return "I am specialized in mushrooms. Please ask about temperature, humidity, or diseases. <br><br><i>Ako ay para sa mushroom farming lamang. Magtanong tungkol sa temperatura o mga sakit.</i>";
+        return "I am specialized in mushrooms. Please ask about temperature, humidity, or diseases. <br><br><i>Ako ay para sa mushroom farming lamang. Magtanong tungkol sa temperatura o mga sakit.</i>";
       }
     </script>
   </body>

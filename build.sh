@@ -11,4 +11,4 @@ python manage.py collectstatic --noinput
 echo "=== Applying database migrations ==="
 python manage.py migrate
 
-echo "=== Build completed successfully! ==="
+echo "=== Build completed successfully! ==="`
