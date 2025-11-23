@@ -766,17 +766,13 @@
 
         <div class="card">
           <div class="card-header">
-            <i class="fas fa-shield-alt"></i> System Status
+            <i class="fas fa-layer-group"></i> Total Bags
           </div>
           <div
             class="card-body text-center d-flex flex-column justify-content-center"
           >
-            <div class="stat-value">
-              <span class="status-indicator status-online"></span>Online
-            </div>
-            <div class="stat-trend">
-              <i class="fas fa-check-circle trend-up"></i>
-              <span>All systems normal</span>
+            <div class="stat-value" id="totalBags">
+              --<span class="stat-unit">pcs</span>
             </div>
           </div>
         </div>
@@ -1152,19 +1148,34 @@
           .catch((error) => console.error("Error loading scan data:", error));
       }
 
+      // UPDATED: Logic to update Total Bags card
       function fetchBagData() {
         fetch("{% url 'get_bag_data' %}")
           .then((response) => response.json())
           .then((data) => {
-            if (data.status_counts && bagStatusChart) {
-              bagStatusChart.data.datasets[0].data = [
-                data.status_counts.active || 0,
-                data.status_counts.incubating || 0,
-                data.status_counts.fruiting || 0,
-                data.status_counts.harvested || 0,
-                data.status_counts.discarded || 0,
-              ];
-              bagStatusChart.update();
+            if (data.status_counts) {
+              // Calculate TOTAL Bags
+              const totalBags = Object.values(data.status_counts).reduce(
+                (a, b) => a + b,
+                0
+              );
+
+              // Update Card ID
+              const totalBagsElement = document.getElementById("totalBags");
+              if (totalBagsElement) {
+                totalBagsElement.innerHTML = `${totalBags}<span class="stat-unit">pcs</span>`;
+              }
+
+              if (bagStatusChart) {
+                bagStatusChart.data.datasets[0].data = [
+                  data.status_counts.active || 0,
+                  data.status_counts.incubating || 0,
+                  data.status_counts.fruiting || 0,
+                  data.status_counts.harvested || 0,
+                  data.status_counts.discarded || 0,
+                ];
+                bagStatusChart.update();
+              }
             }
             if (data.type_counts && bagTypeChart) {
               bagTypeChart.data.datasets[0].data = [
@@ -1176,7 +1187,8 @@
               ];
               bagTypeChart.update();
             }
-          });
+          })
+          .catch((err) => console.error("Error fetching bag data:", err));
       }
 
       function fetchHarvestData() {
@@ -1206,7 +1218,6 @@
                   parseFloat(item.kilograms) > 5
                     ? '<span class="text-success">Excellent</span>'
                     : '<span class="text-warning">Low</span>';
-                // Column logic modified here to remove Growth Rate cell
                 tbody.innerHTML += `<tr><td>${item.date}</td><td>${parseFloat(
                   item.kilograms
                 ).toFixed(2)}</td><td>${status}</td></tr>`;
