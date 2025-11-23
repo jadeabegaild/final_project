@@ -421,6 +421,141 @@
         .status-updated {
             animation: pulse 0.5s ease;
         }
+
+        /* --- CHATBOT STYLES --- */
+      .chat-widget {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          z-index: 1000;
+          font-family: 'Montserrat', sans-serif;
+      }
+
+      .chat-toggle {
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, var(--accent), var(--dark));
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 24px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+          cursor: pointer;
+          transition: all 0.3s ease;
+      }
+
+      .chat-toggle:hover {
+          transform: scale(1.1);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      }
+
+      .chat-window {
+          position: absolute;
+          bottom: 80px;
+          right: 0;
+          width: 350px;
+          height: 500px;
+          background: white;
+          border-radius: 16px;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          opacity: 0;
+          transform: translateY(20px);
+          pointer-events: none;
+          transition: all 0.3s ease;
+          z-index: 1001;
+      }
+
+      .chat-window.active {
+          opacity: 1;
+          transform: translateY(0);
+          pointer-events: all;
+      }
+
+      .chat-header {
+          background: linear-gradient(135deg, var(--accent), var(--dark));
+          padding: 15px 20px;
+          color: white;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+
+      .chat-header h3 { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; margin: 0; }
+      
+      .chat-close { cursor: pointer; opacity: 0.8; transition: 0.2s; }
+      .chat-close:hover { opacity: 1; }
+
+      .chat-body {
+          flex: 1;
+          padding: 15px;
+          overflow-y: auto;
+          background-color: #f9f9f9;
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+      }
+
+      .message {
+          max-width: 80%;
+          padding: 10px 15px;
+          border-radius: 12px;
+          font-size: 14px;
+          line-height: 1.4;
+      }
+
+      .message.bot {
+          background-color: #e9e9e9;
+          color: var(--dark);
+          align-self: flex-start;
+          border-bottom-left-radius: 2px;
+      }
+
+      .message.user {
+          background-color: var(--accent);
+          color: white;
+          align-self: flex-end;
+          border-bottom-right-radius: 2px;
+      }
+
+      .chat-footer {
+          padding: 15px;
+          background: white;
+          border-top: 1px solid #eee;
+          display: flex;
+          gap: 10px;
+      }
+
+      .chat-input {
+          flex: 1;
+          padding: 10px 15px;
+          border: 1px solid #ddd;
+          border-radius: 25px;
+          outline: none;
+          font-family: inherit;
+      }
+
+      .chat-input:focus { border-color: var(--accent); }
+
+      .chat-send {
+          background: var(--accent);
+          color: white;
+          border: none;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: 0.2s;
+      }
+
+      .chat-send:hover { background: var(--dark); }
     </style>
 </head>
 <body>
@@ -572,7 +707,90 @@
         </div>
     </div>
 
+    <div class="chat-widget">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h3><i class="fas fa-robot"></i> SmartShroom Assistant</h3>
+                <span class="chat-close" onclick="toggleChat()"><i class="fas fa-times"></i></span>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="message bot">
+                    Hello! I am your SmartShroom Guide. I can answer questions about mushroom farming and diseases in English or Tagalog.
+                    <br><br>
+                    <i>Kumusta! Ako ang iyong SmartShroom Guide. Maaari akong sumagot tungkol sa pagtatanim ng mushroom at mga sakit nito.</i>
+                </div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask about diseases, temp, etc...">
+                <button class="chat-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <div class="chat-toggle" onclick="toggleChat()">
+            <i class="fas fa-comments"></i>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script>
+    /* --- CHATBOT LOGIC (MOCK API) --- */
+      function toggleChat() {
+          document.getElementById('chatWindow').classList.toggle('active');
+      }
+
+      const chatInput = document.getElementById('chatInput');
+      chatInput.addEventListener("keypress", function(event) {
+          if (event.key === "Enter") {
+              sendMessage();
+          }
+      });
+
+      function sendMessage() {
+          const input = document.getElementById('chatInput');
+          const message = input.value.trim();
+          if (message === "") return;
+
+          // Add User Message
+          addMessage(message, 'user');
+          input.value = '';
+
+          // Simulate API Typing Delay
+          setTimeout(() => {
+              const response = getBotResponse(message);
+              addMessage(response, 'bot');
+          }, 800);
+      }
+
+      function addMessage(text, sender) {
+          const chatBody = document.getElementById('chatBody');
+          const div = document.createElement('div');
+          div.classList.add('message', sender);
+          div.innerHTML = text;
+          chatBody.appendChild(div);
+          chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      // SIMULATED API LOGIC FOR MUSHROOM FARMING (English & Tagalog)
+      function getBotResponse(input) {
+          input = input.toLowerCase();
+
+          // English Keywords
+          if (input.includes('hello') || input.includes('hi')) return "Hello! How can I help with your mushroom farm today?";
+          if (input.includes('temp') || input.includes('heat')) return "Oyster mushrooms thrive in temperatures between 24°C to 28°C.";
+          if (input.includes('humid') || input.includes('moist')) return "Maintain humidity levels between 80% to 90% for optimal fruiting.";
+          if (input.includes('disease') || input.includes('mold') || input.includes('green')) return "Common disease: **Trichoderma (Green Mold)**. It thrives in unsterilized substrate. Remove infected bags immediately!";
+          if (input.includes('harvest')) return "Harvest mushrooms when the caps are fully uncurled but before they release spores.";
+
+          // Tagalog Keywords
+          if (input.includes('kamusta') || input.includes('tao po')) return "Kamusta! Ano ang maitutulong ko sa iyong farm?";
+          if (input.includes('init') || input.includes('temperatura')) return "Ang Oyster mushrooms ay nabubuhay nang maayos sa temperaturang 24°C hanggang 28°C.";
+          if (input.includes('umido') || input.includes('basa')) return "Panatilihin ang humidity o halumigmig sa pagitan ng 80% hanggang 90%.";
+          if (input.includes('sakit') || input.includes('amag') || input.includes('lunti')) return "Karaniwang sakit: **Trichoderma (Green Mold)**. Ito ay dahil sa maruming substrate. Itapon agad ang mga infected na bag!";
+          if (input.includes('ani') || input.includes('pitas')) return "Maaari nang pitasin ang mushroom kapag ang payong nito ay bumuka na, bago pa ito maglabas ng spores.";
+
+          return "I am specialized in mushrooms. Please ask about temperature, humidity, or diseases. <br><br><i>Ako ay para sa mushroom farming lamang. Magtanong tungkol sa temperatura o mga sakit.</i>";
+      }
+    </script>
 </body>
 </html>
