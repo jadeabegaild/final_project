@@ -106,7 +106,7 @@
       }
       /* --------------------------------------- */
 
-      /* Navigation */
+      /* Navigation - UPDATED FOR STICKY HEADER */
       .navbar {
         background: linear-gradient(
           135deg,
@@ -115,8 +115,12 @@
         ) !important;
         box-shadow: var(--shadow-md);
         padding: 0.5rem 1rem;
-        position: relative;
-        z-index: 10;
+        
+        /* CHANGED: Sticky positioning */
+        position: sticky;
+        top: 0;
+        z-index: 1000; /* High z-index to stay above content */
+        width: 100%;
       }
 
       .navbar-brand {

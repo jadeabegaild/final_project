@@ -77,13 +77,17 @@
         }
         /* --------------------------------------- */
         
-        /* Modern navbar styling */
+        /* Modern navbar styling - UPDATED TO STICKY */
         .navbar {
             background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%) !important;
             box-shadow: var(--shadow-md);
             padding: 0.5rem 1rem;
-            position: relative;
-            z-index: 10;
+            
+            /* CHANGED: Sticky positioning */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
         }
         
         .navbar-brand {

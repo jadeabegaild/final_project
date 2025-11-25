@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* [ ... Keep your existing CSS exactly as it is ... ] */
         :root {
             --primary: #D6C1B1;
             --primary-dark: #c0ab9b;
@@ -62,12 +61,17 @@
             100% { transform: translate(-40px, 40px) rotate(-10deg); }
         }
         
+        /* Navbar - UPDATED FOR STICKY HEADER */
         .navbar {
             background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%) !important;
             box-shadow: var(--shadow-md);
             padding: 0.5rem 1rem;
-            position: relative;
-            z-index: 10;
+            
+            /* CHANGED: Sticky positioning */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
         }
         
         .navbar-brand {
