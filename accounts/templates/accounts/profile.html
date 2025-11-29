@@ -155,9 +155,24 @@
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             display: flex; align-items: center; justify-content: center;
             border: 5px solid var(--highlight); box-shadow: var(--shadow-md); margin-bottom: 1.5rem;
+            overflow: hidden; /* Ensure image stays in circle */
+            position: relative;
         }
         
-        .profile-avatar i { font-size: 3.5rem; color: white; }
+        /* New CSS for Avatar Image */
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-avatar:hover img {
+            transform: scale(1.1);
+        }
+
+        /* .profile-avatar i { font-size: 3.5rem; color: white; }  <-- Removed for API image */
+        
         .profile-name { color: var(--dark); font-weight: 700; font-size: 2.2rem; margin-bottom: 0.5rem; }
         .profile-title { color: var(--accent); font-weight: 600; margin-bottom: 1.5rem; font-size: 1.1rem; }
         
@@ -224,6 +239,22 @@
         .form-check-input:checked { background-color: var(--accent); border-color: var(--accent); }
         .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); border: none; border-radius: var(--radius); padding: 0.8rem 1.8rem; font-weight: 600; box-shadow: var(--shadow-sm); }
         .btn-secondary { background: linear-gradient(135deg, var(--secondary) 0%, #9c8a7f 100%); border: none; border-radius: var(--radius); padding: 0.8rem 1.8rem; font-weight: 600; color: white; }
+
+        /* Preview Avatar in Modal */
+        .modal-avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem auto;
+            border: 4px solid var(--accent);
+            overflow: hidden;
+            background: var(--light);
+        }
+        .modal-avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -264,7 +295,7 @@
     <div class="profile-container">
         <div class="profile-header">
             <div class="profile-avatar">
-                <i class="fas fa-user"></i>
+                <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed={{ user_data.firstName }}{{ user_data.lastName }}&radius=50" alt="Cartoon Avatar">
             </div>
             <h1 class="profile-name">{{ user_data.firstName }} {{ user_data.lastName }}</h1>
             <p class="profile-title">{{ user_data.jobTitle }}</p>
@@ -405,7 +436,7 @@
                     {% if user_data.createdAt %}{{ user_data.createdAt|date:"F j, Y" }}
                     {% else %}Unknown{% endif %}
                 </p>
-                <div class="info-label">Last Updated</div>
+                <div class="info-label mt-3">Last Updated</div>
                 <p class="info-value">
                     {% if user_data.updatedAt %}{{ user_data.updatedAt|date:"F j, Y" }}
                     {% else %}Unknown{% endif %}
@@ -423,6 +454,15 @@
                 <form method="POST" action="{% url 'edit_profile' %}">
                     {% csrf_token %}
                     <div class="modal-body">
+                        
+                        <div class="text-center mb-4">
+                            <label class="form-label text-muted small fw-bold">YOUR AVATAR (AUTO-GENERATED)</label>
+                            <div class="modal-avatar-preview">
+                                <img id="avatarPreview" src="https://api.dicebear.com/9.x/fun-emoji/svg?seed={{ user_data.firstName }}{{ user_data.lastName }}&radius=50" alt="Avatar Preview">
+                            </div>
+                            <small class="text-muted d-block">Change your Name to update your Avatar!</small>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="firstName" class="form-label">FIRST NAME</label>
@@ -594,6 +634,28 @@
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('success')) {
                 console.log('Profile updated successfully');
+            }
+
+            // ADDED: Live Avatar Update Logic
+            // This updates the avatar in the modal as you type your name
+            const firstNameInput = document.getElementById('firstName');
+            const lastNameInput = document.getElementById('lastName');
+            const avatarPreview = document.getElementById('avatarPreview');
+
+            function updateAvatar() {
+                const fName = firstNameInput.value.trim();
+                const lName = lastNameInput.value.trim();
+                if(fName || lName) {
+                    // Using DiceBear API 'fun-emoji' style
+                    const seed = fName + lName;
+                    const newUrl = `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(seed)}&radius=50`;
+                    avatarPreview.src = newUrl;
+                }
+            }
+
+            if(firstNameInput && lastNameInput && avatarPreview) {
+                firstNameInput.addEventListener('input', updateAvatar);
+                lastNameInput.addEventListener('input', updateAvatar);
             }
         });
     </script>
