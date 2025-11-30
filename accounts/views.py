@@ -654,127 +654,98 @@ def remote(request):
         messages.error(request, "You need to log in first.")
         return redirect('login') 
 
-    # Fetch device statuses from Firestore
+    # --- 1. FETCH DATA ---
     devices = {}
     current_temperature = None
+    current_humidity = None
+    
     try:
-        # Fetch sensor data to get current temperature
-        sensor_data = database.child("sensors").get().val()
-        if isinstance(sensor_data, dict):
-            current_temperature = sensor_data.get('temperature')
+        # Fetch Realtime Database Data
+        all_data = database.get().val()
         
-        # Fetch Mist Maker status
-        mistmaker_ref = db.collection("devices").document("mistmaker")
-        mistmaker_data = mistmaker_ref.get().to_dict()
-        devices["mistmaker"] = {
-            "active": mistmaker_data.get("active", False) if mistmaker_data else False
-        }
-
-        # Fetch Fan Heater status
-        fan_heater_ref = db.collection("devices").document("fan_heater")
-        fan_heater_data = fan_heater_ref.get().to_dict()
-        devices["fan_heater"] = {
-            "active": fan_heater_data.get("active", False) if fan_heater_data else False,
-            "temperature": fan_heater_data.get("temperature", None) if fan_heater_data else None
-        }
-
-        # Fetch Temperature Control status
-        temperature_ref = db.collection("devices").document("temperature")
-        temperature_data = temperature_ref.get().to_dict()
-        devices["temperature"] = {
-            "target": temperature_data.get("target", None) if temperature_data else None,
-            "mode": temperature_data.get("mode", "auto") if temperature_data else "auto"
-        }
-        
-        # AUTOMATIC FAN CONTROL LOGIC
-        # Only activate if mode is auto and temperature is available
-        if (devices["temperature"].get("mode") == "auto" and 
-            current_temperature is not None and 
-            fan_heater_data is not None):
+        # Parse Sensor Data
+        if all_data and "sensors" in all_data:
+            current_temperature = all_data["sensors"].get('temperature')
+            current_humidity = all_data["sensors"].get('humidity')
             
-            # Convert temperature to float for comparison
-            try:
-                temp_float = float(current_temperature)
-                
-                # If temperature is lower than 18°C, activate the fan
-                if temp_float < 18.0:
-                    if not fan_heater_data.get("active", False):
-                        fan_heater_ref.set({
-                            "active": True, 
-                            "temperature": 22.0,  # Set a reasonable target temperature
-                            "auto_activated": True  # Flag to indicate automatic activation
-                        }, merge=True)
-                        print(f"Fan automatically activated due to low temperature: {temp_float}°C")
-                
-                # Optional: Turn off fan if temperature rises above a certain threshold
-                elif temp_float > 22.0 and fan_heater_data.get("active", False):
-                    # Check if it was auto-activated to avoid turning off manual operations
-                    if fan_heater_data.get("auto_activated", False):
-                        fan_heater_ref.set({
-                            "active": False,
-                            "auto_activated": False
-                        }, merge=True)
-                        print(f"Fan automatically deactivated due to high temperature: {temp_float}°C")
-                        
-            except ValueError:
-                print(f"Invalid temperature value: {current_temperature}")
+        # Parse Device Data
+        devices_data = all_data.get("devices", {}) if all_data else {}
+        controls = devices_data.get("controls", {})
+        
+        # Get Current Settings
+        target_temp = float(controls.get("target_temp", 24.0))
+        mode = controls.get("mode", "auto")
+        
+        # Get Current Device States
+        mist_active = devices_data.get("mistmaker", {}).get("active", False)
+        fan_active = devices_data.get("fan_heater", {}).get("active", False)
+
+        devices = {
+            "mistmaker": {"active": mist_active},
+            "fan_heater": {"active": fan_active},
+            "temperature": {"target": target_temp, "mode": mode},
+            "controls": {"target_temp": target_temp, "mode": mode}
+        }
 
     except Exception as e:
-        messages.error(request, f"Error fetching device statuses: {str(e)}")
+        print(f"Error fetching data: {e}")
+        # Defaults
         devices = {
             "mistmaker": {"active": False},
-            "fan_heater": {"active": False, "temperature": None},
-            "temperature": {"target": None, "mode": "auto"}
+            "fan_heater": {"active": False},
+            "temperature": {"target": 24.0, "mode": "manual"}
         }
 
-    # Handle form submissions
+    # --- 2. HANDLE POST REQUESTS ---
     if request.method == "POST":
-        device = request.POST.get("device")
+        device_type = request.POST.get("device")
         action = request.POST.get("action")
 
         try:
-            if device == "mistmaker":
-                mistmaker_ref = db.collection("devices").document("mistmaker")
-                if action == "on":
-                    mistmaker_ref.set({"active": True}, merge=True)
-                    messages.success(request, "Mist Maker turned on.")
-                elif action == "off":
-                    mistmaker_ref.set({"active": False}, merge=True)
-                    messages.success(request, "Mist Maker turned off.")
+            # === MANUAL DEVICE CONTROL ===
+            if device_type == "mistmaker":
+                is_active = (action == "on")
+                # 1. Update the device state
+                database.child("devices").child("mistmaker").update({"active": is_active})
+                # 2. FORCE MANUAL MODE so Auto logic doesn't override this immediately
+                database.child("devices").child("controls").update({"mode": "manual"})
+                messages.success(request, f"Mist Maker turned {'ON' if is_active else 'OFF'} (Switched to Manual).")
 
-            elif device == "fan_heater":
-                fan_heater_ref = db.collection("devices").document("fan_heater")
-                if action == "on":
-                    temperature = float(request.POST.get("temperature", 0))
-                    fan_heater_ref.set({
-                        "active": True, 
-                        "temperature": temperature,
-                        "auto_activated": False  # Reset auto flag on manual activation
-                    }, merge=True)
-                    messages.success(request, f"Fan Heater turned on at {temperature}°C.")
-                elif action == "off":
-                    fan_heater_ref.set({
-                        "active": False,
-                        "auto_activated": False  # Reset auto flag
-                    }, merge=True)
-                    messages.success(request, "Fan Heater turned off.")
+            elif device_type == "fan_heater":
+                is_active = (action == "on")
+                # 1. Update the device state
+                database.child("devices").child("fan_heater").update({"active": is_active})
+                # 2. FORCE MANUAL MODE
+                database.child("devices").child("controls").update({"mode": "manual"})
+                messages.success(request, f"Exhaust Fans turned {'ON' if is_active else 'OFF'} (Switched to Manual).")
 
-            elif device == "temperature":
-                temperature_ref = db.collection("devices").document("temperature")
-                target_temperature = float(request.POST.get("temperature", 0))
-                mode = request.POST.get("mode", "auto")
-                temperature_ref.set({"target": target_temperature, "mode": mode}, merge=True)
-                messages.success(request, f"Temperature control updated to {target_temperature}°C in {mode} mode.")
+            # === SETTINGS CONTROL (Switching Modes) ===
+            elif device_type == "temperature":
+                new_temp = float(request.POST.get("temperature", 24.0))
+                new_mode = request.POST.get("mode", "auto") # Values: 'auto' or 'manual'
+                
+                # Update Settings
+                database.child("devices").child("controls").update({
+                    "target_temp": new_temp,
+                    "mode": new_mode,
+                    "min_humid": 85.0,
+                    "max_humid": 95.0
+                })
+                
+                if new_mode == "auto":
+                    messages.info(request, f"System set to AUTOMATIC (Target: {new_temp}°C).")
+                else:
+                    messages.info(request, "System set to MANUAL control.")
 
         except Exception as e:
-            messages.error(request, f"Error updating device: {str(e)}")
-
+            messages.error(request, f"Command failed: {str(e)}")
+        
         return redirect("remote")
 
-    # Pass current temperature to template for display
     return render(request, "accounts/remote.html", {
         "devices": devices,
-        "current_temperature": current_temperature
+        "current_temperature": current_temperature,
+        "current_humidity": current_humidity
     })
 
 def get_sensor_data(request):

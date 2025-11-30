@@ -634,11 +634,11 @@
             
             <div class="device-card">
                 <div class="card-header heater-header">
-                    <i class="fas fa-fan"></i> Fan Heater
+                    <i class="fas fa-wind"></i> Exhaust Fans
                 </div>
                 <div class="card-body text-center">
                     <div class="device-icon">
-                        <i class="fas fa-temperature-high"></i>
+                        <i class="fas fa-fan"></i>
                     </div>
                     <div class="device-status">
                         <span class="status-badge {{ devices.fan_heater.active|yesno:'status-active,status-inactive' }}">
@@ -652,13 +652,6 @@
                     <form method="post">
                         {% csrf_token %}
                         <input type="hidden" name="device" value="fan_heater">
-                        <div class="form-group mb-3">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-thermometer-half"></i></span>
-                                <input type="number" name="temperature" class="form-control" placeholder="Set Temperature">
-                                <span class="input-group-text">°C</span>
-                            </div>
-                        </div>
                         <div class="btn-group-control">
                             <button type="submit" name="action" value="on" class="btn btn-success">
                                 <i class="fas fa-power-off"></i> Turn On
@@ -682,7 +675,7 @@
                     <div class="target-display">
                         <p>Current Target</p>
                         <div class="target-value">
-                            {{ devices.temperature.target|default:"Not Set" }}°C
+                            {{ devices.temperature.target|default:"24" }}°C
                         </div>
                     </div>
                     <form method="post">
@@ -691,14 +684,14 @@
                         <div class="form-group mb-3">
                             <div class="input-group mb-3">
                                 <span class="input-group-text"><i class="fas fa-thermometer-half"></i></span>
-                                <input type="number" name="temperature" class="form-control" placeholder="Target Temperature">
+                                <input type="number" name="temperature" class="form-control" placeholder="Target Temperature" step="0.1" value="{{ devices.temperature.target }}">
                                 <span class="input-group-text">°C</span>
                             </div>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-gear"></i></span>
                                 <select name="mode" class="form-control">
-                                    <option value="auto">Automatic</option>
-                                    <option value="manual">Manual</option>
+                                    <option value="auto" {% if devices.temperature.mode == 'auto' %}selected{% endif %}>Automatic</option>
+                                    <option value="manual" {% if devices.temperature.mode == 'manual' %}selected{% endif %}>Manual</option>
                                 </select>
                             </div>
                         </div>
