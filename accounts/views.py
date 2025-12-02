@@ -749,72 +749,76 @@ def remote(request):
     })
 
 def get_sensor_data(request):
-    # 1. Authorization Check
     if 'user' not in request.session:
         return JsonResponse({'error': 'unauthorized'}, status=401)
 
     try:
-        # 2. Fetch Data using the renamed module
-        # Note: We use 'realtime_db', NOT just 'db'
-        ref = realtime_db.reference("historical_data") 
-        snapshot = ref.get()
+        current_ts = int(time.time())
 
-        print("--- DEBUGGING FIREBASE DATA ---")
-        print(f"Raw Data from Firebase: {snapshot}")
+        # 1. Fetch live sensor data
+        live_ref = realtime_db.reference("sensors")
+        live_data = live_ref.get()
 
-        if not snapshot:
-            return JsonResponse({'sensor_data': []})
+        # ⬇ AUTOMATIC HISTORY SAVING HERE ⬇
+        if live_data:
+            last_save_ref = realtime_db.reference("historical_data")
+            last = last_save_ref.order_by_child("timestamp").limit_to_last(1).get()
 
+            should_save = False
+
+            if not last:
+                should_save = True
+            else:
+                for key, item in last.items():
+                    last_ts = int(item.get("timestamp", 0))
+                    # Save every 5 minutes
+                    if current_ts - last_ts >= 300:
+                        should_save = True
+
+            if should_save:
+                entry = {
+                    "temperature": float(live_data.get("temperature", 0)),
+                    "humidity": float(live_data.get("humidity", 0)),
+                    "timestamp": current_ts
+                }
+                last_save_ref.child(str(current_ts)).set(entry)
+                print("Saved historical:", entry)
+
+        # 2. Format output for dashboard
         formatted_data = []
+        ref = realtime_db.reference("historical_data")
+        snapshot = ref.order_by_child("timestamp").limit_to_last(20).get()
 
-        # 3. Handle Data (List vs Dict)
-        if isinstance(snapshot, list):
-            iterable = enumerate(filter(None, snapshot))
-        else:
-            iterable = snapshot.items()
-
-        # 4. Extract Data
-        for key, val in iterable:
-            if not isinstance(val, dict):
-                continue
-
-            try:
-                # Safely get values
-                temp = float(val.get('temperature', 0))
-                humid = float(val.get('humidity', 0))
-                
-                # Get timestamp safely
-                ts = val.get('timestamp')
-                if not ts:
-                    # If timestamp missing, try using the Key (if it's a timestamp)
-                    # or default to 0
-                    try:
-                        ts = float(key)
-                    except:
-                        ts = 0
-                else:
-                    ts = float(ts)
-
+        if snapshot:
+            for key, val in snapshot.items():
+                ts = val.get("timestamp", 0)
                 formatted_data.append({
                     "timestamp": ts,
                     "date_str": datetime.fromtimestamp(ts).strftime('%H:%M:%S'),
-                    "temperature": temp,
-                    "humidity": humid,
+                    "temperature": val.get("temperature", 0),
+                    "humidity": val.get("humidity", 0),
                 })
-            except Exception as e:
-                print(f"Skipping bad row: {e}")
-                continue
 
-        # 5. Sort Newest -> Oldest
-        formatted_data.sort(key=lambda x: x['timestamp'], reverse=True)
+        # Add live reading on top
+        if live_data:
+            formatted_data.append({
+                "timestamp": current_ts,
+                "date_str": datetime.fromtimestamp(current_ts).strftime('%H:%M:%S'),
+                "temperature": float(live_data.get("temperature", 0)),
+                "humidity": float(live_data.get("humidity", 0)),
+                "is_live": True
+            })
 
-        return JsonResponse({'sensor_data': formatted_data})
+        formatted_data.sort(key=lambda x: x["timestamp"], reverse=True)
+
+        return JsonResponse({"sensor_data": formatted_data})
 
     except Exception as e:
-        print(f"CRITICAL ERROR: {e}")
-        return JsonResponse({'error': str(e)}, status=500)
+        print("Error:", e)
+        return JsonResponse({"error": str(e)}, status=500)
 
 
+    
 def update_control_settings(request):
     if 'user' not in request.session:
         messages.error(request, "You need to log in first.")

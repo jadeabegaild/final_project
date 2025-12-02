@@ -115,7 +115,7 @@
         ) !important;
         box-shadow: var(--shadow-md);
         padding: 0.5rem 1rem;
-        
+
         /* CHANGED: Sticky positioning */
         position: sticky;
         top: 0;
@@ -838,16 +838,6 @@
       <div class="chart-container">
         <div class="chart-header">
           <h2 class="chart-title">
-            <i class="fas fa-thermometer-half"></i> Sensor Data: Temperature &
-            Humidity Trend
-          </h2>
-        </div>
-        <canvas id="sensorDataChart"></canvas>
-      </div>
-
-      <div class="chart-container">
-        <div class="chart-header">
-          <h2 class="chart-title">
             <i class="fas fa-chart-area"></i> Oyster Mushroom Harvest Trend
           </h2>
           <div class="chart-actions"></div>
@@ -923,10 +913,10 @@
     <script>
       // Initialize variables
       let harvestChart = null;
-      let sensorDataChart = null;
+      let sensorDataChart = null; // We keep this null
       let bagStatusChart = null;
       let bagTypeChart = null;
-      let scanHealthChart = null; // NEW: Health chart variable
+      let scanHealthChart = null; 
 
       function initializeCharts() {
         // Harvest Chart
@@ -957,47 +947,17 @@
           },
         });
 
-        // Sensor Chart
-        let sensorCtx = document
-          .getElementById("sensorDataChart")
-          .getContext("2d");
+        /* REMOVED SENSOR CHART INITIALIZATION 
+           (Code commented out to prevent errors since the HTML canvas is gone)
+        */
+        /*
+        let sensorCtx = document.getElementById("sensorDataChart").getContext("2d");
         sensorDataChart = new Chart(sensorCtx, {
           type: "line",
-          data: {
-            labels: [],
-            datasets: [
-              {
-                label: "Temperature (°C)",
-                data: [],
-                borderColor: "#dc3545",
-                backgroundColor: "rgba(220, 53, 69, 0.1)",
-                yAxisID: "yTemp",
-                fill: true,
-              },
-              {
-                label: "Humidity (%)",
-                data: [],
-                borderColor: "#007bff",
-                backgroundColor: "rgba(0, 123, 255, 0.1)",
-                yAxisID: "yHumidity",
-                fill: true,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              yTemp: { type: "linear", position: "left", beginAtZero: true },
-              yHumidity: {
-                type: "linear",
-                position: "right",
-                beginAtZero: true,
-                grid: { drawOnChartArea: false },
-              },
-            },
-          },
+          data: { ... },
+          options: { ... },
         });
+        */
 
         // Bag Status Chart
         let bagStatusCtx = document
@@ -1234,7 +1194,7 @@
         fetch("{% url 'get_sensor_data' %}")
           .then((res) => res.json())
           .then((data) => {
-            // LOG THE DATA TO BROWSER CONSOLE (Press F12 to see)
+            // Debug: Check what the backend is actually sending
             console.log("Received Sensor Data:", data);
 
             if (data.error) {
@@ -1242,39 +1202,45 @@
               return;
             }
 
+            // Check if array is empty
             if (!data.sensor_data || data.sensor_data.length === 0) {
-              console.warn("Database is empty or path is wrong.");
+              console.warn("No sensor data available.");
               document.getElementById("temperature").innerText = "--";
               document.getElementById("humidity").innerText = "--";
               return;
             }
 
-            // --- 1. UPDATE CARDS (Latest Data is at index 0) ---
+            // --- 1. UPDATE CARDS (Corrected: Index 0 for Newest) ---
             const latest = data.sensor_data[0];
 
-            document.getElementById(
-              "temperature"
-            ).innerHTML = `${latest.temperature.toFixed(
-              1
-            )}<span class="stat-unit">°C</span>`;
+            // Safety check: ensure 'latest' exists and has properties
+            if (latest) {
+              document.getElementById(
+                "temperature"
+              ).innerHTML = `${latest.temperature.toFixed(
+                1
+              )}<span class="stat-unit">°C</span>`;
 
-            document.getElementById(
-              "humidity"
-            ).innerHTML = `${latest.humidity.toFixed(
-              1
-            )}<span class="stat-unit">%</span>`;
+              document.getElementById(
+                "humidity"
+              ).innerHTML = `${latest.humidity.toFixed(
+                1
+              )}<span class="stat-unit">%</span>`;
+            }
 
-            // --- 2. UPDATE CHART (Needs Oldest -> Newest) ---
+            /* --- 2. UPDATE CHART REMOVED --- 
+               Logic commented out since chart is removed from HTML
+            */
+            /*
             if (sensorDataChart) {
-              // Clone the array and reverse it so graph draws Left to Right
+              // Python sends [Newest, ..., Oldest]
+              // Chart needs [Oldest, ..., Newest] to draw left-to-right
               let history = [...data.sensor_data].reverse();
 
-              // Optional: Show only last 20 readings to keep chart clean
               if (history.length > 20) {
                 history = history.slice(history.length - 20);
               }
 
-              // Map data using the pre-formatted string from Python
               sensorDataChart.data.labels = history.map((d) => d.date_str);
               sensorDataChart.data.datasets[0].data = history.map(
                 (d) => d.temperature
@@ -1285,9 +1251,11 @@
 
               sensorDataChart.update();
             }
+            */
           })
           .catch((err) => console.error("Fetch Logic Error:", err));
       }
+
       // Initialize
       document.addEventListener("DOMContentLoaded", function () {
         initializeCharts();
