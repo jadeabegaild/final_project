@@ -15,7 +15,7 @@
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
 
@@ -55,7 +55,154 @@
         position: relative; /* For z-index context */
       }
 
-      /* --- NEW BACKGROUND ANIMATION STYLES --- */
+      /* --- NEW HEADER CONTAINER STYLES --- */
+      .hero-container {
+        max-width: 1400px;
+        margin: 1.5rem auto 0 auto;
+        padding: 0 1rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-banner {
+        /* Green gradient complementing the accent color */
+        background: linear-gradient(135deg, var(--accent) 0%, #2e8b57 100%); 
+        border-radius: var(--radius);
+        padding: 3rem 2rem;
+        color: white;
+        text-align: center;
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-banner h1 {
+        font-weight: 800;
+        font-size: 3.5rem;
+        letter-spacing: 2px;
+        margin: 0;
+        text-transform: uppercase;
+        text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-banner p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        font-weight: 400;
+        margin-top: 5px;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Decorative background leaf in the banner */
+      .hero-banner::after {
+        content: '\f06c'; /* FontAwesome Leaf */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        right: -30px;
+        bottom: -50px;
+        font-size: 18rem;
+        opacity: 0.15;
+        color: white;
+        transform: rotate(-25deg);
+        z-index: 1;
+      }
+
+      .hero-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at top left, rgba(255,255,255,0.1), transparent 60%);
+        z-index: 1;
+      }
+
+      @media (max-width: 768px) {
+        .hero-banner h1 { font-size: 2.2rem; }
+        .hero-banner { padding: 2rem 1rem; }
+      }
+      /* ----------------------------------- */
+
+      /* --- WELCOME ANIMATION STYLES --- */
+      #welcome-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--dark), var(--accent));
+        z-index: 9999; /* Must be higher than navbar (1000) and chatbot (1001) */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+      }
+
+      .welcome-content {
+        text-align: center;
+        color: var(--light);
+      }
+
+      .welcome-text {
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+        font-weight: 400;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: textSlideUp 1s ease-out forwards;
+      }
+
+      .welcome-brand {
+        font-size: 4rem;
+        font-weight: 800;
+        color: var(--primary);
+        text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        opacity: 0;
+        transform: translateY(30px);
+        animation: textSlideUp 1s ease-out 0.5s forwards; /* 0.5s delay */
+        margin-top: 10px;
+      }
+
+      .welcome-icon {
+        font-size: 3rem;
+        color: var(--highlight);
+        margin-bottom: 20px;
+        opacity: 0;
+        animation: fadeIn 1s ease-out 0.2s forwards;
+      }
+
+      @keyframes textSlideUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        to { opacity: 1; }
+      }
+
+      .fade-out-overlay {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      /* Responsive adjustments for welcome screen */
+      @media (max-width: 768px) {
+        .welcome-text { font-size: 1rem; }
+        .welcome-brand { font-size: 2.5rem; }
+      }
+      /* ------------------------------------ */
+
+
+      /* --- EXISTING BACKGROUND ANIMATION STYLES --- */
       .background-shapes {
         position: fixed;
         top: 0;
@@ -200,7 +347,7 @@
 
       /* Dashboard Layout */
       .dashboard-container {
-        padding: 2rem 1rem;
+        padding: 1rem 1rem 2rem 1rem; /* Adjusted top padding */
         max-width: 1400px;
         margin: 0 auto;
         position: relative;
@@ -643,6 +790,14 @@
     </style>
   </head>
   <body>
+    <div id="welcome-overlay">
+        <div class="welcome-content">
+            <i class="fas fa-seedling welcome-icon"></i>
+            <div class="welcome-text">WELCOME TO</div>
+            <div class="welcome-brand">SMARTSHROOM</div>
+        </div>
+    </div>
+
     <div class="background-shapes">
       <i
         class="fas fa-leaf shape drift-medium"
@@ -728,6 +883,13 @@
         </div>
       </div>
     </nav>
+
+    <div class="hero-container">
+        <div class="hero-banner">
+            <h1>SMARTSHROOM</h1>
+            <p>Integrated Mushroom Farming System</p>
+        </div>
+    </div>
 
     <div class="dashboard-container">
       <div class="stats-grid">
@@ -838,6 +1000,15 @@
       <div class="chart-container">
         <div class="chart-header">
           <h2 class="chart-title">
+            <i class="fas fa-thermometer-three-quarters"></i> Environmental Trends (Historical)
+          </h2>
+        </div>
+        <canvas id="historicalSensorChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <h2 class="chart-title">
             <i class="fas fa-chart-area"></i> Oyster Mushroom Harvest Trend
           </h2>
           <div class="chart-actions"></div>
@@ -913,7 +1084,7 @@
     <script>
       // Initialize variables
       let harvestChart = null;
-      let sensorDataChart = null; // We keep this null
+      let historicalSensorChart = null; 
       let bagStatusChart = null;
       let bagTypeChart = null;
       let scanHealthChart = null; 
@@ -947,17 +1118,61 @@
           },
         });
 
-        /* REMOVED SENSOR CHART INITIALIZATION 
-           (Code commented out to prevent errors since the HTML canvas is gone)
-        */
-        /*
-        let sensorCtx = document.getElementById("sensorDataChart").getContext("2d");
-        sensorDataChart = new Chart(sensorCtx, {
+        // Historical Sensor Data Chart Initialization
+        let histCtx = document.getElementById("historicalSensorChart").getContext("2d");
+        historicalSensorChart = new Chart(histCtx, {
           type: "line",
-          data: { ... },
-          options: { ... },
+          data: {
+            labels: [], 
+            datasets: [
+              {
+                label: "Temperature (°C)",
+                data: [],
+                borderColor: "#dc3545", // Red/Warm color
+                backgroundColor: "rgba(220, 53, 69, 0.1)",
+                tension: 0.3,
+                borderWidth: 2,
+                pointRadius: 2,
+                yAxisID: 'y', // Left axis
+              },
+              {
+                label: "Humidity (%)",
+                data: [],
+                borderColor: "#0dcaf0", // Blue/Cool color
+                backgroundColor: "rgba(13, 202, 240, 0.1)",
+                tension: 0.3,
+                borderWidth: 2,
+                pointRadius: 2,
+                yAxisID: 'y1', // Right axis
+              }
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            scales: {
+              y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                title: { display: true, text: 'Temperature (°C)' }
+              },
+              y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                title: { display: true, text: 'Humidity (%)' },
+                grid: {
+                  drawOnChartArea: false, 
+                },
+              },
+            },
+          },
         });
-        */
 
         // Bag Status Chart
         let bagStatusCtx = document
@@ -1026,7 +1241,7 @@
         });
       }
 
-      // NEW: Fetch Scan Dashboard Data
+      // Fetch Scan Dashboard Data
       function fetchScanDashboardData() {
         console.log("Fetching scan analytics...");
 
@@ -1112,7 +1327,7 @@
           .catch((error) => console.error("Error loading scan data:", error));
       }
 
-      // UPDATED: Logic to update Total Bags card
+      // Logic to update Total Bags card
       function fetchBagData() {
         fetch("{% url 'get_bag_data' %}")
           .then((response) => response.json())
@@ -1194,9 +1409,6 @@
         fetch("{% url 'get_sensor_data' %}")
           .then((res) => res.json())
           .then((data) => {
-            // Debug: Check what the backend is actually sending
-            console.log("Received Sensor Data:", data);
-
             if (data.error) {
               console.error("Server Error:", data.error);
               return;
@@ -1210,10 +1422,9 @@
               return;
             }
 
-            // --- 1. UPDATE CARDS (Corrected: Index 0 for Newest) ---
+            // --- 1. UPDATE CARDS ---
             const latest = data.sensor_data[0];
 
-            // Safety check: ensure 'latest' exists and has properties
             if (latest) {
               document.getElementById(
                 "temperature"
@@ -1228,50 +1439,55 @@
               )}<span class="stat-unit">%</span>`;
             }
 
-            /* --- 2. UPDATE CHART REMOVED --- 
-               Logic commented out since chart is removed from HTML
-            */
-            /*
-            if (sensorDataChart) {
-              // Python sends [Newest, ..., Oldest]
-              // Chart needs [Oldest, ..., Newest] to draw left-to-right
-              let history = [...data.sensor_data].reverse();
-
+            // --- 2. UPDATE CHART FOR HISTORICAL DATA ---
+            if (historicalSensorChart) {
+              let history = [...data.sensor_data];
               if (history.length > 20) {
-                history = history.slice(history.length - 20);
+                 history = history.slice(0, 20); // Take newest 20
               }
+              history.reverse(); // Now it is Oldest -> Newest
 
-              sensorDataChart.data.labels = history.map((d) => d.date_str);
-              sensorDataChart.data.datasets[0].data = history.map(
+              // Map data to chart
+              historicalSensorChart.data.labels = history.map((d) => d.date_str || d.timestamp || ''); 
+              historicalSensorChart.data.datasets[0].data = history.map(
                 (d) => d.temperature
               );
-              sensorDataChart.data.datasets[1].data = history.map(
+              historicalSensorChart.data.datasets[1].data = history.map(
                 (d) => d.humidity
               );
 
-              sensorDataChart.update();
+              historicalSensorChart.update();
             }
-            */
           })
           .catch((err) => console.error("Fetch Logic Error:", err));
       }
 
       // Initialize
       document.addEventListener("DOMContentLoaded", function () {
+        
+        // --- ANIMATION LOGIC: REMOVE OVERLAY AFTER 3 SECONDS ---
+        setTimeout(() => {
+            const overlay = document.getElementById('welcome-overlay');
+            if (overlay) {
+                overlay.classList.add('fade-out-overlay');
+            }
+        }, 3000); // 3 seconds display time
+        // --------------------------------------------------------
+
         initializeCharts();
         fetchHarvestData();
         fetchSensorData();
         fetchBagData();
-        fetchScanDashboardData(); // NEW: Initial fetch
+        fetchScanDashboardData(); 
 
         // Refresh Intervals
         setInterval(fetchHarvestData, 30000);
         setInterval(fetchSensorData, 10000);
         setInterval(fetchBagData, 30000);
-        setInterval(fetchScanDashboardData, 30000); // NEW: Refresh every 30s
+        setInterval(fetchScanDashboardData, 30000); 
       });
 
-      /* --- CHATBOT LOGIC (MOCK API) --- */
+      /* --- CHATBOT LOGIC --- */
       function toggleChat() {
         document.getElementById("chatWindow").classList.toggle("active");
       }
@@ -1308,7 +1524,6 @@
         chatBody.scrollTop = chatBody.scrollHeight;
       }
 
-      // SIMULATED API LOGIC FOR MUSHROOM FARMING (English & Tagalog)
       function getBotResponse(input) {
         input = input.toLowerCase();
 
