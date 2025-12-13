@@ -12,6 +12,7 @@
     
     <style>
         :root {
+            /* --- GLOBAL VARIABLES --- */
             --primary: #D6C1B1;
             --primary-dark: #c0ab9b;
             --secondary: #8B786D;
@@ -25,6 +26,10 @@
             --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
             --radius: 16px;
             --transition: all 0.3s ease;
+            
+            /* Sidebar Variables */
+            --sidebar-width: 280px; 
+            --sidebar-collapsed-width: 80px;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,142 +42,301 @@
             position: relative;
         }
 
-        .background-shapes {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
+        /* --- LAYOUT CONTAINER STYLES --- */
+        .layout-container {
+            display: flex;
+            min-height: 100vh;
         }
 
+        /* --- SIDEBAR STYLES --- */
+        #sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            left: 0;
+            background: linear-gradient(
+                180deg,
+                var(--accent) 0%,
+                var(--dark) 100%
+            ) !important;
+            color: white;
+            padding: 0;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            overflow-y: auto;
+            transition: width 0.3s ease, min-width 0.3s ease;
+            transform: translateX(0);
+            border-right: 2px solid rgba(255, 255, 255, 0.1); 
+            overflow-x: hidden;
+        }
+
+        #sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+            min-width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+            overflow: hidden; 
+        }
+
+        #sidebar.collapsed .sidebar-header {
+            justify-content: center;
+            padding: 1.5rem 0;
+        }
+
+        .burger-icon {
+            cursor: pointer;
+            font-size: 1.4rem;
+            color: var(--light);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 30px;
+        }
+
+        .burger-icon:hover { color: var(--primary); }
+
+        .sidebar-brand {
+            color: var(--light) !important;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-size: 1.3rem; 
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: opacity 0.2s ease;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .sidebar-brand i {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-right: 8px;
+            transition: var(--transition);
+        }
+        
+        .sidebar-brand:hover i { transform: rotate(-15deg); }
+
+        #sidebar.collapsed .sidebar-brand { display: none; }
+
+        .sidebar-nav .nav-item { margin: 0; }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+            transition: var(--transition);
+            position: relative;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        #sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 0.75rem 0;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            color: var(--primary) !important;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-nav .nav-link.active {
+            color: var(--primary) !important;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .sidebar-nav .nav-link i {
+            margin-right: 0;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        #sidebar.collapsed .nav-link span,
+        #sidebar.collapsed .dropdown-item span,
+        #sidebar.collapsed .dropdown-toggle::after {
+            display: none;
+        }
+
+        .sidebar-nav .dropdown-item {
+            padding: 0.5rem 1.5rem 0.5rem 3.5rem;
+            transition: var(--transition);
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-weight: 400;
+            background: transparent;
+            font-size: 0.95rem;
+            border-left: 4px solid transparent;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        #sidebar.collapsed .dropdown-item {
+            padding: 0.5rem 1rem;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+        }
+
+        #sidebar.collapsed .dropdown-item i { margin: 0; }
+
+        .sidebar-nav .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary) !important;
+            border-left: 4px solid var(--primary-dark);
+        }
+        
+        .sidebar-nav .dropdown-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary) !important;
+            border-left: 4px solid var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-nav .dropdown-menu {
+            position: static !important;
+            transform: none !important;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-nav .dropdown-toggle::after {
+            float: right;
+            margin-top: 0.5em;
+            margin-left: auto;
+        }
+        
+        .sidebar-nav .dropdown-toggle[aria-expanded="true"] {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- MAIN CONTENT WRAPPER --- */
+        .content-wrapper {
+            flex-grow: 1;
+            padding: 0; 
+            min-width: 0;
+            transition: margin 0.3s ease;
+        }
+
+        /* --- MOBILE HEADER --- */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%);
+            z-index: 1001;
+            align-items: center;
+            padding: 0 1rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .mobile-toggle {
+            color: white;
+            font-size: 1.4rem;
+            cursor: pointer;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .mobile-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .mobile-brand i { color: var(--primary); font-size: 1.5rem; }
+
+        .sidebar-toggle { display: none; }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            #sidebar {
+                position: fixed; left: 0; top: 0; height: 100%;
+                transform: translateX(-100%); transition: transform 0.3s ease;
+                box-shadow: var(--shadow-lg); border-right: none; width: var(--sidebar-width);
+                z-index: 1002;
+            }
+            
+            #sidebar.collapsed { width: var(--sidebar-width); min-width: var(--sidebar-width); }
+            #sidebar.collapsed .sidebar-brand,
+            #sidebar.collapsed .nav-link span,
+            #sidebar.collapsed .dropdown-toggle::after {
+                display: flex; opacity: 1;
+            }
+
+            #sidebar.active { transform: translateX(0); }
+            
+            .burger-icon { display: none; }
+            .sidebar-header { justify-content: center; }
+            .mobile-header { display: flex; }
+            .content-wrapper { margin-top: 60px; }
+        }
+
+        /* --- BACKGROUND ANIMATION --- */
+        .background-shapes {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; pointer-events: none;
+        }
         .shape { position: absolute; opacity: 0.05; color: var(--accent); }
         .drift-slow { animation: drift 35s ease-in-out infinite alternate; }
         .drift-medium { animation: drift 25s ease-in-out infinite alternate; }
         .drift-fast { animation: drift 18s ease-in-out infinite alternate; }
         .drift-reverse { animation: drift-rev 30s ease-in-out infinite alternate; }
-
-        @keyframes drift {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(50px, -30px) rotate(10deg); }
-        }
-
-        @keyframes drift-rev {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-40px, 40px) rotate(-10deg); }
-        }
+        @keyframes drift { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(50px, -30px) rotate(10deg); } }
+        @keyframes drift-rev { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(-40px, 40px) rotate(-10deg); } }
         
-        /* Navbar - UPDATED FOR STICKY HEADER */
-        .navbar {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%) !important;
-            box-shadow: var(--shadow-md);
-            padding: 0.5rem 1rem;
-            
-            /* CHANGED: Sticky positioning */
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            width: 100%;
-        }
-        
-        .navbar-brand {
-            color: var(--light) !important;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            font-size: 1.4rem;
-        }
-        
-        .navbar-brand i {
-            color: var(--primary);
-            font-size: 1.8rem;
-            margin-right: 10px;
-            transition: var(--transition);
-        }
-        
-        .navbar-brand:hover i { transform: rotate(-15deg); }
-        
-        .nav-link {
-            color: rgba(255, 255, 255, 0.85) !important;
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            transition: var(--transition);
-            position: relative;
-            border-radius: var(--radius);
-            margin: 0 0.2rem;
-        }
-        
-        .nav-link:hover {
-            color: var(--primary) !important;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .nav-link.active {
-            color: var(--primary) !important;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .dropdown-menu {
-            border-radius: var(--radius);
-            border: none;
-            box-shadow: var(--shadow-md);
-            background: white;
-            overflow: hidden;
-        }
-        
-        .dropdown-item {
-            padding: 0.7rem 1.2rem;
-            transition: var(--transition);
-            color: var(--dark);
-            font-weight: 500;
-        }
-        
-        .dropdown-item:hover {
-            background: var(--highlight);
-            color: var(--dark);
-        }
-        
-        /* Main content */
+        /* --- PROFILE SPECIFIC STYLES --- */
         .profile-container {
-            padding: 2rem 1rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1; 
+            padding: 2rem 1.5rem; max-width: 1200px; margin: 0 auto;
+            position: relative; z-index: 1; 
         }
-        
-        /* Profile CSS continues... */
         .profile-header {
             display: flex; flex-direction: column; align-items: center;
             margin-bottom: 3rem; background: white; padding: 2.5rem;
             border-radius: var(--radius); box-shadow: var(--shadow-sm); text-align: center;
         }
-        
         .profile-avatar {
             width: 140px; height: 140px; border-radius: 50%;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             display: flex; align-items: center; justify-content: center;
             border: 5px solid var(--highlight); box-shadow: var(--shadow-md); margin-bottom: 1.5rem;
-            overflow: hidden; /* Ensure image stays in circle */
-            position: relative;
+            overflow: hidden; position: relative;
         }
-        
-        /* New CSS for Avatar Image */
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        
-        .profile-avatar:hover img {
-            transform: scale(1.1);
-        }
-
-        /* .profile-avatar i { font-size: 3.5rem; color: white; }  <-- Removed for API image */
-        
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+        .profile-avatar:hover img { transform: scale(1.1); }
         .profile-name { color: var(--dark); font-weight: 700; font-size: 2.2rem; margin-bottom: 0.5rem; }
         .profile-title { color: var(--accent); font-weight: 600; margin-bottom: 1.5rem; font-size: 1.1rem; }
         
@@ -182,78 +346,62 @@
             padding: 0.8rem 1.8rem; font-weight: 600; transition: var(--transition);
             display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: var(--shadow-sm);
         }
-        
         .edit-btn:hover {
             background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
             transform: translateY(-2px); box-shadow: var(--shadow-md); color: white;
         }
-        
         .profile-section {
             margin-bottom: 2.5rem; background: white; padding: 2rem;
             border-radius: var(--radius); box-shadow: var(--shadow-sm);
         }
-        
         .section-title {
             color: var(--dark); font-weight: 700; margin-bottom: 1.5rem;
             padding-bottom: 0.8rem; border-bottom: 2px solid var(--highlight);
             display: flex; align-items: center;
         }
-        
         .section-title i { color: var(--accent); margin-right: 10px; font-size: 1.2rem; }
-        
         .info-card {
             background: var(--light); border-radius: var(--radius); padding: 1.5rem;
             margin-bottom: 1.2rem; box-shadow: var(--shadow-sm); transition: var(--transition);
         }
-        
         .info-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
         .info-label { font-weight: 600; font-size: 0.85rem; color: var(--secondary); margin-bottom: 0.5rem; text-transform: uppercase; }
         .info-value { font-size: 1rem; color: var(--dark); margin-bottom: 0; }
-        
         .text-success { color: var(--accent) !important; font-weight: 600; }
         .text-secondary { color: var(--secondary) !important; }
-        
         .bio-text {
             color: var(--dark); line-height: 1.6; white-space: pre-line;
             padding: 1rem; background: var(--light); border-radius: var(--radius);
             border-left: 4px solid var(--accent);
         }
         
-        /* Modal specific styles */
+        /* Modal & Form Styles */
         .modal-content { border-radius: var(--radius); border: none; box-shadow: var(--shadow-lg); }
         .modal-header { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color: white; border-bottom: none; padding: 1.5rem; }
         .modal-body { padding: 1.5rem; }
         .modal-footer { border-top: 1px solid color-mix(in srgb, var(--primary) 20%, transparent); padding: 1.5rem; }
         .btn-close { filter: brightness(0) invert(1); }
-        
         .input-group {
             margin-bottom: 1.2rem; border-radius: var(--radius); overflow: hidden;
             box-shadow: var(--shadow-sm); transition: var(--transition); border: 1px solid transparent;
         }
-        
         .input-group:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
         .input-group-text { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color: white; border: none; padding: 0.8rem 1rem; min-width: 45px; display: flex; justify-content: center; }
         .form-control, .form-select { border: none; padding: 0.8rem 1rem; font-size: 0.95rem; background-color: white; transition: var(--transition); color: var(--dark); }
         .form-control:focus, .form-select:focus { box-shadow: none; background-color: #fafafa; }
         .form-control:read-only { background-color: color-mix(in srgb, var(--light) 50%, white); }
-        .form-check-input:checked { background-color: var(--accent); border-color: var(--accent); }
         .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); border: none; border-radius: var(--radius); padding: 0.8rem 1.8rem; font-weight: 600; box-shadow: var(--shadow-sm); }
         .btn-secondary { background: linear-gradient(135deg, var(--secondary) 0%, #9c8a7f 100%); border: none; border-radius: var(--radius); padding: 0.8rem 1.8rem; font-weight: 600; color: white; }
-
-        /* Preview Avatar in Modal */
         .modal-avatar-preview {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 0 auto 1.5rem auto;
-            border: 4px solid var(--accent);
-            overflow: hidden;
-            background: var(--light);
+            width: 100px; height: 100px; border-radius: 50%;
+            margin: 0 auto 1.5rem auto; border: 4px solid var(--accent);
+            overflow: hidden; background: var(--light);
         }
-        .modal-avatar-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .modal-avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- TOAST NOTIFICATIONS (Added) --- */
+        .toast-container {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
         }
     </style>
 </head>
@@ -266,185 +414,248 @@
         <i class="fas fa-briefcase shape drift-medium" style="top: 50%; left: 50%; font-size: 120px; opacity: 0.03;"></i>
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="fas fa-seedling"></i>SMARTSHROOM</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto"> 
-                    <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'report' %}"><i class="fas fa-file-alt"></i> Report</a></li>
-                    <li class="nav-item"><a class="nav-link " href="{% url 'scan' %}"><i class="fas fa-qrcode"></i> Scan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'remote' %}"><i class="fas fa-wifi"></i> Remote</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i> 
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item active" href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+    <div class="toast-container">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="toast align-items-center text-white bg-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
             </div>
-        </div>
-    </nav>
+            {% endfor %}
+        {% endif %}
+    </div>
 
-    <div class="profile-container">
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed={{ user_data.firstName }}{{ user_data.lastName }}&radius=50" alt="Cartoon Avatar">
+    <div class="layout-container">
+        <div class="mobile-header">
+            <div class="mobile-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
             </div>
-            <h1 class="profile-name">{{ user_data.firstName }} {{ user_data.lastName }}</h1>
-            <p class="profile-title">{{ user_data.jobTitle }}</p>
-            <button type="button" class="btn edit-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                <i class="fas fa-edit"></i> Edit Profile
-            </button>
-        </div>
-        
-        <div class="profile-section">
-            <h3 class="section-title"><i class="fas fa-user"></i> Personal Information</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <div class="info-label">Email</div>
-                        <p class="info-value">{{ user_data.email }}</p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <div class="info-label">Phone Number</div>
-                        <p class="info-value">{{ user_data.phone|default:"Not provided" }}</p>
-                    </div>
-                </div>
+            <div class="mobile-brand">
+                <i class="fas fa-seedling"></i> SMARTSHROOM
             </div>
         </div>
-        
-        <div class="profile-section">
-            <h3 class="section-title"><i class="fas fa-briefcase"></i> Professional Information</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <div class="info-label">Organization</div>
-                        <p class="info-value">{{ user_data.organization|default:"Not provided" }}</p>
-                    </div>
+
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <div class="burger-icon" onclick="collapseSidebar()">
+                    <i class="fas fa-bars"></i>
                 </div>
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <div class="info-label">Department</div>
-                        <p class="info-value">{{ user_data.department|default:"Not provided" }}</p>
-                    </div>
-                </div>
+                
+                <a class="sidebar-brand" href="#">
+                  <i class="fas fa-seedling"></i><span>SMARTSHROOM</span>
+                </a>
             </div>
-            <div class="row">
-                <div class="col-md-6">
+            
+            <ul class="nav flex-column sidebar-nav" id="sidebarNav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">
+                        <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#reportSubmenu" role="button" data-bs-toggle="collapse" aria-expanded="false">
+                    <i class="fas fa-file-alt"></i> <span>Report</span>
+                  </a>
+                  <div class="collapse dropdown-menu" id="reportSubmenu" data-bs-parent="#sidebarNav">
+                    <a class="dropdown-item" href="{% url 'report' %}">
+                        <i class="fas fa-table"></i> <span>View Data</span>
+                    </a>
+                    <a class="dropdown-item" href="{% url 'report' %}">
+                        <i class="fas fa-print"></i> <span>Print Report</span>
+                    </a>
+                  </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'scan' %}">
+                        <i class="fas fa-qrcode"></i> <span>Scan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'remote' %}">
+                        <i class="fas fa-wifi"></i> <span>Remote</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle active" href="#userSubmenu" role="button" data-bs-toggle="collapse" aria-expanded="true">
+                    <i class="fas fa-user-circle"></i> <span>Account</span>
+                  </a>
+                  <div class="collapse dropdown-menu show" id="userSubmenu" data-bs-parent="#sidebarNav">
+                    <a class="dropdown-item active" href="{% url 'profile' %}">
+                        <i class="fas fa-user"></i> <span>Profile</span>
+                    </a>
+                    <a class="dropdown-item" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                    </a>
+                  </div>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="content-wrapper">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed={{ user_data.firstName }}{{ user_data.lastName }}&radius=50" alt="Cartoon Avatar">
+                    </div>
+                    <h1 class="profile-name">{{ user_data.firstName }} {{ user_data.lastName }}</h1>
+                    <p class="profile-title">{{ user_data.jobTitle }}</p>
+                    <button type="button" class="btn edit-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                </div>
+                
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="fas fa-user"></i> Personal Information</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-label">Email</div>
+                                <p class="info-value">{{ user_data.email }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-label">Phone Number</div>
+                                <p class="info-value">{{ user_data.phone|default:"Not provided" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="fas fa-briefcase"></i> Professional Information</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-label">Organization</div>
+                                <p class="info-value">{{ user_data.organization|default:"Not provided" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-label">Department</div>
+                                <p class="info-value">{{ user_data.department|default:"Not provided" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-label">Specialization</div>
+                                <p class="info-value">
+                                    {% if user_data.specialization == "oyster" %}Oyster Mushrooms
+                                    {% elif user_data.specialization == "shiitake" %}Shiitake Mushrooms
+                                    {% elif user_data.specialization == "reishi" %}Reishi Mushrooms
+                                    {% elif user_data.specialization == "lion-mane" %}Lion's Mane
+                                    {% else %}Mixed Varieties{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-label">Experience Level</div>
+                                <p class="info-value">
+                                    {% if user_data.experience == "0-1" %}0-1 years
+                                    {% elif user_data.experience == "2-5" %}2-5 years
+                                    {% elif user_data.experience == "6-10" %}6-10 years
+                                    {% elif user_data.experience == "11-15" %}11-15 years
+                                    {% else %}15+ years{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="fas fa-cog"></i> Preferences</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-label">Timezone</div>
+                                <p class="info-value">
+                                    {% if user_data.timezone == "EST" %}Eastern Standard Time
+                                    {% elif user_data.timezone == "CST" %}Central Standard Time
+                                    {% elif user_data.timezone == "MST" %}Mountain Standard Time
+                                    {% elif user_data.timezone == "PST" %}Pacific Standard Time
+                                    {% else %}UTC{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-label">Language</div>
+                                <p class="info-value">
+                                    {% if user_data.language == "en" %}English
+                                    {% elif user_data.language == "es" %}Spanish
+                                    {% elif user_data.language == "fr" %}French
+                                    {% elif user_data.language == "de" %}German
+                                    {% elif user_data.language == "zh" %}Chinese
+                                    {% else %}English{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-label">Email Notifications</div>
+                                <p class="info-value">
+                                    {% if user_data.emailNotifications %}<span class="text-success"><i class="fas fa-check-circle"></i> Enabled</span>
+                                    {% else %}<span class="text-secondary"><i class="fas fa-times-circle"></i> Disabled</span>{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-label">Data Sharing for Research</div>
+                                <p class="info-value">
+                                    {% if user_data.dataSharing %}<span class="text-success"><i class="fas fa-check-circle"></i> Enabled</span>
+                                    {% else %}<span class="text-secondary"><i class="fas fa-times-circle"></i> Disabled</span>{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="fas fa-book-open"></i> About Me</h3>
                     <div class="info-card">
-                        <div class="info-label">Specialization</div>
-                        <p class="info-value">
-                            {% if user_data.specialization == "oyster" %}Oyster Mushrooms
-                            {% elif user_data.specialization == "shiitake" %}Shiitake Mushrooms
-                            {% elif user_data.specialization == "reishi" %}Reishi Mushrooms
-                            {% elif user_data.specialization == "lion-mane" %}Lion's Mane
-                            {% else %}Mixed Varieties{% endif %}
+                        <div class="info-label">Bio</div>
+                        <p class="bio-text">
+                            {% if user_data.bio %}{{ user_data.bio }}
+                            {% else %}No bio provided yet.{% endif %}
                         </p>
                     </div>
                 </div>
-                <div class="col-md-6">
+                
+                <div class="profile-section">
+                    <h3 class="section-title"><i class="fas fa-shield-alt"></i> Account Information</h3>
                     <div class="info-card">
-                        <div class="info-label">Experience Level</div>
+                        <div class="info-label">Account Created</div>
                         <p class="info-value">
-                            {% if user_data.experience == "0-1" %}0-1 years
-                            {% elif user_data.experience == "2-5" %}2-5 years
-                            {% elif user_data.experience == "6-10" %}6-10 years
-                            {% elif user_data.experience == "11-15" %}11-15 years
-                            {% else %}15+ years{% endif %}
+                            {% if user_data.createdAt %}{{ user_data.createdAt|date:"F j, Y" }}
+                            {% else %}Unknown{% endif %}
+                        </p>
+                        <div class="info-label mt-3">Last Updated</div>
+                        <p class="info-value">
+                            {% if user_data.updatedAt %}{{ user_data.updatedAt|date:"F j, Y" }}
+                            {% else %}Unknown{% endif %}
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="profile-section">
-            <h3 class="section-title"><i class="fas fa-cog"></i> Preferences</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <div class="info-label">Timezone</div>
-                        <p class="info-value">
-                            {% if user_data.timezone == "EST" %}Eastern Standard Time
-                            {% elif user_data.timezone == "CST" %}Central Standard Time
-                            {% elif user_data.timezone == "MST" %}Mountain Standard Time
-                            {% elif user_data.timezone == "PST" %}Pacific Standard Time
-                            {% else %}UTC{% endif %}
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <div class="info-label">Language</div>
-                        <p class="info-value">
-                            {% if user_data.language == "en" %}English
-                            {% elif user_data.language == "es" %}Spanish
-                            {% elif user_data.language == "fr" %}French
-                            {% elif user_data.language == "de" %}German
-                            {% elif user_data.language == "zh" %}Chinese
-                            {% else %}English{% endif %}
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <div class="info-label">Email Notifications</div>
-                        <p class="info-value">
-                            {% if user_data.emailNotifications %}<span class="text-success"><i class="fas fa-check-circle"></i> Enabled</span>
-                            {% else %}<span class="text-secondary"><i class="fas fa-times-circle"></i> Disabled</span>{% endif %}
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="info-card">
-                        <div class="info-label">Data Sharing for Research</div>
-                        <p class="info-value">
-                            {% if user_data.dataSharing %}<span class="text-success"><i class="fas fa-check-circle"></i> Enabled</span>
-                            {% else %}<span class="text-secondary"><i class="fas fa-times-circle"></i> Disabled</span>{% endif %}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="profile-section">
-            <h3 class="section-title"><i class="fas fa-book-open"></i> About Me</h3>
-            <div class="info-card">
-                <div class="info-label">Bio</div>
-                <p class="bio-text">
-                    {% if user_data.bio %}{{ user_data.bio }}
-                    {% else %}No bio provided yet.{% endif %}
-                </p>
-            </div>
-        </div>
-        
-        <div class="profile-section">
-            <h3 class="section-title"><i class="fas fa-shield-alt"></i> Account Information</h3>
-            <div class="info-card">
-                <div class="info-label">Account Created</div>
-                <p class="info-value">
-                    {% if user_data.createdAt %}{{ user_data.createdAt|date:"F j, Y" }}
-                    {% else %}Unknown{% endif %}
-                </p>
-                <div class="info-label mt-3">Last Updated</div>
-                <p class="info-value">
-                    {% if user_data.updatedAt %}{{ user_data.updatedAt|date:"F j, Y" }}
-                    {% else %}Unknown{% endif %}
-                </p>
-            </div>
-        </div>
-        
-        </div> <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    </div>
+
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -617,8 +828,54 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     
     <script>
+        // SIDEBAR LOGIC (Copied from Report/Scan Page)
+        function collapseSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 992 && 
+                sidebar.classList.contains('active') && 
+                !sidebar.contains(event.target) && 
+                !toggleBtn.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Auto-hide Django toasts
+        document.addEventListener('DOMContentLoaded', function() {
+            const toasts = document.querySelectorAll(".toast");
+            toasts.forEach((toast) => {
+              setTimeout(() => { new bootstrap.Toast(toast).hide(); }, 5000);
+            });
+        });
+
         // Phone number formatting
         document.addEventListener('DOMContentLoaded', function() {
+            // 1. Request Notification Permission
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+
+            function sendNotification(title, body) {
+                if (Notification.permission === "granted") {
+                    new Notification(title, {
+                        body: body,
+                        icon: "https://cdn-icons-png.flaticon.com/512/2903/2903556.png"
+                    });
+                }
+            }
+
             const phoneInput = document.getElementById('phone');
             if (phoneInput) {
                 phoneInput.addEventListener('input', function(e) {
@@ -630,14 +887,22 @@
                 });
             }
             
-            // Show success message if redirected from edit
+            // 2. CHECK FOR SUCCESS URL PARAM (Trigger notification after reload)
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('success')) {
                 console.log('Profile updated successfully');
+                sendNotification('SmartShroom Profile', 'Your profile has been updated successfully!');
             }
 
-            // ADDED: Live Avatar Update Logic
-            // This updates the avatar in the modal as you type your name
+            // 3. CHECK FOR FORM SUBMISSION (Trigger notification before reload)
+            const profileForm = document.querySelector('form[action*="edit_profile"]');
+            if (profileForm) {
+                profileForm.addEventListener('submit', function() {
+                    sendNotification('SmartShroom Profile', 'Updating your profile information...');
+                });
+            }
+
+            // Live Avatar Update Logic
             const firstNameInput = document.getElementById('firstName');
             const lastNameInput = document.getElementById('lastName');
             const avatarPreview = document.getElementById('avatarPreview');

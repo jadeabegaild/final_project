@@ -35,6 +35,9 @@
         --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
         --radius: 16px;
         --transition: all 0.3s ease;
+        /* Sidebar Variables */
+        --sidebar-width: 280px; 
+        --sidebar-collapsed-width: 80px;
       }
 
       * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -47,7 +50,286 @@
         position: relative; /* Context for z-index */
       }
 
-      /* --- NEW BACKGROUND ANIMATION STYLES --- */
+      /* --- LAYOUT CONTAINER STYLES --- */
+      .layout-container {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* --- SIDEBAR STYLES --- */
+      #sidebar {
+        width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        left: 0;
+        background: linear-gradient(
+          180deg,
+          var(--accent) 0%,
+          var(--dark) 100%
+        ) !important;
+        color: white;
+        padding: 0;
+        box-shadow: var(--shadow-lg);
+        z-index: 1000;
+        overflow-y: auto;
+        transition: width 0.3s ease, min-width 0.3s ease;
+        transform: translateX(0);
+        border-right: 2px solid rgba(255, 255, 255, 0.1); 
+        overflow-x: hidden;
+      }
+
+      /* Collapsed State Styles */
+      #sidebar.collapsed {
+        width: var(--sidebar-collapsed-width);
+        min-width: var(--sidebar-collapsed-width);
+      }
+
+      .sidebar-header {
+        text-align: center;
+        padding: 1.5rem 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 80px;
+        overflow: hidden; 
+      }
+
+      #sidebar.collapsed .sidebar-header {
+        justify-content: center;
+        padding: 1.5rem 0;
+      }
+
+      /* Burger Icon Styles */
+      .burger-icon {
+        cursor: pointer;
+        font-size: 1.4rem;
+        color: var(--light);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 30px;
+      }
+
+      .burger-icon:hover {
+        color: var(--primary);
+      }
+
+      .sidebar-brand {
+        color: var(--light) !important;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        font-size: 1.3rem; 
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: opacity 0.2s ease;
+        flex-grow: 1;
+        justify-content: center;
+      }
+
+      .sidebar-brand i {
+        color: var(--primary);
+        font-size: 1.8rem;
+        margin-right: 8px;
+        transition: var(--transition);
+      }
+      
+      .sidebar-brand:hover i { transform: rotate(-15deg); }
+
+      /* Hide brand elements when collapsed */
+      #sidebar.collapsed .sidebar-brand { display: none; }
+
+      .sidebar-nav .nav-item { margin: 0; }
+      
+      .sidebar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.85) !important;
+        font-weight: 500;
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+        transition: var(--transition);
+        position: relative;
+        border-radius: 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      #sidebar.collapsed .nav-link {
+        justify-content: center;
+        padding: 0.75rem 0;
+      }
+
+      .sidebar-nav .nav-link:hover {
+        color: var(--primary) !important;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .sidebar-nav .nav-link.active {
+        color: var(--primary) !important;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.15);
+        border-left: 4px solid var(--primary);
+      }
+      
+      .sidebar-nav .nav-link i {
+        margin-right: 0;
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+      }
+
+      /* Hide spans (text) when collapsed */
+      #sidebar.collapsed .nav-link span,
+      #sidebar.collapsed .dropdown-item span,
+      #sidebar.collapsed .dropdown-toggle::after {
+        display: none;
+      }
+
+      .sidebar-nav .dropdown-item {
+          padding: 0.5rem 1.5rem 0.5rem 3.5rem;
+          transition: var(--transition);
+          color: rgba(255, 255, 255, 0.7) !important;
+          font-weight: 400;
+          background: transparent;
+          font-size: 0.95rem;
+          border-left: 4px solid transparent;
+          white-space: nowrap;
+          cursor: pointer;
+      }
+
+      #sidebar.collapsed .dropdown-item {
+          padding: 0.5rem 1rem;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+      }
+
+      #sidebar.collapsed .dropdown-item i { margin: 0; }
+
+      .sidebar-nav .dropdown-item:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: var(--primary) !important;
+          border-left: 4px solid var(--primary-dark);
+      }
+      
+      .sidebar-nav .dropdown-menu {
+          position: static !important;
+          transform: none !important;
+          border-radius: 0;
+          border: none;
+          box-shadow: none;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 0;
+          margin: 0;
+      }
+      
+      .sidebar-nav .dropdown-toggle::after {
+          float: right;
+          margin-top: 0.5em;
+          margin-left: auto;
+      }
+      
+      .sidebar-nav .dropdown-toggle[aria-expanded="true"] {
+          background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* --- MAIN CONTENT WRAPPER --- */
+      .content-wrapper {
+        flex-grow: 1;
+        padding: 0; 
+        min-width: 0;
+        transition: margin 0.3s ease;
+      }
+
+      /* --- NEW MOBILE HEADER (From Scan.html) --- */
+      .mobile-header {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 60px;
+          background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%);
+          z-index: 1001;
+          align-items: center;
+          padding: 0 1rem;
+          box-shadow: var(--shadow-md);
+      }
+
+      .mobile-toggle {
+          color: white;
+          font-size: 1.4rem;
+          cursor: pointer;
+          margin-right: 15px;
+          display: flex;
+          align-items: center;
+      }
+
+      .mobile-brand {
+          color: white;
+          font-weight: 700;
+          font-size: 1.3rem;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          letter-spacing: 0.5px;
+      }
+
+      .mobile-brand i {
+          color: var(--primary);
+          font-size: 1.5rem;
+      }
+
+      /* Hide the old floating sidebar toggle */
+      .sidebar-toggle {
+          display: none !important;
+      }
+
+      /* Responsive Adjustments for Sidebar */
+      @media (max-width: 992px) {
+        #sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          height: 100%;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          box-shadow: var(--shadow-lg);
+          border-right: none;
+          width: var(--sidebar-width);
+          z-index: 1002;
+        }
+        
+        #sidebar.collapsed {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+        }
+        #sidebar.collapsed .sidebar-brand,
+        #sidebar.collapsed .nav-link span,
+        #sidebar.collapsed .dropdown-toggle::after {
+            display: flex;
+            opacity: 1;
+        }
+
+        #sidebar.active { transform: translateX(0); }
+        
+        .burger-icon { display: none; }
+        .sidebar-header { justify-content: center; }
+        
+        .mobile-header { display: flex; } /* Show header on mobile */
+        .content-wrapper { margin-top: 60px; } /* Push content down */
+      }
+
+      /* --- BACKGROUND ANIMATION STYLES --- */
       .background-shapes {
         position: fixed;
         top: 0;
@@ -82,97 +364,6 @@
       }
       /* --------------------------------------- */
 
-      /* Navigation - SYNCHRONIZED WITH DASHBOARD */
-      .navbar {
-        background: linear-gradient(
-          135deg,
-          var(--accent) 0%,
-          var(--dark) 100%
-        ) !important;
-        box-shadow: var(--shadow-md);
-        padding: 0.5rem 1rem;
-        position: sticky; /* Sticky */
-        top: 0;
-        z-index: 1000;
-        width: 100%;
-      }
-
-      .navbar-brand {
-        color: var(--light) !important;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        display: flex;
-        align-items: center;
-        font-size: 1.4rem;
-      }
-
-      .navbar-brand i {
-        color: var(--primary);
-        font-size: 1.8rem;
-        margin-right: 10px;
-        transition: var(--transition);
-      }
-
-      .navbar-brand:hover i {
-        transform: rotate(-15deg);
-      }
-
-      .nav-link {
-        color: rgba(255, 255, 255, 0.85) !important;
-        font-weight: 500;
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
-        transition: var(--transition);
-        position: relative;
-        border-radius: var(--radius);
-        margin: 0 0.2rem;
-      }
-
-      .nav-link:hover {
-        color: var(--primary) !important;
-        background: rgba(255, 255, 255, 0.1);
-      }
-
-      .nav-link.active {
-        color: var(--primary) !important;
-        font-weight: 600;
-        background: rgba(255, 255, 255, 0.15);
-      }
-
-      .nav-link i {
-        margin-right: 8px;
-        font-size: 1rem;
-        width: 20px;
-        text-align: center;
-      }
-
-      .dropdown-menu {
-        border-radius: var(--radius);
-        border: none;
-        box-shadow: var(--shadow-md);
-        background: white;
-        overflow: hidden;
-      }
-
-      .dropdown-item {
-        padding: 0.7rem 1.2rem;
-        transition: var(--transition);
-        color: var(--dark);
-        font-weight: 500;
-      }
-
-      .dropdown-item:hover {
-        background: var(--highlight);
-        color: var(--dark);
-      }
-
-      .dropdown-item i {
-        margin-right: 8px;
-        color: var(--accent);
-        width: 18px;
-      }
-      /* --------------------------------------- */
-
       /* Layout */
       .report-container { 
         padding: 2rem 1rem; 
@@ -185,8 +376,15 @@
       /* Print Header (Hidden on Screen) */
       .print-header { display: none; }
 
-      /* Buttons */
-      .action-buttons { display: flex; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+      /* Buttons & Action Bar */
+      .action-buttons { 
+        display: flex; 
+        justify-content: flex-end; 
+        margin-bottom: 2rem; 
+        flex-wrap: wrap; 
+        gap: 1rem; 
+      }
+      
       .btn { border: none; border-radius: var(--radius); padding: 0.8rem 1.5rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; transition: var(--transition); }
       .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
       .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color: white; }
@@ -252,16 +450,10 @@
       .bag-details-row { display: flex; justify-content: space-between; margin-bottom: 1rem; }
       .bag-details-label { font-weight: 600; color: var(--secondary); }
 
-      /* ================= MOBILE RESPONSIVE TABLE STYLES ================= */
-      @media (max-width: 768px) {
-        /* Navbar */
-        .navbar-brand { font-size: 1.2rem; }
+      /* ================= MOBILE RESPONSIVE TABLE STYLES (Screen Only) ================= */
+      @media screen and (max-width: 768px) {
+        .report-container { padding: 1rem 0.5rem; }
         
-        /* Action Buttons */
-        .action-buttons { flex-direction: column; }
-        .action-buttons .d-flex { width: 100%; justify-content: stretch; }
-        .action-buttons .btn { flex: 1; }
-
         /* Headers */
         .table-header-wrapper { flex-direction: column; align-items: flex-start; gap: 15px; }
         .table-header-wrapper .d-flex { width: 100%; justify-content: space-between; flex-wrap: wrap; }
@@ -426,9 +618,11 @@
             padding: 0 !important;
         }
 
-        /* 2. Hide Non-Printable Elements (Added background-shapes here) */
+        /* 2. Hide Non-Printable Elements */
+        #sidebar,
+        .sidebar-toggle,
+        .mobile-header,
         .navbar, 
-        .action-buttons, 
         .toast-container, 
         .modal, 
         .header-filters, 
@@ -436,9 +630,14 @@
         .action-buttons-cell,
         .btn,
         .background-shapes,
-        .chat-widget { /* HIDE CHATBOT AND ANIMATION ON PRINT */
+        .chat-widget { 
             display: none !important; 
         }
+
+        /* Reset Layout for Print */
+        .layout-container { display: block !important; }
+        .content-wrapper { margin: 0 !important; padding: 0 !important; }
+        .report-container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
 
         /* 3. Show Print Header */
         .print-header { 
@@ -478,26 +677,40 @@
             color: black !important;
         }
 
-        /* 6. Professional Table Styling */
+        /* 6. Professional Table Styling & Alignment */
         .table-responsive { overflow: visible !important; }
+        
         .table { 
             width: 100% !important; 
             border-collapse: collapse !important; 
             display: table !important; 
+            border: 1px solid #000 !important; /* Outer Border */
         }
         
         .table thead { display: table-header-group !important; }
         .table tbody { display: table-row-group !important; }
-        .table tr { display: table-row !important; page-break-inside: avoid; }
+        
+        .table tr { 
+            display: table-row !important; 
+            page-break-inside: avoid; 
+        }
+        
+        /* Ensure filtered rows stay hidden */
+        tr[style*="display: none"] { display: none !important; }
+
+        /* Shared cell styles for strict alignment */
         .table td, .table th { 
             display: table-cell !important; 
             background: transparent !important;
             color: black !important;
             border: 1px solid #000 !important; 
-            padding: 8px !important;
+            padding: 8px 12px !important; /* Explicit padding */
             text-align: left !important;
+            vertical-align: middle !important;
+            width: auto !important; /* Allow browser to align columns */
         }
         
+        /* Header specific style */
         .table th {
             background-color: #f0f0f0 !important; 
             font-weight: bold !important;
@@ -505,7 +718,6 @@
         }
 
         .table td::before { content: none !important; }
-        .table td { justify-content: flex-start !important; text-align: left !important; }
         th.no-print { display: none !important; }
       }
     </style>
@@ -533,201 +745,237 @@
       {% endfor %} {% endif %}
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#"><i class="fas fa-seedling"></i>SMARTSHROOM</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link active" href="{% url 'report' %}"><i class="fas fa-file-alt"></i> Report</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'scan' %}"><i class="fas fa-qrcode"></i> Scan</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'remote' %}"><i class="fas fa-wifi"></i> Remote</a></li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"><i class="fas fa-user-circle"></i></a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
-                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <div class="report-container">
-      <div class="print-header">Naujan Mushroom Farm - Official Report</div>
-
-      <div class="action-buttons">
-        <div class="d-flex gap-2">
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addHarvestModal">
-            <i class="fas fa-plus"></i> Add Harvest
-          </button>
-        </div>
-        <div class="d-flex gap-2">
-          <button class="btn btn-secondary" onclick="showPrintOptions()">
-            <i class="fas fa-print"></i> Print
-          </button>
-          <button class="btn btn-success" onclick="showExportOptions()">
-            <i class="fas fa-file-excel"></i> Export
-          </button>
-        </div>
-      </div>
-
-      <div class="table-container harvest-report-container">
-        <div class="table-header-wrapper">
-             <h5 class="table-title"><i class="fas fa-weight-hanging me-2 text-primary"></i>Harvest Records</h5>
-             <div class="header-filters">
-                 <input type="date" id="filterDate" class="form-control" title="Filter by Date" />
-                 <select id="filterMonth" class="form-select">
-                    <option value="">Month</option>
-                    <option value="01">Jan</option>
-                    <option value="02">Feb</option>
-                    <option value="03">Mar</option>
-                    <option value="04">Apr</option>
-                    <option value="05">May</option>
-                    <option value="06">Jun</option>
-                    <option value="07">Jul</option>
-                    <option value="08">Aug</option>
-                    <option value="09">Sep</option>
-                    <option value="10">Oct</option>
-                    <option value="11">Nov</option>
-                    <option value="12">Dec</option>
-                  </select>
-                  <input type="number" id="filterYear" class="form-control" placeholder="Year" min="2000" max="2030" style="width: 100px; min-width: 80px;" />
-             </div>
+    <div class="layout-container">
+        <div class="mobile-header">
+            <div class="mobile-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="mobile-brand">
+                <i class="fas fa-seedling"></i> SMARTSHROOM
+            </div>
         </div>
 
-        <div class="table-responsive">
-          <table class="table table-striped" id="harvestTable">
-            <thead>
-              <tr>
-                <th><i class="fas fa-calendar me-2"></i>Date</th>
-                <th><i class="fas fa-weight-scale me-2"></i>Kilograms</th>
-                <th class="no-print"><i class="fas fa-cog me-2"></i>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for harvest in harvests %}
-              <tr>
-                <td data-label="Date">{{ harvest.date }}</td>
-                <td data-label="Kilograms">{{ harvest.kilograms }}</td>
-                <td class="action-buttons-cell no-print" data-label="Actions">
-                  <button class="btn btn-warning btn-sm" onclick="editHarvest('{{ harvest.id }}', '{{ harvest.date }}', '{{ harvest.kilograms }}')"><i class="fas fa-edit"></i></button>
-                  <button class="btn btn-danger btn-sm" onclick="showDeleteWarning('{{ harvest.id }}')"><i class="fas fa-trash"></i></button>
-                </td>
-              </tr>
-              {% empty %}
-              <tr><td colspan="3" class="text-center py-4">No harvest records found.</td></tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="mushroom-bags-container">
-        <div class="table-header-wrapper">
-          <h3 class="table-title"><i class="fas fa-cubes me-2"></i>Mushroom Bags</h3>
-          <div class="header-filters">
-            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addMushroomBagModal"><i class="fas fa-plus"></i> Add</button>
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <div class="burger-icon" onclick="collapseSidebar()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                
+                <a class="sidebar-brand" href="#">
+                  <i class="fas fa-seedling"></i><span>SMARTSHROOM</span>
+                </a>
+            </div>
             
-            <input type="date" id="bagFilterDate" class="form-control" title="Filter by Date" />
-            <select id="bagFilterStatus" class="form-select">
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="incubating">Incubating</option>
-                <option value="fruiting">Fruiting</option>
-                <option value="harvested">Harvested</option>
-                <option value="discarded">Discarded</option>
-            </select>
-          </div>
-        </div>
+            <ul class="nav flex-column sidebar-nav" id="sidebarNav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}"
+                      ><i class="fas fa-chart-line"></i> <span>Dashboard</span></a
+                    >
+                </li>
+                
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle active"
+                    href="#reportSubmenu"
+                    role="button"
+                    data-bs-toggle="collapse"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-file-alt"></i> <span>Report</span>
+                  </a>
+                  <div class="collapse dropdown-menu" id="reportSubmenu" data-bs-parent="#sidebarNav">
+                    <a class="dropdown-item" href="{% url 'report' %}">
+                        <i class="fas fa-table"></i> <span>View Data</span>
+                    </a>
+                    <a class="dropdown-item" href="#" onclick="showPrintOptions()">
+                        <i class="fas fa-print"></i> <span>Print</span>
+                    </a>
+                    <a class="dropdown-item" href="#" onclick="showExportOptions()">
+                        <i class="fas fa-file-excel"></i> <span>Export</span>
+                    </a>
+                  </div>
+                </li>
 
-        <div class="table-responsive">
-          <table class="table table-striped" id="bagsTable">
-            <thead>
-              <tr>
-                <th><i class="fas fa-calendar me-2"></i>Date</th>
-                <th><i class="fas fa-tag me-2"></i>Name</th>
-                <th><i class="fas fa-seedling me-2"></i>Type</th>
-                <th><i class="fas fa-layer-group me-2"></i>Qty</th>
-                <th><i class="fas fa-info-circle me-2"></i>Status</th>
-                <th class="no-print"><i class="fas fa-cog me-2"></i>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for bag in mushroom_bags %}
-              <tr data-status="{{ bag.status }}">
-                <td data-label="Date">{{ bag.date }}</td>
-                <td data-label="Name">{{ bag.bag_name }}</td>
-                <td data-label="Type">{{ bag.bag_type|title }}</td>
-                <td data-label="Qty">{{ bag.quantity }}</td>
-                <td data-label="Status">
-                  <span class="badge {% if bag.status == 'active' %}bg-success{% elif bag.status == 'incubating' %}bg-info{% elif bag.status == 'fruiting' %}bg-warning{% elif bag.status == 'discarded' %}bg-danger{% else %}bg-secondary{% endif %}">
-                    {{ bag.status|title }}
-                  </span>
-                </td>
-                <td class="action-buttons-cell no-print" data-label="Actions">
-                  <button class="btn btn-warning btn-sm" onclick="editBag('{{ bag.id }}', '{{ bag.bag_name }}', '{{ bag.bag_type }}', '{{ bag.quantity }}', '{{ bag.status }}', '{{ bag.date }}')">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="btn btn-danger btn-sm" onclick="showDeleteBagWarning('{{ bag.id }}')">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </td>
-              </tr>
-              {% empty %}
-              <tr><td colspan="6" class="text-center py-4">No mushroom bags found.</td></tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'scan' %}"
+                      ><i class="fas fa-qrcode"></i> <span>Scan</span></a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'remote' %}"
+                      ><i class="fas fa-wifi"></i> <span>Remote</span></a
+                    >
+                </li>
+                
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#userSubmenu"
+                    role="button"
+                    data-bs-toggle="collapse"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-user-circle"></i> <span>Account</span>
+                  </a>
+                  <div class="collapse dropdown-menu" id="userSubmenu" data-bs-parent="#sidebarNav">
+                    <a class="dropdown-item" href="{% url 'profile' %}"
+                      ><i class="fas fa-user"></i> <span>Profile</span></a
+                    >
+                    <a class="dropdown-item" href="{% url 'logout' %}"
+                      ><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a
+                    >
+                  </div>
+                </li>
+            </ul>
+        </nav>
 
-      <div class="table-container scan-report-container">
-        <div class="table-header-wrapper">
-             <h5 class="table-title"><i class="fas fa-microscope me-2 text-primary"></i>AI Scan History</h5>
-             <div class="header-filters">
-                <input type="date" id="scanFilterDate" class="form-control" title="Filter by Date" />
-                <select id="scanFilterResult" class="form-select">
-                    <option value="all">All Results</option>
-                    <option value="healthy">Healthy</option>
-                    <option value="disease">Disease</option>
-                </select>
-             </div>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-striped" id="scanTable">
-            <thead>
-              <tr>
-                <th><i class="fas fa-calendar me-2"></i>Date Scanned</th>
-                <th><i class="fas fa-poll-h me-2"></i>Result</th>
-                <th><i class="fas fa-percentage me-2"></i>Confidence</th>
-                <th><i class="fas fa-image me-2"></i>Image ID</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for scan in scans %}
-              <tr>
-                <td data-label="Date">{{ scan.date }}</td>
-                <td data-label="Result">
-                    {% if 'healthy' in scan.result|lower %}
-                        <span class="badge bg-success"><i class="fas fa-check me-1"></i>Healthy</span>
-                    {% else %}
-                        <span class="badge bg-danger"><i class="fas fa-exclamation-triangle me-1"></i>Disease</span>
-                    {% endif %}
-                </td>
-                <td data-label="Confidence">{{ scan.confidence|floatformat:1 }}%</td>
-                <td data-label="Image ID" class="text-muted small">{{ scan.image_name|truncatechars:15 }}</td>
-              </tr>
-              {% empty %}
-              <tr><td colspan="4" class="text-center py-4">No AI scans recorded.</td></tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <div class="content-wrapper">
+            <div class="report-container">
+              <div class="print-header">Naujan Mushroom Farm - Official Report</div>
 
+              <div class="table-container harvest-report-container">
+                <div class="table-header-wrapper">
+                      <h5 class="table-title"><i class="fas fa-weight-hanging me-2 text-primary"></i>Harvest Records</h5>
+                      <div class="header-filters">
+                          <button class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#addHarvestModal">
+                            <i class="fas fa-plus"></i> Add
+                          </button>
+                          
+                          <input type="date" id="filterDate" class="form-control" title="Filter by Date" />
+                      </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table table-striped" id="harvestTable">
+                    <thead>
+                      <tr>
+                        <th><i class="fas fa-calendar me-2"></i>Date</th>
+                        <th><i class="fas fa-weight-scale me-2"></i>Kilograms</th>
+                        <th class="no-print"><i class="fas fa-cog me-2"></i>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for harvest in harvests %}
+                      <tr>
+                        <td data-label="Date">{{ harvest.date }}</td>
+                        <td data-label="Kilograms">{{ harvest.kilograms }}</td>
+                        <td class="action-buttons-cell no-print" data-label="Actions">
+                          <button class="btn btn-warning btn-sm" onclick="editHarvest('{{ harvest.id }}', '{{ harvest.date }}', '{{ harvest.kilograms }}')"><i class="fas fa-edit"></i></button>
+                          <button class="btn btn-danger btn-sm" onclick="showDeleteWarning('{{ harvest.id }}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                      </tr>
+                      {% empty %}
+                      <tr><td colspan="3" class="text-center py-4">No harvest records found.</td></tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="mushroom-bags-container">
+                <div class="table-header-wrapper">
+                  <h3 class="table-title"><i class="fas fa-cubes me-2"></i>Mushroom Bags</h3>
+                  <div class="header-filters">
+                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addMushroomBagModal"><i class="fas fa-plus"></i> Add</button>
+                    
+                    <input type="date" id="bagFilterDate" class="form-control" title="Filter by Date" />
+                    <select id="bagFilterStatus" class="form-select">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="incubating">Incubating</option>
+                        <option value="fruiting">Fruiting</option>
+                        <option value="harvested">Harvested</option>
+                        <option value="discarded">Discarded</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table table-striped" id="bagsTable">
+                    <thead>
+                      <tr>
+                        <th><i class="fas fa-calendar me-2"></i>Date</th>
+                        <th><i class="fas fa-tag me-2"></i>Name</th>
+                        <th><i class="fas fa-seedling me-2"></i>Type</th>
+                        <th><i class="fas fa-layer-group me-2"></i>Qty</th>
+                        <th><i class="fas fa-info-circle me-2"></i>Status</th>
+                        <th class="no-print"><i class="fas fa-cog me-2"></i>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for bag in mushroom_bags %}
+                      <tr data-status="{{ bag.status }}">
+                        <td data-label="Date">{{ bag.date }}</td>
+                        <td data-label="Name">{{ bag.bag_name }}</td>
+                        <td data-label="Type">{{ bag.bag_type|title }}</td>
+                        <td data-label="Qty">{{ bag.quantity }}</td>
+                        <td data-label="Status">
+                          <span class="badge {% if bag.status == 'active' %}bg-success{% elif bag.status == 'incubating' %}bg-info{% elif bag.status == 'fruiting' %}bg-warning{% elif bag.status == 'discarded' %}bg-danger{% else %}bg-secondary{% endif %}">
+                            {{ bag.status|title }}
+                          </span>
+                        </td>
+                        <td class="action-buttons-cell no-print" data-label="Actions">
+                          <button class="btn btn-warning btn-sm" onclick="editBag('{{ bag.id }}', '{{ bag.bag_name }}', '{{ bag.bag_type }}', '{{ bag.quantity }}', '{{ bag.status }}', '{{ bag.date }}')">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button class="btn btn-danger btn-sm" onclick="showDeleteBagWarning('{{ bag.id }}')">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      {% empty %}
+                      <tr><td colspan="6" class="text-center py-4">No mushroom bags found.</td></tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="table-container scan-report-container">
+                <div class="table-header-wrapper">
+                      <h5 class="table-title"><i class="fas fa-microscope me-2 text-primary"></i>AI Scan History</h5>
+                      <div class="header-filters">
+                        <input type="date" id="scanFilterDate" class="form-control" title="Filter by Date" />
+                        <select id="scanFilterResult" class="form-select">
+                            <option value="all">All Results</option>
+                            <option value="healthy">Healthy</option>
+                            <option value="disease">Disease</option>
+                        </select>
+                      </div>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-striped" id="scanTable">
+                    <thead>
+                      <tr>
+                        <th><i class="fas fa-calendar me-2"></i>Date Scanned</th>
+                        <th><i class="fas fa-poll-h me-2"></i>Result</th>
+                        <th><i class="fas fa-percentage me-2"></i>Confidence</th>
+                        <th><i class="fas fa-image me-2"></i>Image ID</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for scan in scans %}
+                      <tr>
+                        <td data-label="Date">{{ scan.date }}</td>
+                        <td data-label="Result">
+                            {% if 'healthy' in scan.result|lower %}
+                                <span class="badge bg-success"><i class="fas fa-check me-1"></i>Healthy</span>
+                            {% else %}
+                                <span class="badge bg-danger"><i class="fas fa-exclamation-triangle me-1"></i>Disease</span>
+                            {% endif %}
+                        </td>
+                        <td data-label="Confidence">{{ scan.confidence|floatformat:1 }}%</td>
+                        <td data-label="Image ID" class="text-muted small">{{ scan.image_name|truncatechars:15 }}</td>
+                      </tr>
+                      {% empty %}
+                      <tr><td colspan="4" class="text-center py-4">No AI scans recorded.</td></tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="printOptionsModal" tabindex="-1">
@@ -1028,6 +1276,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
 
     <script>
+      // ---------------- SIDEBAR LOGIC ----------------
+      function collapseSidebar() {
+          const sidebar = document.getElementById('sidebar');
+          sidebar.classList.toggle('collapsed');
+      }
+
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('active');
+      }
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(event) {
+          const sidebar = document.getElementById('sidebar');
+          const toggleBtn = document.querySelector('.mobile-toggle');
+          
+          if (window.innerWidth <= 992 && 
+              sidebar.classList.contains('active') && 
+              !sidebar.contains(event.target) && 
+              !toggleBtn.contains(event.target)) {
+              sidebar.classList.remove('active');
+          }
+      });
+
       // ---------------- PRINT LOGIC ----------------
       function showPrintOptions() {
         var printModal = new bootstrap.Modal(document.getElementById("printOptionsModal"));
@@ -1109,21 +1381,15 @@
 
       // ---------------- HARVEST TABLE FILTERS ----------------
       document.getElementById("filterDate").addEventListener("change", filterHarvestTable);
-      document.getElementById("filterMonth").addEventListener("change", filterHarvestTable);
-      document.getElementById("filterYear").addEventListener("input", filterHarvestTable);
 
       function filterHarvestTable() {
         let dateFilter = document.getElementById("filterDate").value;
-        let monthFilter = document.getElementById("filterMonth").value;
-        let yearFilter = document.getElementById("filterYear").value;
         let rows = document.querySelectorAll("#harvestTable tbody tr");
 
         rows.forEach((row) => {
           let date = row.cells[0].textContent.trim();
           let show = true;
           if (dateFilter && !date.includes(dateFilter)) show = false;
-          if (monthFilter && !date.includes(`-${monthFilter}-`)) show = false;
-          if (yearFilter && !date.startsWith(yearFilter)) show = false;
           row.style.display = show ? "" : "none";
         });
       }
@@ -1266,6 +1532,76 @@
 
           return "I am specialized in mushrooms. Please ask about temperature, humidity, or diseases. <br><br><i>Ako ay para sa mushroom farming lamang. Magtanong tungkol sa temperatura o mga sakit.</i>";
       }
+
+      /* ---------------- PUSH NOTIFICATION LOGIC ---------------- */
+      
+      // 1. Request Permission
+      function requestNotificationPermission() {
+          if ("Notification" in window) {
+              if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                  Notification.requestPermission();
+              }
+          }
+      }
+
+      // 2. Trigger System Notification
+      function sendNotification(title, message) {
+          if (Notification.permission === "granted") {
+              new Notification(title, {
+                  body: message,
+                  icon: "https://cdn-icons-png.flaticon.com/512/2903/2903556.png" // Simple mushroom icon
+              });
+          }
+      }
+
+      // 3. Initialize & Attach Listeners on Load
+      document.addEventListener('DOMContentLoaded', function() {
+          requestNotificationPermission();
+
+          // --- HARVEST FORMS ---
+          const addHarvestForm = document.querySelector('#addHarvestModal form');
+          if (addHarvestForm) {
+              addHarvestForm.addEventListener('submit', function() {
+                  sendNotification("SmartShroom Alert", "Adding new harvest record...");
+              });
+          }
+
+          const editHarvestForm = document.getElementById('editHarvestForm');
+          if (editHarvestForm) {
+              editHarvestForm.addEventListener('submit', function() {
+                  sendNotification("SmartShroom Alert", "Updating harvest record...");
+              });
+          }
+
+          const deleteHarvestForm = document.getElementById('deleteHarvestForm');
+          if (deleteHarvestForm) {
+              deleteHarvestForm.addEventListener('submit', function() {
+                  sendNotification("SmartShroom Alert", "Deleting harvest record...");
+              });
+          }
+
+          // --- BAG FORMS ---
+          const addBagForm = document.querySelector('#addMushroomBagModal form');
+          if (addBagForm) {
+              addBagForm.addEventListener('submit', function() {
+                  sendNotification("SmartShroom Alert", "Adding new mushroom bag...");
+              });
+          }
+
+          const editBagForm = document.getElementById('editMushroomBagForm');
+          if (editBagForm) {
+              editBagForm.addEventListener('submit', function() {
+                  sendNotification("SmartShroom Alert", "Updating mushroom bag...");
+              });
+          }
+
+          const deleteBagForm = document.getElementById('deleteBagForm');
+          if (deleteBagForm) {
+              deleteBagForm.addEventListener('submit', function() {
+                  sendNotification("SmartShroom Alert", "Deleting mushroom bag...");
+              });
+          }
+      });
     </script>
   </body>
 </html>

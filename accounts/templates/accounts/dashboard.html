@@ -34,6 +34,9 @@
         --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
         --radius: 16px;
         --transition: all 0.3s ease;
+        /* Sidebar Variables */
+        --sidebar-width: 280px; 
+        --sidebar-collapsed-width: 80px;
       }
 
       * {
@@ -53,6 +56,294 @@
         min-height: 100vh;
         padding-bottom: 2rem;
         position: relative; /* For z-index context */
+      }
+
+      /* --- LAYOUT CONTAINER STYLES --- */
+      .layout-container {
+        display: flex;
+        min-height: 100vh;
+      }
+      
+      /* --- SIDEBAR STYLES --- */
+      #sidebar {
+        width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        left: 0;
+        background: linear-gradient(
+          180deg,
+          var(--accent) 0%,
+          var(--dark) 100%
+        ) !important;
+        color: white;
+        padding: 0;
+        box-shadow: var(--shadow-lg);
+        z-index: 1000;
+        overflow-y: auto;
+        transition: width 0.3s ease, min-width 0.3s ease;
+        transform: translateX(0);
+        border-right: 2px solid rgba(255, 255, 255, 0.1); 
+        overflow-x: hidden;
+      }
+
+      /* Collapsed State Styles */
+      #sidebar.collapsed {
+        width: var(--sidebar-collapsed-width);
+        min-width: var(--sidebar-collapsed-width);
+      }
+
+      .sidebar-header {
+        text-align: center;
+        padding: 1.5rem 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 80px;
+        overflow: hidden; 
+      }
+
+      #sidebar.collapsed .sidebar-header {
+        justify-content: center;
+        padding: 1.5rem 0;
+      }
+
+      /* Burger Icon Styles (Desktop) */
+      .burger-icon {
+        cursor: pointer;
+        font-size: 1.4rem;
+        color: var(--light);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 30px;
+      }
+
+      .burger-icon:hover {
+        color: var(--primary);
+      }
+
+      .sidebar-brand {
+        color: var(--light) !important;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        font-size: 1.3rem; 
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: opacity 0.2s ease;
+        flex-grow: 1;
+        justify-content: center;
+      }
+
+      .sidebar-brand i {
+        color: var(--primary);
+        font-size: 1.8rem;
+        margin-right: 8px;
+        transition: var(--transition);
+      }
+      
+      .sidebar-brand:hover i {
+        transform: rotate(-15deg);
+      }
+
+      /* Hide elements when collapsed */
+      #sidebar.collapsed .sidebar-brand { display: none; }
+
+      .sidebar-nav .nav-item { margin: 0; }
+      
+      .sidebar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.85) !important;
+        font-weight: 500;
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+        transition: var(--transition);
+        position: relative;
+        border-radius: 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      #sidebar.collapsed .nav-link {
+        justify-content: center;
+        padding: 0.75rem 0;
+      }
+
+      .sidebar-nav .nav-link:hover {
+        color: var(--primary) !important;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .sidebar-nav .nav-link.active {
+        color: var(--primary) !important;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.15);
+        border-left: 4px solid var(--primary);
+      }
+      
+      .sidebar-nav .nav-link i {
+        margin-right: 0;
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+      }
+
+      /* Hide spans (text) when collapsed */
+      #sidebar.collapsed .nav-link span,
+      #sidebar.collapsed .dropdown-item span,
+      #sidebar.collapsed .dropdown-toggle::after {
+        display: none;
+      }
+
+      .sidebar-nav .dropdown-item {
+          padding: 0.5rem 1.5rem 0.5rem 3.5rem;
+          transition: var(--transition);
+          color: rgba(255, 255, 255, 0.7) !important;
+          font-weight: 400;
+          background: transparent;
+          font-size: 0.95rem;
+          border-left: 4px solid transparent;
+          white-space: nowrap;
+          cursor: pointer;
+      }
+
+      #sidebar.collapsed .dropdown-item {
+          padding: 0.5rem 1rem;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+      }
+
+      #sidebar.collapsed .dropdown-item i { margin: 0; }
+
+      .sidebar-nav .dropdown-item:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: var(--primary) !important;
+          border-left: 4px solid var(--primary-dark);
+      }
+      
+      .sidebar-nav .dropdown-menu {
+          position: static !important;
+          transform: none !important;
+          border-radius: 0;
+          border: none;
+          box-shadow: none;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 0;
+          margin: 0;
+      }
+      
+      .sidebar-nav .dropdown-toggle::after {
+          float: right;
+          margin-top: 0.5em;
+          margin-left: auto;
+      }
+      
+      .sidebar-nav .dropdown-toggle[aria-expanded="true"] {
+          background: rgba(255, 255, 255, 0.1);
+      }
+      
+      /* --- MAIN CONTENT WRAPPER --- */
+      .content-wrapper {
+        flex-grow: 1;
+        padding: 0; 
+        min-width: 0;
+        transition: margin 0.3s ease;
+      }
+
+      /* --- NEW MOBILE HEADER --- */
+      .mobile-header {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 60px;
+          background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%);
+          z-index: 1001; /* High z-index to stay above content */
+          align-items: center;
+          padding: 0 1rem;
+          box-shadow: var(--shadow-md);
+      }
+
+      .mobile-toggle {
+          color: white;
+          font-size: 1.4rem;
+          cursor: pointer;
+          margin-right: 15px;
+          display: flex;
+          align-items: center;
+      }
+
+      .mobile-brand {
+          color: white;
+          font-weight: 700;
+          font-size: 1.3rem;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          letter-spacing: 0.5px;
+      }
+
+      .mobile-brand i {
+          color: var(--primary);
+          font-size: 1.5rem;
+      }
+
+      /* Toggle Button for Mobile (Hidden by default) */
+      .sidebar-toggle {
+        display: none; 
+      }
+
+      /* Responsive Adjustments for Sidebar */
+      @media (max-width: 992px) {
+        #sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          height: 100%;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          box-shadow: var(--shadow-lg);
+          border-right: none;
+          width: var(--sidebar-width);
+          z-index: 1002;
+        }
+        
+        #sidebar.collapsed {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+        }
+        #sidebar.collapsed .sidebar-brand,
+        #sidebar.collapsed .nav-link span,
+        #sidebar.collapsed .dropdown-toggle::after {
+            display: flex;
+            opacity: 1;
+        }
+
+        #sidebar.active { transform: translateX(0); }
+        
+        .burger-icon { display: none; }
+        .sidebar-header { justify-content: center; }
+        
+        .mobile-header { display: flex; } /* Show header on mobile */
+        .content-wrapper { margin-top: 60px; } /* Push content down */
+        
+        .hero-container, .dashboard-container {
+            margin-left: 0.5rem; 
+            margin-right: 0.5rem;
+            max-width: none;
+        }
+        .hero-container { margin-top: 0.5rem; }
       }
 
       /* --- NEW HEADER CONTAINER STYLES --- */
@@ -136,7 +427,7 @@
         width: 100%;
         height: 100%;
         background: linear-gradient(135deg, var(--dark), var(--accent));
-        z-index: 9999; /* Must be higher than navbar (1000) and chatbot (1001) */
+        z-index: 9999; 
         display: flex;
         justify-content: center;
         align-items: center;
@@ -165,7 +456,7 @@
         text-shadow: 0 4px 15px rgba(0,0,0,0.3);
         opacity: 0;
         transform: translateY(30px);
-        animation: textSlideUp 1s ease-out 0.5s forwards; /* 0.5s delay */
+        animation: textSlideUp 1s ease-out 0.5s forwards; 
         margin-top: 10px;
       }
 
@@ -221,133 +512,25 @@
       }
 
       /* Animation Keyframes */
-      .drift-slow {
-        animation: drift 35s ease-in-out infinite alternate;
-      }
-      .drift-medium {
-        animation: drift 25s ease-in-out infinite alternate;
-      }
-      .drift-fast {
-        animation: drift 18s ease-in-out infinite alternate;
-      }
-      .drift-reverse {
-        animation: drift-rev 30s ease-in-out infinite alternate;
-      }
+      .drift-slow { animation: drift 35s ease-in-out infinite alternate; }
+      .drift-medium { animation: drift 25s ease-in-out infinite alternate; }
+      .drift-fast { animation: drift 18s ease-in-out infinite alternate; }
+      .drift-reverse { animation: drift-rev 30s ease-in-out infinite alternate; }
 
       @keyframes drift {
-        0% {
-          transform: translate(0, 0) rotate(0deg);
-        }
-        100% {
-          transform: translate(50px, -30px) rotate(10deg);
-        }
+        0% { transform: translate(0, 0) rotate(0deg); }
+        100% { transform: translate(50px, -30px) rotate(10deg); }
       }
 
       @keyframes drift-rev {
-        0% {
-          transform: translate(0, 0) rotate(0deg);
-        }
-        100% {
-          transform: translate(-40px, 40px) rotate(-10deg);
-        }
+        0% { transform: translate(0, 0) rotate(0deg); }
+        100% { transform: translate(-40px, 40px) rotate(-10deg); }
       }
       /* --------------------------------------- */
 
-      /* Navigation - UPDATED FOR STICKY HEADER */
-      .navbar {
-        background: linear-gradient(
-          135deg,
-          var(--accent) 0%,
-          var(--dark) 100%
-        ) !important;
-        box-shadow: var(--shadow-md);
-        padding: 0.5rem 1rem;
-
-        /* CHANGED: Sticky positioning */
-        position: sticky;
-        top: 0;
-        z-index: 1000; /* High z-index to stay above content */
-        width: 100%;
-      }
-
-      .navbar-brand {
-        color: var(--light) !important;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        display: flex;
-        align-items: center;
-        font-size: 1.4rem;
-      }
-
-      .navbar-brand i {
-        color: var(--primary);
-        font-size: 1.8rem;
-        margin-right: 10px;
-        transition: var(--transition);
-      }
-
-      .navbar-brand:hover i {
-        transform: rotate(-15deg);
-      }
-
-      .nav-link {
-        color: rgba(255, 255, 255, 0.85) !important;
-        font-weight: 500;
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
-        transition: var(--transition);
-        position: relative;
-        border-radius: var(--radius);
-        margin: 0 0.2rem;
-      }
-
-      .nav-link:hover {
-        color: var(--primary) !important;
-        background: rgba(255, 255, 255, 0.1);
-      }
-
-      .nav-link.active {
-        color: var(--primary) !important;
-        font-weight: 600;
-        background: rgba(255, 255, 255, 0.15);
-      }
-
-      .nav-link i {
-        margin-right: 8px;
-        font-size: 1rem;
-        width: 20px;
-        text-align: center;
-      }
-
-      .dropdown-menu {
-        border-radius: var(--radius);
-        border: none;
-        box-shadow: var(--shadow-md);
-        background: white;
-        overflow: hidden;
-      }
-
-      .dropdown-item {
-        padding: 0.7rem 1.2rem;
-        transition: var(--transition);
-        color: var(--dark);
-        font-weight: 500;
-      }
-
-      .dropdown-item:hover {
-        background: var(--highlight);
-        color: var(--dark);
-      }
-
-      .dropdown-item i {
-        margin-right: 8px;
-        color: var(--accent);
-        width: 18px;
-      }
-
       /* Dashboard Layout */
       .dashboard-container {
-        padding: 1rem 1rem 2rem 1rem; /* Adjusted top padding */
+        padding: 1rem 1rem 2rem 1rem; 
         max-width: 1400px;
         margin: 0 auto;
         position: relative;
@@ -790,6 +973,20 @@
     </style>
   </head>
   <body>
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-danger text-white">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          <strong class="me-auto" id="toastTitle">Alert</strong>
+          <small>Just now</small>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body bg-white" id="toastBody">
+          Notification content...
+        </div>
+      </div>
+    </div>
+
     <div id="welcome-overlay">
         <div class="welcome-content">
             <i class="fas fa-seedling welcome-icon"></i>
@@ -821,228 +1018,236 @@
       ></i>
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-          <i class="fas fa-seedling"></i>SMARTSHROOM
-        </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span class="navbar-toggler-icon"></span>
+    <div class="layout-container">
+        <div class="mobile-header">
+            <div class="mobile-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="mobile-brand">
+                <i class="fas fa-seedling"></i> SMARTSHROOM
+            </div>
+        </div>
+
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <div class="burger-icon" onclick="collapseSidebar()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                
+                <a class="sidebar-brand" href="#">
+                  <i class="fas fa-seedling"></i><span>SMARTSHROOM</span>
+                </a>
+            </div>
+            
+            <ul class="nav flex-column sidebar-nav" id="sidebarNav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'dashboard' %}"
+                      ><i class="fas fa-chart-line"></i> <span>Dashboard</span></a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'report' %}"
+                      ><i class="fas fa-file-alt"></i> <span>Report</span></a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'scan' %}"
+                      ><i class="fas fa-qrcode"></i> <span>Scan</span></a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'remote' %}"
+                      ><i class="fas fa-wifi"></i> <span>Remote</span></a
+                    >
+                </li>
+                
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#userSubmenu"
+                    role="button"
+                    data-bs-toggle="collapse"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-user-circle"></i> <span>Account</span>
+                  </a>
+                  <div class="collapse dropdown-menu" id="userSubmenu" data-bs-parent="#sidebarNav">
+                    <a class="dropdown-item" href="{% url 'profile' %}"
+                      ><i class="fas fa-user"></i> <span>Profile</span></a
+                    >
+                    <a class="dropdown-item" href="{% url 'logout' %}"
+                      ><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a
+                    >
+                  </div>
+                </li>
+            </ul>
+        </nav>
+        
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link active" href="{% url 'dashboard' %}"
-                ><i class="fas fa-chart-line"></i> Dashboard</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'report' %}"
-                ><i class="fas fa-file-alt"></i> Report</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'scan' %}"
-                ><i class="fas fa-qrcode"></i> Scan</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'remote' %}"
-                ><i class="fas fa-wifi"></i> Remote</a
-              >
-            </li>
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-              >
-                <i class="fas fa-user-circle"></i>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                  <a class="dropdown-item" href="{% url 'profile' %}"
-                    ><i class="fas fa-user"></i> Profile</a
-                  >
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{% url 'logout' %}"
-                    ><i class="fas fa-sign-out-alt"></i> Logout</a
-                  >
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
 
-    <div class="hero-container">
-        <div class="hero-banner">
-            <h1>SMARTSHROOM</h1>
-            <p>Integrated Mushroom Farming System</p>
-        </div>
-    </div>
-
-    <div class="dashboard-container">
-      <div class="stats-grid">
-        <div class="card">
-          <div class="card-header">
-            <i class="fas fa-temperature-high"></i> Temperature
-          </div>
-          <div
-            class="card-body text-center d-flex flex-column justify-content-center"
-          >
-            <div class="stat-value" id="temperature">
-              --<span class="stat-unit">°C</span>
+        <div class="content-wrapper">
+            <div class="hero-container">
+                <div class="hero-banner">
+                    <h1>SMARTSHROOM</h1>
+                    <p>Integrated Mushroom Farming System</p>
+                </div>
             </div>
-          </div>
-        </div>
 
-        <div class="card">
-          <div class="card-header"><i class="fas fa-tint"></i> Humidity</div>
-          <div
-            class="card-body text-center d-flex flex-column justify-content-center"
-          >
-            <div class="stat-value" id="humidity">
-              --<span class="stat-unit">%</span>
+            <div class="dashboard-container">
+                <div class="stats-grid">
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-temperature-high"></i> Temperature
+                      </div>
+                      <div
+                        class="card-body text-center d-flex flex-column justify-content-center"
+                      >
+                        <div class="stat-value" id="temperature">
+                          --<span class="stat-unit">°C</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card">
+                      <div class="card-header"><i class="fas fa-tint"></i> Humidity</div>
+                      <div
+                        class="card-body text-center d-flex flex-column justify-content-center"
+                      >
+                        <div class="stat-value" id="humidity">
+                          --<span class="stat-unit">%</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-weight-hanging"></i> Total Harvest
+                      </div>
+                      <div
+                        class="card-body text-center d-flex flex-column justify-content-center"
+                      >
+                        <div class="stat-value" id="totalHarvest">
+                          --<span class="stat-unit">kg</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card">
+                      <div class="card-header">
+                        <i class="fas fa-layer-group"></i> Total Bags
+                      </div>
+                      <div
+                        class="card-body text-center d-flex flex-column justify-content-center"
+                      >
+                        <div class="stat-value" id="totalBags">
+                          --<span class="stat-unit">pcs</span>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-container h-100 mb-0">
+                      <div class="chart-header">
+                        <h2 class="chart-title">
+                          <i class="fas fa-microscope"></i> Crop Health Analysis
+                        </h2>
+                      </div>
+                      <div style="position: relative; height: 200px">
+                        <canvas id="scanHealthChart"></canvas>
+                      </div>
+                      <div class="text-center mt-3">
+                        <span class="badge rounded-pill bg-success me-2">Healthy</span>
+                        <span class="badge rounded-pill bg-danger">Trichoderma</span>
+                      </div>
+                    </div>
+
+                    <div class="card h-100 mb-0">
+                      <div class="card-header">
+                        <i class="fas fa-history"></i> Recent Scans
+                      </div>
+                      <div
+                        class="card-body p-0"
+                        style="max-height: 300px; overflow-y: auto"
+                      >
+                        <div class="list-group list-group-flush" id="recentScansList">
+                          <div class="text-center p-4 text-muted">
+                            Loading recent scans...
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-container">
+                      <div class="chart-header">
+                        <h2 class="chart-title">
+                          <i class="fas fa-chart-pie"></i> Bag Status Distribution
+                        </h2>
+                      </div>
+                      <canvas id="bagStatusChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                      <div class="chart-header">
+                        <h2 class="chart-title">
+                          <i class="fas fa-cubes"></i> Quantity by Type
+                        </h2>
+                      </div>
+                      <canvas id="bagTypeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                      <h2 class="chart-title">
+                        <i class="fas fa-thermometer-three-quarters"></i> Environmental Trends (Historical)
+                      </h2>
+                    </div>
+                    <canvas id="historicalSensorChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                      <h2 class="chart-title">
+                        <i class="fas fa-chart-area"></i> Oyster Mushroom Harvest Trend
+                      </h2>
+                      <div class="chart-actions"></div>
+                    </div>
+                    <canvas id="harvestChart"></canvas>
+                </div>
+
+                <div class="data-table-container">
+                    <h3><i class="fas fa-table"></i> Recent Harvest Data</h3>
+                    <div class="table-responsive">
+                      <table class="data-table">
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Harvest (kg)</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody id="harvestTableBody">
+                          <tr>
+                            <td colspan="3" class="text-center">Loading data...</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
             </div>
-          </div>
+
+            <footer class="dashboard-footer">
+              <p>
+                SmartShroom Dashboard &copy; 2023 | Real-time Mushroom Farming Analytics
+              </p>
+            </footer>
         </div>
-
-        <div class="card">
-          <div class="card-header">
-            <i class="fas fa-weight-hanging"></i> Total Harvest
-          </div>
-          <div
-            class="card-body text-center d-flex flex-column justify-content-center"
-          >
-            <div class="stat-value" id="totalHarvest">
-              --<span class="stat-unit">kg</span>
-            </div>
-          </div>
         </div>
-
-        <div class="card">
-          <div class="card-header">
-            <i class="fas fa-layer-group"></i> Total Bags
-          </div>
-          <div
-            class="card-body text-center d-flex flex-column justify-content-center"
-          >
-            <div class="stat-value" id="totalBags">
-              --<span class="stat-unit">pcs</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="chart-row">
-        <div class="chart-container h-100 mb-0">
-          <div class="chart-header">
-            <h2 class="chart-title">
-              <i class="fas fa-microscope"></i> Crop Health Analysis
-            </h2>
-          </div>
-          <div style="position: relative; height: 200px">
-            <canvas id="scanHealthChart"></canvas>
-          </div>
-          <div class="text-center mt-3">
-            <span class="badge rounded-pill bg-success me-2">Healthy</span>
-            <span class="badge rounded-pill bg-danger">Trichoderma</span>
-          </div>
-        </div>
-
-        <div class="card h-100 mb-0">
-          <div class="card-header">
-            <i class="fas fa-history"></i> Recent Scans
-          </div>
-          <div
-            class="card-body p-0"
-            style="max-height: 300px; overflow-y: auto"
-          >
-            <div class="list-group list-group-flush" id="recentScansList">
-              <div class="text-center p-4 text-muted">
-                Loading recent scans...
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="chart-row">
-        <div class="chart-container">
-          <div class="chart-header">
-            <h2 class="chart-title">
-              <i class="fas fa-chart-pie"></i> Bag Status Distribution
-            </h2>
-          </div>
-          <canvas id="bagStatusChart"></canvas>
-        </div>
-
-        <div class="chart-container">
-          <div class="chart-header">
-            <h2 class="chart-title">
-              <i class="fas fa-cubes"></i> Quantity by Type
-            </h2>
-          </div>
-          <canvas id="bagTypeChart"></canvas>
-        </div>
-      </div>
-
-      <div class="chart-container">
-        <div class="chart-header">
-          <h2 class="chart-title">
-            <i class="fas fa-thermometer-three-quarters"></i> Environmental Trends (Historical)
-          </h2>
-        </div>
-        <canvas id="historicalSensorChart"></canvas>
-      </div>
-
-      <div class="chart-container">
-        <div class="chart-header">
-          <h2 class="chart-title">
-            <i class="fas fa-chart-area"></i> Oyster Mushroom Harvest Trend
-          </h2>
-          <div class="chart-actions"></div>
-        </div>
-        <canvas id="harvestChart"></canvas>
-      </div>
-
-      <div class="data-table-container">
-        <h3><i class="fas fa-table"></i> Recent Harvest Data</h3>
-        <div class="table-responsive">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Harvest (kg)</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="harvestTableBody">
-              <tr>
-                <td colspan="3" class="text-center">Loading data...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <footer class="dashboard-footer">
-      <p>
-        SmartShroom Dashboard &copy; 2023 | Real-time Mushroom Farming Analytics
-      </p>
-    </footer>
-
     <div class="chat-widget">
       <div class="chat-window" id="chatWindow">
         <div class="chat-header">
@@ -1082,12 +1287,80 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+      // ---------------- SIDEBAR LOGIC ----------------
+      function collapseSidebar() {
+          const sidebar = document.getElementById('sidebar');
+          sidebar.classList.toggle('collapsed');
+      }
+
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('active');
+      }
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(event) {
+          const sidebar = document.getElementById('sidebar');
+          const toggleBtn = document.querySelector('.mobile-toggle');
+          
+          if (window.innerWidth <= 992 && 
+              sidebar.classList.contains('active') && 
+              !sidebar.contains(event.target) && 
+              !toggleBtn.contains(event.target)) {
+              sidebar.classList.remove('active');
+          }
+      });
+
       // Initialize variables
       let harvestChart = null;
       let historicalSensorChart = null; 
       let bagStatusChart = null;
       let bagTypeChart = null;
       let scanHealthChart = null; 
+      
+      // Variables for Notification Logic
+      let lastAlertTime = 0;
+      const ALERT_COOLDOWN = 60000; // 1 Minute cooldown between alerts
+
+      // 2. PUSH NOTIFICATION LOGIC
+      function showPushNotification(title, body) {
+          // Visual Toast
+          const toastEl = document.getElementById('liveToast');
+          document.getElementById('toastTitle').textContent = title;
+          document.getElementById('toastBody').textContent = body;
+          
+          const toast = new bootstrap.Toast(toastEl);
+          toast.show();
+
+          // Browser System Notification
+          if (Notification.permission === "granted") {
+              new Notification("SmartShroom Alert: " + title, {
+                  body: body,
+                  icon: "https://cdn-icons-png.flaticon.com/512/2903/2903556.png" 
+              });
+          }
+      }
+
+      function requestNotificationPermission() {
+          if ("Notification" in window) {
+              if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                  Notification.requestPermission();
+              }
+          }
+      }
+
+      function checkSensorThresholds(temp, humidity) {
+          const now = Date.now();
+          if (now - lastAlertTime < ALERT_COOLDOWN) return; // Prevent spam
+
+          if (temp > 30) {
+              showPushNotification("Critical Heat Alert", `Temperature is too high: ${temp}°C! Check ventilation.`);
+              lastAlertTime = now;
+          } else if (humidity < 65) {
+              showPushNotification("Low Humidity Warning", `Humidity is too low: ${humidity}%. Check misting system.`);
+              lastAlertTime = now;
+          }
+      }
 
       function initializeCharts() {
         // Harvest Chart
@@ -1239,6 +1512,32 @@
             plugins: { legend: { display: false } },
           },
         });
+        
+        // Scan Health Chart (Doughnut)
+        let scanHealthCtx = document
+          .getElementById("scanHealthChart")
+          .getContext("2d");
+        scanHealthChart = new Chart(scanHealthCtx, {
+          type: "doughnut",
+          data: {
+            labels: ["Healthy Mushroom", "Trichoderma (Disease)"],
+            datasets: [
+              {
+                data: [50, 50], // Placeholder data
+                backgroundColor: ["#28a745", "#dc3545"],
+                borderWidth: 2,
+                borderColor: "#ffffff",
+                hoverOffset: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "70%",
+            plugins: { legend: { display: false } },
+          },
+        });
       }
 
       // Fetch Scan Dashboard Data
@@ -1254,32 +1553,10 @@
             }
 
             // 1. Update Health Chart
-            const ctx = document
-              .getElementById("scanHealthChart")
-              .getContext("2d");
-            if (scanHealthChart) scanHealthChart.destroy();
-
-            scanHealthChart = new Chart(ctx, {
-              type: "doughnut",
-              data: {
-                labels: ["Healthy Mushroom", "Trichoderma (Disease)"],
-                datasets: [
-                  {
-                    data: [data.stats.healthy, data.stats.disease],
-                    backgroundColor: ["#28a745", "#dc3545"],
-                    borderWidth: 2,
-                    borderColor: "#ffffff",
-                    hoverOffset: 4,
-                  },
-                ],
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: "70%",
-                plugins: { legend: { display: false } },
-              },
-            });
+            if (scanHealthChart) {
+                scanHealthChart.data.datasets[0].data = [data.stats.healthy, data.stats.disease];
+                scanHealthChart.update();
+            }
 
             // 2. Update Recent Scans List
             const listContainer = document.getElementById("recentScansList");
@@ -1299,27 +1576,27 @@
                   : "bg-danger-subtle";
 
                 const itemHtml = `
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle p-2 me-3 ${bgClass}" style="background-color: ${
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle p-2 me-3 ${bgClass}" style="background-color: ${
                   isHealthy ? "#e6f4ea" : "#fce8e6"
                 }">
-                                        <i class="fas ${iconClass}"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0 fw-bold" style="font-size: 0.9rem;">${
-                                          scan.result
-                                        }</h6>
-                                        <small class="text-muted"><i class="far fa-clock me-1"></i>${
-                                          scan.date
-                                        }</small>
-                                    </div>
-                                </div>
-                                <span class="badge bg-secondary rounded-pill" style="font-weight:400; font-size: 0.75rem;">${parseFloat(
-                                  scan.confidence
-                                ).toFixed(1)}%</span>
+                                <i class="fas ${iconClass}"></i>
                             </div>
-                        `;
+                            <div>
+                                <h6 class="mb-0 fw-bold" style="font-size: 0.9rem;">${
+                                  scan.result
+                                }</h6>
+                                <small class="text-muted"><i class="far fa-clock me-1"></i>${
+                                  scan.date
+                                }</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-secondary rounded-pill" style="font-weight:400; font-size: 0.75rem;">${parseFloat(
+                          scan.confidence
+                        ).toFixed(1)}%</span>
+                    </div>
+                `;
                 listContainer.innerHTML += itemHtml;
               });
             }
@@ -1422,7 +1699,7 @@
               return;
             }
 
-            // --- 1. UPDATE CARDS ---
+            // --- 1. UPDATE CARDS (Get latest data) ---
             const latest = data.sensor_data[0];
 
             if (latest) {
@@ -1437,13 +1714,16 @@
               ).innerHTML = `${latest.humidity.toFixed(
                 1
               )}<span class="stat-unit">%</span>`;
+              
+              // NEW: CHECK THRESHOLDS FOR NOTIFICATION
+              checkSensorThresholds(latest.temperature, latest.humidity);
             }
 
             // --- 2. UPDATE CHART FOR HISTORICAL DATA ---
             if (historicalSensorChart) {
               let history = [...data.sensor_data];
               if (history.length > 20) {
-                 history = history.slice(0, 20); // Take newest 20
+                history = history.slice(0, 20); // Take newest 20
               }
               history.reverse(); // Now it is Oldest -> Newest
 
@@ -1465,13 +1745,16 @@
       // Initialize
       document.addEventListener("DOMContentLoaded", function () {
         
+        // Request notification permission immediately
+        requestNotificationPermission();
+
         // --- ANIMATION LOGIC: REMOVE OVERLAY AFTER 3 SECONDS ---
         setTimeout(() => {
             const overlay = document.getElementById('welcome-overlay');
             if (overlay) {
                 overlay.classList.add('fade-out-overlay');
             }
-        }, 3000); // 3 seconds display time
+        }, 3000); 
         // --------------------------------------------------------
 
         initializeCharts();

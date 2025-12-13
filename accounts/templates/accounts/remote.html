@@ -1,432 +1,530 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Remote Climate Control | Smart Shroom</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-        :root {
-            /* Enhanced Oyster mushroom palette */
-            --primary: #D6C1B1; /* Light mushroom tan */
-            --primary-dark: #c0ab9b; /* Darker shade for hover states */
-            --secondary: #8B786D; /* Medium mushroom brown */
-            --accent: #4D6A6D; /* Complementary blue-green */
-            --accent-light: #5d8286; /* Lighter accent for gradients */
-            --light: #F5F1ED; /* Very light tan */
-            --dark: #3A3238; /* Deep purple-brown */
-            --highlight: #BED3C9; /* Soft sage green */
-            
-            /* New variables for modern design */
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
-            --radius: 16px;
-            --transition: all 0.3s ease;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, var(--light) 0%, var(--highlight) 100%);
-            color: var(--dark);
-            min-height: 100vh;
-            position: relative; /* Context for z-index */
+      :root {
+        /* --- GLOBAL VARIABLES (From Report Page) --- */
+        --primary: #d6c1b1;
+        --primary-dark: #c0ab9b;
+        --secondary: #8b786d;
+        --accent: #4d6a6d;
+        --accent-light: #5d8286;
+        --light: #f5f1ed;
+        --dark: #3a3238;
+        --highlight: #bed3c9;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+        --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+        --radius: 16px;
+        --transition: all 0.3s ease;
+        /* Sidebar Variables */
+        --sidebar-width: 280px;
+        --sidebar-collapsed-width: 80px;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        background: linear-gradient(135deg, var(--light) 0%, var(--highlight) 100%);
+        color: var(--dark);
+        min-height: 100vh;
+        position: relative;
+      }
+
+      /* --- LAYOUT CONTAINER STYLES --- */
+      .layout-container {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* --- SIDEBAR STYLES (Fixed to match Report Page) --- */
+      #sidebar {
+        width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        left: 0;
+        background: linear-gradient(
+          180deg,
+          var(--accent) 0%,
+          var(--dark) 100%
+        ) !important;
+        color: white;
+        padding: 0;
+        box-shadow: var(--shadow-lg);
+        z-index: 1000;
+        overflow-y: auto;
+        transition: width 0.3s ease, min-width 0.3s ease;
+        transform: translateX(0);
+        border-right: 2px solid rgba(255, 255, 255, 0.1);
+        overflow-x: hidden;
+      }
+
+      /* Collapsed State Styles */
+      #sidebar.collapsed {
+        width: var(--sidebar-collapsed-width);
+        min-width: var(--sidebar-collapsed-width);
+      }
+
+      .sidebar-header {
+        text-align: center;
+        padding: 1.5rem 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 80px;
+        overflow: hidden;
+      }
+
+      #sidebar.collapsed .sidebar-header {
+        justify-content: center;
+        padding: 1.5rem 0;
+      }
+
+      /* Burger Icon Styles */
+      .burger-icon {
+        cursor: pointer;
+        font-size: 1.4rem;
+        color: var(--light);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 30px;
+      }
+
+      .burger-icon:hover {
+        color: var(--primary);
+      }
+
+      .sidebar-brand {
+        color: var(--light) !important;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        font-size: 1.3rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: opacity 0.2s ease;
+        flex-grow: 1;
+        justify-content: center;
+      }
+
+      .sidebar-brand i {
+        color: var(--primary);
+        font-size: 1.8rem;
+        margin-right: 8px;
+        transition: var(--transition);
+      }
+
+      .sidebar-brand:hover i { transform: rotate(-15deg); }
+
+      /* Hide brand elements when collapsed */
+      #sidebar.collapsed .sidebar-brand { display: none; }
+
+      .sidebar-nav .nav-item { margin: 0; }
+
+      .sidebar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.85) !important;
+        font-weight: 500;
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+        transition: var(--transition);
+        position: relative;
+        border-radius: 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      #sidebar.collapsed .nav-link {
+        justify-content: center;
+        padding: 0.75rem 0;
+      }
+
+      .sidebar-nav .nav-link:hover {
+        color: var(--primary) !important;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .sidebar-nav .nav-link.active {
+        color: var(--primary) !important;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.15);
+        border-left: 4px solid var(--primary);
+      }
+
+      .sidebar-nav .nav-link i {
+        margin-right: 0;
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+      }
+
+      /* Hide spans (text) when collapsed */
+      #sidebar.collapsed .nav-link span,
+      #sidebar.collapsed .dropdown-item span,
+      #sidebar.collapsed .dropdown-toggle::after {
+        display: none;
+      }
+
+      .sidebar-nav .dropdown-item {
+          padding: 0.5rem 1.5rem 0.5rem 3.5rem;
+          transition: var(--transition);
+          color: rgba(255, 255, 255, 0.7) !important;
+          font-weight: 400;
+          background: transparent;
+          font-size: 0.95rem;
+          border-left: 4px solid transparent;
+          white-space: nowrap;
+          cursor: pointer;
+      }
+
+      #sidebar.collapsed .dropdown-item {
+          padding: 0.5rem 1rem;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+      }
+
+      #sidebar.collapsed .dropdown-item i { margin: 0; }
+
+      .sidebar-nav .dropdown-item:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: var(--primary) !important;
+          border-left: 4px solid var(--primary-dark);
+      }
+
+      .sidebar-nav .dropdown-menu {
+          position: static !important;
+          transform: none !important;
+          border-radius: 0;
+          border: none;
+          box-shadow: none;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 0;
+          margin: 0;
+      }
+
+      .sidebar-nav .dropdown-toggle::after {
+          float: right;
+          margin-top: 0.5em;
+          margin-left: auto;
+      }
+
+      .sidebar-nav .dropdown-toggle[aria-expanded="true"] {
+          background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* --- MAIN CONTENT WRAPPER --- */
+      .content-wrapper {
+        flex-grow: 1;
+        padding: 0;
+        min-width: 0;
+        transition: margin 0.3s ease;
+      }
+
+      /* --- MOBILE HEADER --- */
+      .mobile-header {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 60px;
+          background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%);
+          z-index: 1001;
+          align-items: center;
+          padding: 0 1rem;
+          box-shadow: var(--shadow-md);
+      }
+
+      .mobile-toggle {
+          color: white;
+          font-size: 1.4rem;
+          cursor: pointer;
+          margin-right: 15px;
+          display: flex;
+          align-items: center;
+      }
+
+      .mobile-brand {
+          color: white;
+          font-weight: 700;
+          font-size: 1.3rem;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          letter-spacing: 0.5px;
+      }
+
+      .mobile-brand i {
+          color: var(--primary);
+          font-size: 1.5rem;
+      }
+
+      /* Hide the old floating sidebar toggle */
+      .sidebar-toggle {
+          display: none !important;
+      }
+
+      /* Responsive Adjustments for Sidebar */
+      @media (max-width: 992px) {
+        #sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          height: 100%;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          box-shadow: var(--shadow-lg);
+          border-right: none;
+          width: var(--sidebar-width);
+          z-index: 1002;
         }
 
-        /* --- NEW BACKGROUND ANIMATION STYLES --- */
-        .background-shapes {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Behind everything */
-            overflow: hidden;
-            pointer-events: none;
+        #sidebar.collapsed {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
         }
-
-        .shape {
-            position: absolute;
-            opacity: 0.05; /* Very subtle opacity */
-            color: var(--accent);
-        }
-
-        /* Animation Keyframes */
-        .drift-slow { animation: drift 35s ease-in-out infinite alternate; }
-        .drift-medium { animation: drift 25s ease-in-out infinite alternate; }
-        .drift-fast { animation: drift 18s ease-in-out infinite alternate; }
-        .drift-reverse { animation: drift-rev 30s ease-in-out infinite alternate; }
-
-        @keyframes drift {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(50px, -30px) rotate(10deg); }
-        }
-
-        @keyframes drift-rev {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-40px, 40px) rotate(-10deg); }
-        }
-        /* --------------------------------------- */
-        
-        /* Modern navbar styling - UPDATED TO STICKY */
-        .navbar {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%) !important;
-            box-shadow: var(--shadow-md);
-            padding: 0.5rem 1rem;
-            
-            /* CHANGED: Sticky positioning */
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            width: 100%;
-        }
-        
-        .navbar-brand {
-            color: var(--light) !important;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+        #sidebar.collapsed .sidebar-brand,
+        #sidebar.collapsed .nav-link span,
+        #sidebar.collapsed .dropdown-toggle::after {
             display: flex;
-            align-items: center;
-            font-size: 1.4rem;
-        }
-        
-        .navbar-brand i {
-            color: var(--primary);
-            font-size: 1.8rem;
-            margin-right: 10px;
-            transition: var(--transition);
-        }
-        
-        .navbar-brand:hover i {
-            transform: rotate(-15deg);
-        }
-        
-        .nav-link {
-            color: rgba(255, 255, 255, 0.85) !important;
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            transition: var(--transition);
-            position: relative;
-            border-radius: var(--radius);
-            margin: 0 0.2rem;
-        }
-        
-        .nav-link:hover {
-            color: var(--primary) !important;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .nav-link.active {
-            color: var(--primary) !important;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .nav-link i {
-            margin-right: 8px;
-            font-size: 1rem;
-            width: 20px;
-            text-align: center;
+            opacity: 1;
         }
 
-        .dropdown-menu {
-            border-radius: var(--radius);
-            border: none;
-            box-shadow: var(--shadow-md);
-            background: white;
-            overflow: hidden;
-        }
-        
-        .dropdown-item {
-            padding: 0.7rem 1.2rem;
-            transition: var(--transition);
-            color: var(--dark);
-            font-weight: 500;
-        }
-        
-        .dropdown-item:hover {
-            background: var(--highlight);
-            color: var(--dark);
-        }
-        
-        .dropdown-item i {
-            margin-right: 8px;
-            color: var(--accent);
-            width: 18px;
-        }
-        
-        /* Main content */
-        .control-container {
-            padding: 2rem 1rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1; /* Ensures content is above background animation */
-        }
-        
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            background: white;
-            padding: 2rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .page-title {
-            color: var(--dark);
-            font-weight: 700;
-            font-size: 2.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-        
-        .page-title i {
-            color: var(--accent);
-            margin-right: 15px;
-            font-size: 2rem;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .page-subtitle {
-            color: var(--secondary);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        /* Device cards */
-        .devices-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .device-card {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-            transition: var(--transition);
-            height: 100%;
-            position: relative;
-        }
-        
-        .device-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-light));
-        }
-        
-        .device-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .card-header {
-            padding: 1.5rem;
-            font-weight: 600;
-            color: var(--light);
-            display: flex;
-            align-items: center;
-        }
-        
-        .mistmaker-header {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
-        }
-        
-        .heater-header {
-            background: linear-gradient(135deg, var(--secondary) 0%, #9c8a7f 100%);
-        }
-        
-        .temp-header {
-            background: linear-gradient(135deg, var(--dark) 0%, #4a4148 100%);
-        }
-        
-        .card-header i {
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .card-body {
-            padding: 1.5rem;
-        }
-        
-        .device-icon {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-size: 3rem;
-            color: var(--accent);
-        }
-        
-        .device-status {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding: 0.8rem;
-            background: var(--light);
-            border-radius: var(--radius);
-        }
-        
-        .status-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .status-active {
-            background: var(--highlight);
-            color: var(--dark);
-        }
-        
-        .status-inactive {
-            background: color-mix(in srgb, var(--secondary) 20%, transparent);
-            color: var(--secondary);
-        }
-        
-        .btn-group-control {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-            margin-top: 1.5rem;
-        }
-        
-        .btn {
-            border: none;
-            border-radius: var(--radius);
-            padding: 0.8rem 1.2rem;
-            font-weight: 600;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, var(--highlight) 0%, #a8c8b9 100%);
-            color: var(--dark);
-        }
-        
-        .btn-success:hover {
-            background: linear-gradient(135deg, #a8c8b9 0%, var(--highlight) 100%);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-            color: var(--dark);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, var(--secondary) 0%, #9c8a7f 100%);
-            color: var(--light);
-        }
-        
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #9c8a7f 0%, var(--secondary) 100%);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-            color: var(--light);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
-            color: var(--light);
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-            color: var(--light);
-        }
-        
-        .form-control {
-            border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
-            border-radius: var(--radius);
-            padding: 0.8rem 1rem;
-            transition: var(--transition);
-        }
-        
-        .form-control:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--accent) 25%, transparent);
-        }
-        
-        .input-group-text {
-            background: color-mix(in srgb, var(--accent) 10%, transparent);
-            border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
-            color: var(--accent);
-            border-radius: var(--radius);
-        }
-        
-        .target-display {
-            background: var(--light);
-            padding: 1rem;
-            border-radius: var(--radius);
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-        
-        .target-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 0.5rem 0;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .devices-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .page-title {
-                font-size: 1.8rem;
-            }
-            
-            .btn-group-control {
-                grid-template-columns: 1fr;
-            }
-            
-            .control-container {
-                padding: 1.5rem 1rem;
-            }
-        }
-        
-        /* Animation for status changes */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .status-updated {
-            animation: pulse 0.5s ease;
-        }
+        #sidebar.active { transform: translateX(0); }
 
-        /* --- CHATBOT STYLES --- */
+        .burger-icon { display: none; }
+        .sidebar-header { justify-content: center; }
+
+        .mobile-header { display: flex; } /* Show header on mobile */
+        .content-wrapper { margin-top: 60px; } /* Push content down */
+      }
+
+      /* --- BACKGROUND ANIMATION STYLES --- */
+      .background-shapes {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .shape {
+        position: absolute;
+        opacity: 0.05;
+        color: var(--accent);
+      }
+
+      .drift-slow { animation: drift 35s ease-in-out infinite alternate; }
+      .drift-medium { animation: drift 25s ease-in-out infinite alternate; }
+      .drift-fast { animation: drift 18s ease-in-out infinite alternate; }
+      .drift-reverse { animation: drift-rev 30s ease-in-out infinite alternate; }
+
+      @keyframes drift {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        100% { transform: translate(50px, -30px) rotate(10deg); }
+      }
+
+      @keyframes drift-rev {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        100% { transform: translate(-40px, 40px) rotate(-10deg); }
+      }
+
+      /* --- REMOTE SPECIFIC STYLES --- */
+      .control-container {
+          padding: 2rem 1rem;
+          max-width: 1200px;
+          margin: 0 auto;
+          position: relative;
+          z-index: 1;
+      }
+
+      /* Device cards */
+      .devices-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+          gap: 2rem;
+          margin-bottom: 2rem;
+      }
+
+      .device-card {
+          background: white;
+          border-radius: var(--radius);
+          box-shadow: var(--shadow-sm);
+          overflow: hidden;
+          transition: var(--transition);
+          height: 100%;
+          position: relative;
+      }
+
+      .device-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 4px;
+          background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      }
+
+      .device-card:hover {
+          transform: translateY(-5px);
+          box-shadow: var(--shadow-lg);
+      }
+
+      .card-header {
+          padding: 1.5rem;
+          font-weight: 600;
+          color: var(--light);
+          display: flex;
+          align-items: center;
+      }
+
+      .mistmaker-header { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); }
+      .heater-header { background: linear-gradient(135deg, var(--secondary) 0%, #9c8a7f 100%); }
+      .temp-header { background: linear-gradient(135deg, var(--dark) 0%, #4a4148 100%); }
+
+      .card-header i { margin-right: 10px; font-size: 1.2rem; }
+      .card-body { padding: 1.5rem; }
+
+      .device-icon {
+          text-align: center;
+          margin-bottom: 1.5rem;
+          font-size: 3rem;
+          color: var(--accent);
+      }
+
+      .device-status {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 1.5rem;
+          padding: 0.8rem;
+          background: var(--light);
+          border-radius: var(--radius);
+      }
+
+      .status-badge {
+          padding: 0.5rem 1rem;
+          border-radius: 50px;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+      }
+
+      .status-active { background: var(--highlight); color: var(--dark); }
+      .status-inactive { background: color-mix(in srgb, var(--secondary) 20%, transparent); color: var(--secondary); }
+
+      .btn-group-control {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.8rem;
+          margin-top: 1.5rem;
+      }
+
+      .btn {
+          border: none;
+          border-radius: var(--radius);
+          padding: 0.8rem 1.2rem;
+          font-weight: 600;
+          transition: var(--transition);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+      }
+
+      .btn-success { background: linear-gradient(135deg, var(--highlight) 0%, #a8c8b9 100%); color: var(--dark); }
+      .btn-success:hover { background: linear-gradient(135deg, #a8c8b9 0%, var(--highlight) 100%); transform: translateY(-2px); box-shadow: var(--shadow-sm); color: var(--dark); }
+
+      .btn-danger { background: linear-gradient(135deg, var(--secondary) 0%, #9c8a7f 100%); color: var(--light); }
+      .btn-danger:hover { background: linear-gradient(135deg, #9c8a7f 0%, var(--secondary) 100%); transform: translateY(-2px); box-shadow: var(--shadow-sm); color: var(--light); }
+
+      .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color: var(--light); }
+      .btn-primary:hover { background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%); transform: translateY(-2px); box-shadow: var(--shadow-sm); color: var(--light); }
+
+      .form-control {
+          border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+          border-radius: var(--radius);
+          padding: 0.8rem 1rem;
+          transition: var(--transition);
+      }
+
+      .form-control:focus {
+          border-color: var(--accent);
+          box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--accent) 25%, transparent);
+      }
+
+      .input-group-text {
+          background: color-mix(in srgb, var(--accent) 10%, transparent);
+          border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+          color: var(--accent);
+          border-radius: var(--radius);
+      }
+
+      .target-display {
+          background: var(--light);
+          padding: 1rem;
+          border-radius: var(--radius);
+          margin-bottom: 1.5rem;
+          text-align: center;
+      }
+
+      .target-value {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: var(--accent);
+          margin: 0.5rem 0;
+      }
+
+      /* Responsive adjustments for Grid */
+      @media (max-width: 768px) {
+          .devices-grid { grid-template-columns: 1fr; }
+          .btn-group-control { grid-template-columns: 1fr; }
+      }
+
+      /* Animation for status changes */
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+
+      .status-updated { animation: pulse 0.5s ease; }
+
+      /* --- CHATBOT STYLES --- */
       .chat-widget {
           position: fixed;
           bottom: 30px;
@@ -490,7 +588,6 @@
       }
 
       .chat-header h3 { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; margin: 0; }
-      
       .chat-close { cursor: pointer; opacity: 0.8; transition: 0.2s; }
       .chat-close:hover { opacity: 1; }
 
@@ -561,144 +658,208 @@
 
       .chat-send:hover { background: var(--dark); }
     </style>
-</head>
-<body>
-    <div class="background-shapes">
-        <i class="fas fa-fan shape drift-medium" style="top: 10%; left: 5%; font-size: 60px;"></i>
-        <i class="fas fa-cloud shape drift-slow" style="top: 20%; right: 15%; font-size: 100px;"></i>
-        <i class="fas fa-tint shape drift-reverse" style="bottom: 15%; left: 10%; font-size: 80px;"></i>
-        <i class="fas fa-temperature-high shape drift-fast" style="bottom: 30%; right: 5%; font-size: 70px;"></i>
-        <i class="fas fa-wind shape drift-medium" style="top: 50%; left: 50%; font-size: 120px; opacity: 0.03;"></i>
+  </head>
+  <body>
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999">
+      {% if messages %}
+        {% for message in messages %}
+        <div class="toast align-items-center text-white bg-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% else %}primary{% endif %} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">
+              <i class="fas fa-info-circle me-2"></i> {{ message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="fas fa-seedling"></i>SMARTSHROOM</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto"> 
-                    <li class="nav-item"><a class="nav-link " href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'report' %}"><i class="fas fa-file-alt"></i> Report</a></li>
-                    <li class="nav-item"><a class="nav-link " href="{% url 'scan' %}"><i class="fas fa-qrcode"></i> Scan</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="{% url 'remote' %}"><i class="fas fa-wifi"></i> Remote</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i> 
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+    <div class="layout-container">
+        <div class="mobile-header">
+            <div class="mobile-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="mobile-brand">
+                <i class="fas fa-seedling"></i> SMARTSHROOM
             </div>
         </div>
-    </nav>
-    
-    <div class="control-container">
-        
-        <div class="devices-grid">
-            <div class="device-card">
-                <div class="card-header mistmaker-header">
-                    <i class="fas fa-droplet"></i> Mist Maker
+
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <div class="burger-icon" onclick="collapseSidebar()">
+                    <i class="fas fa-bars"></i>
                 </div>
-                <div class="card-body text-center">
-                    <div class="device-icon">
-                        <i class="fas fa-spray-can-sparkles"></i>
-                    </div>
-                    <div class="device-status">
-                        <span class="status-badge {{ devices.mistmaker.active|yesno:'status-active,status-inactive' }}">
-                            {% if devices.mistmaker.active %}
-                                <i class="fas fa-circle-check"></i> Active
-                            {% else %}
-                                <i class="fas fa-circle-xmark"></i> Inactive
-                            {% endif %}
-                        </span>
-                    </div>
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="device" value="mistmaker">
-                        <div class="btn-group-control">
-                            <button type="submit" name="action" value="on" class="btn btn-success">
-                                <i class="fas fa-power-off"></i> Turn On
-                            </button>
-                            <button type="submit" name="action" value="off" class="btn btn-danger">
-                                <i class="fas fa-power-off"></i> Turn Off
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                
+                <a class="sidebar-brand" href="#">
+                  <i class="fas fa-seedling"></i><span>SMARTSHROOM</span>
+                </a>
             </div>
             
-            <div class="device-card">
-                <div class="card-header heater-header">
-                    <i class="fas fa-wind"></i> Exhaust Fans
-                </div>
-                <div class="card-body text-center">
-                    <div class="device-icon">
-                        <i class="fas fa-fan"></i>
-                    </div>
-                    <div class="device-status">
-                        <span class="status-badge {{ devices.fan_heater.active|yesno:'status-active,status-inactive' }}">
-                            {% if devices.fan_heater.active %}
-                                <i class="fas fa-circle-check"></i> Active
-                            {% else %}
-                                <i class="fas fa-circle-xmark"></i> Inactive
-                            {% endif %}
-                        </span>
-                    </div>
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="device" value="fan_heater">
-                        <div class="btn-group-control">
-                            <button type="submit" name="action" value="on" class="btn btn-success">
-                                <i class="fas fa-power-off"></i> Turn On
-                            </button>
-                            <button type="submit" name="action" value="off" class="btn btn-danger">
-                                <i class="fas fa-power-off"></i> Turn Off
-                            </button>
+            <ul class="nav flex-column sidebar-nav" id="sidebarNav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}"
+                      ><i class="fas fa-chart-line"></i> <span>Dashboard</span></a
+                    >
+                </li>
+                
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#reportSubmenu"
+                    role="button"
+                    data-bs-toggle="collapse"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-file-alt"></i> <span>Report</span>
+                  </a>
+                  <div class="collapse dropdown-menu" id="reportSubmenu" data-bs-parent="#sidebarNav">
+                    <a class="dropdown-item" href="{% url 'report' %}">
+                        <i class="fas fa-table"></i> <span>View Data</span>
+                    </a>
+                    <a class="dropdown-item" href="{% url 'report' %}">
+                        <i class="fas fa-print"></i> <span>Print Report</span>
+                    </a>
+                  </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'scan' %}"
+                      ><i class="fas fa-qrcode"></i> <span>Scan</span></a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'remote' %}"
+                      ><i class="fas fa-wifi"></i> <span>Remote</span></a
+                    >
+                </li>
+                
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#userSubmenu"
+                    role="button"
+                    data-bs-toggle="collapse"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-user-circle"></i> <span>Account</span>
+                  </a>
+                  <div class="collapse dropdown-menu" id="userSubmenu" data-bs-parent="#sidebarNav">
+                    <a class="dropdown-item" href="{% url 'profile' %}"
+                      ><i class="fas fa-user"></i> <span>Profile</span></a
+                    >
+                    <a class="dropdown-item" href="{% url 'logout' %}"
+                      ><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a
+                    >
+                  </div>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="content-wrapper">
+            <div class="control-container">
+                <div class="devices-grid">
+                    <div class="device-card">
+                        <div class="card-header mistmaker-header">
+                            <i class="fas fa-droplet"></i> Mist Maker
                         </div>
-                    </form>
-                </div>
-            </div>
-            
-            <div class="device-card">
-                <div class="card-header temp-header">
-                    <i class="fas fa-temperature-arrow-up"></i> Temperature Control
-                </div>
-                <div class="card-body text-center">
-                    <div class="device-icon">
-                        <i class="fas fa-sliders"></i>
-                    </div>
-                    <div class="target-display">
-                        <p>Current Target</p>
-                        <div class="target-value">
-                            {{ devices.temperature.target|default:"24" }}°C
-                        </div>
-                    </div>
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="device" value="temperature">
-                        <div class="form-group mb-3">
-                            <div class="input-group mb-3">
-                                <span class="input-group-text"><i class="fas fa-thermometer-half"></i></span>
-                                <input type="number" name="temperature" class="form-control" placeholder="Target Temperature" step="0.1" value="{{ devices.temperature.target }}">
-                                <span class="input-group-text">°C</span>
+                        <div class="card-body text-center">
+                            <div class="device-icon">
+                                <i class="fas fa-spray-can-sparkles"></i>
                             </div>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-gear"></i></span>
-                                <select name="mode" class="form-control">
-                                    <option value="auto" {% if devices.temperature.mode == 'auto' %}selected{% endif %}>Automatic</option>
-                                    <option value="manual" {% if devices.temperature.mode == 'manual' %}selected{% endif %}>Manual</option>
-                                </select>
+                            <div class="device-status">
+                                <span class="status-badge {{ devices.mistmaker.active|yesno:'status-active,status-inactive' }}">
+                                    {% if devices.mistmaker.active %}
+                                        <i class="fas fa-circle-check"></i> Active
+                                    {% else %}
+                                        <i class="fas fa-circle-xmark"></i> Inactive
+                                    {% endif %}
+                                </span>
                             </div>
+                            <form id="mistForm" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="device" value="mistmaker">
+                                <div class="btn-group-control">
+                                    <button type="submit" name="action" value="on" class="btn btn-success">
+                                        <i class="fas fa-power-off"></i> Turn On
+                                    </button>
+                                    <button type="submit" name="action" value="off" class="btn btn-danger">
+                                        <i class="fas fa-power-off"></i> Turn Off
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <button type="submit" name="action" value="update" class="btn btn-primary w-100">
-                            <i class="fas fa-refresh"></i> Update Settings
-                        </button>
-                    </form>
+                    </div>
+                    
+                    <div class="device-card">
+                        <div class="card-header heater-header">
+                            <i class="fas fa-wind"></i> Exhaust Fans
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="device-icon">
+                                <i class="fas fa-fan"></i>
+                            </div>
+                            <div class="device-status">
+                                <span class="status-badge {{ devices.fan_heater.active|yesno:'status-active,status-inactive' }}">
+                                    {% if devices.fan_heater.active %}
+                                        <i class="fas fa-circle-check"></i> Active
+                                    {% else %}
+                                        <i class="fas fa-circle-xmark"></i> Inactive
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <form id="fanForm" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="device" value="fan_heater">
+                                <div class="btn-group-control">
+                                    <button type="submit" name="action" value="on" class="btn btn-success">
+                                        <i class="fas fa-power-off"></i> Turn On
+                                    </button>
+                                    <button type="submit" name="action" value="off" class="btn btn-danger">
+                                        <i class="fas fa-power-off"></i> Turn Off
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="device-card">
+                        <div class="card-header temp-header">
+                            <i class="fas fa-temperature-arrow-up"></i> Temperature Control
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="device-icon">
+                                <i class="fas fa-sliders"></i>
+                            </div>
+                            <div class="target-display">
+                                <p>Current Target</p>
+                                <div class="target-value">
+                                    {{ devices.temperature.target|default:"24" }}°C
+                                </div>
+                            </div>
+                            <form id="tempForm" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="device" value="temperature">
+                                <div class="form-group mb-3">
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text"><i class="fas fa-thermometer-half"></i></span>
+                                        <input type="number" name="temperature" class="form-control" placeholder="Target Temperature" step="0.1" value="{{ devices.temperature.target }}">
+                                        <span class="input-group-text">°C</span>
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-gear"></i></span>
+                                        <select name="mode" class="form-control" id="tempMode">
+                                            <option value="auto" {% if devices.temperature.mode == 'auto' %}selected{% endif %}>Automatic</option>
+                                            <option value="manual" {% if devices.temperature.mode == 'manual' %}selected{% endif %}>Manual</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" name="action" value="update" class="btn btn-primary w-100">
+                                    <i class="fas fa-refresh"></i> Update Settings
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -731,7 +892,39 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
     <script>
-    /* --- CHATBOT LOGIC (MOCK API) --- */
+      // ---------------- SIDEBAR LOGIC ----------------
+      function collapseSidebar() {
+          const sidebar = document.getElementById('sidebar');
+          sidebar.classList.toggle('collapsed');
+      }
+
+      function toggleSidebar() {
+          const sidebar = document.getElementById('sidebar');
+          sidebar.classList.toggle('active');
+      }
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(event) {
+          const sidebar = document.getElementById('sidebar');
+          const toggleBtn = document.querySelector('.mobile-toggle');
+          
+          if (window.innerWidth <= 992 && 
+              sidebar.classList.contains('active') && 
+              !sidebar.contains(event.target) && 
+              !toggleBtn.contains(event.target)) {
+              sidebar.classList.remove('active');
+          }
+      });
+
+      // Auto-hide Django toasts
+      document.addEventListener('DOMContentLoaded', function() {
+        const toasts = document.querySelectorAll(".toast");
+        toasts.forEach((toast) => {
+          setTimeout(() => { new bootstrap.Toast(toast).hide(); }, 5000);
+        });
+      });
+
+      /* --- CHATBOT LOGIC (MOCK API) --- */
       function toggleChat() {
           document.getElementById('chatWindow').classList.toggle('active');
       }
@@ -788,6 +981,61 @@
 
           return "I am specialized in mushrooms. Please ask about temperature, humidity, or diseases. <br><br><i>Ako ay para sa mushroom farming lamang. Magtanong tungkol sa temperatura o mga sakit.</i>";
       }
+
+      /* ---------------- PUSH NOTIFICATION LOGIC ---------------- */
+      
+      // 1. Request Permission
+      function requestNotificationPermission() {
+          if ("Notification" in window) {
+              if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                  Notification.requestPermission();
+              }
+          }
+      }
+
+      // 2. Trigger System Notification
+      function sendNotification(title, message) {
+          if (Notification.permission === "granted") {
+              new Notification(title, {
+                  body: message,
+                  icon: "https://cdn-icons-png.flaticon.com/512/2903/2903556.png" // Simple mushroom icon
+              });
+          }
+      }
+
+      // 3. Initialize & Attach Listeners on Load
+      document.addEventListener('DOMContentLoaded', function() {
+          requestNotificationPermission();
+
+          // --- MIST MAKER NOTIFICATIONS ---
+          const mistForm = document.getElementById('mistForm');
+          if (mistForm) {
+              mistForm.addEventListener('submit', function(e) {
+                  // e.submitter gets the specific button clicked (on/off)
+                  const action = e.submitter.value === 'on' ? 'ACTIVATED' : 'DEACTIVATED';
+                  sendNotification("SmartShroom Control", `Mist Maker ${action}. System switched to Manual Mode.`);
+              });
+          }
+
+          // --- FAN/HEATER NOTIFICATIONS ---
+          const fanForm = document.getElementById('fanForm');
+          if (fanForm) {
+              fanForm.addEventListener('submit', function(e) {
+                  const action = e.submitter.value === 'on' ? 'ACTIVATED' : 'DEACTIVATED';
+                  sendNotification("SmartShroom Control", `Exhaust Fans ${action}. System switched to Manual Mode.`);
+              });
+          }
+
+          // --- TEMPERATURE NOTIFICATIONS ---
+          const tempForm = document.getElementById('tempForm');
+          if (tempForm) {
+              tempForm.addEventListener('submit', function() {
+                  const mode = document.getElementById('tempMode').value;
+                  const modeText = mode === 'auto' ? 'AUTOMATIC' : 'MANUAL';
+                  sendNotification("SmartShroom Settings", `Temperature configuration updated. System set to ${modeText} Mode.`);
+              });
+          }
+      });
     </script>
-</body>
+  </body>
 </html>

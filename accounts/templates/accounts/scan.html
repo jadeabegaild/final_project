@@ -10,60 +10,339 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <style>
-        /* Enhanced Oyster mushroom palette */
+        /* --- GLOBAL VARIABLES & THEME --- */
         :root {
-            --primary: #D6C1B1; /* Light mushroom tan */
-            --primary-dark: #c0ab9b; /* Darker shade for hover states */
-            --secondary: #8B786D; /* Medium mushroom brown */
-            --accent: #4D6A6D; /* Complementary blue-green */
-            --accent-light: #5d8286; /* Lighter accent for gradients */
-            --light: #F5F1ED; /* Very light tan */
-            --dark: #3A3238; /* Deep purple-brown */
-            --highlight: #BED3C9; /* Soft sage green */
+            --primary: #d6c1b1;
+            --primary-dark: #c0ab9b;
+            --secondary: #8b786d;
+            --accent: #4d6a6d;
+            --accent-light: #5d8286;
+            --light: #f5f1ed;
+            --dark: #3a3238;
+            --highlight: #bed3c9;
             --success: #4D6A6D;
             --danger: #A15C54;
+            --warning: #E6B800;
             
-            /* New variables for modern design */
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+            /* Shadows & Radius */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
             --radius: 16px;
             --transition: all 0.3s ease;
+            
+            /* Sidebar Variables (Matched to Report Page) */
+            --sidebar-width: 280px; 
+            --sidebar-collapsed-width: 80px;
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        body {
-            background: linear-gradient(135deg, var(--light) 0%, var(--highlight) 100%);
-            font-family: 'Montserrat', sans-serif;
-            color: var(--dark);
-            min-height: 100vh;
-            position: relative; /* Context for z-index */
+        body { 
+            background: linear-gradient(135deg, var(--light) 0%, var(--highlight) 100%); 
+            font-family: "Montserrat", sans-serif; 
+            color: var(--dark); 
+            min-height: 100vh; 
+            position: relative; 
         }
 
-        /* --- NEW BACKGROUND ANIMATION STYLES --- */
+        /* --- LAYOUT CONTAINER STYLES --- */
+        .layout-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR STYLES (Fixed to match Report Page) --- */
+        #sidebar {
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            left: 0;
+            background: linear-gradient(
+                180deg,
+                var(--accent) 0%,
+                var(--dark) 100%
+            ) !important;
+            color: white;
+            padding: 0;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            overflow-y: auto;
+            transition: width 0.3s ease, min-width 0.3s ease;
+            transform: translateX(0);
+            border-right: 2px solid rgba(255, 255, 255, 0.1); 
+            overflow-x: hidden;
+        }
+
+        /* Collapsed State Styles */
+        #sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+            min-width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+            overflow: hidden; 
+        }
+
+        #sidebar.collapsed .sidebar-header {
+            justify-content: center;
+            padding: 1.5rem 0;
+        }
+
+        /* Burger Icon Styles */
+        .burger-icon {
+            cursor: pointer;
+            font-size: 1.4rem;
+            color: var(--light);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 30px;
+        }
+
+        .burger-icon:hover {
+            color: var(--primary);
+        }
+
+        .sidebar-brand {
+            color: var(--light) !important;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-size: 1.3rem; 
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: opacity 0.2s ease;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .sidebar-brand i {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-right: 8px;
+            transition: var(--transition);
+        }
+        
+        .sidebar-brand:hover i { transform: rotate(-15deg); }
+
+        /* Hide brand elements when collapsed */
+        #sidebar.collapsed .sidebar-brand { display: none; }
+
+        .sidebar-nav .nav-item { margin: 0; }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+            transition: var(--transition);
+            position: relative;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        #sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 0.75rem 0;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            color: var(--primary) !important;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-nav .nav-link.active {
+            color: var(--primary) !important;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .sidebar-nav .nav-link i {
+            margin-right: 0;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Hide spans (text) when collapsed */
+        #sidebar.collapsed .nav-link span,
+        #sidebar.collapsed .dropdown-item span,
+        #sidebar.collapsed .dropdown-toggle::after {
+            display: none;
+        }
+
+        .sidebar-nav .dropdown-item {
+            padding: 0.5rem 1.5rem 0.5rem 3.5rem;
+            transition: var(--transition);
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-weight: 400;
+            background: transparent;
+            font-size: 0.95rem;
+            border-left: 4px solid transparent;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        #sidebar.collapsed .dropdown-item {
+            padding: 0.5rem 1rem;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+        }
+
+        #sidebar.collapsed .dropdown-item i { margin: 0; }
+
+        .sidebar-nav .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary) !important;
+            border-left: 4px solid var(--primary-dark);
+        }
+        
+        .sidebar-nav .dropdown-menu {
+            position: static !important;
+            transform: none !important;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-nav .dropdown-toggle::after {
+            float: right;
+            margin-top: 0.5em;
+            margin-left: auto;
+        }
+        
+        .sidebar-nav .dropdown-toggle[aria-expanded="true"] {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- MAIN CONTENT WRAPPER --- */
+        .content-wrapper {
+            flex-grow: 1;
+            padding: 0; 
+            min-width: 0;
+            transition: margin 0.3s ease;
+        }
+
+        /* --- MOBILE HEADER --- */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%);
+            z-index: 1001;
+            align-items: center;
+            padding: 0 1rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .mobile-toggle {
+            color: white;
+            font-size: 1.4rem;
+            cursor: pointer;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .mobile-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .mobile-brand i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        /* Hide the old floating sidebar toggle */
+        .sidebar-toggle {
+            display: none !important;
+        }
+
+        /* Responsive Adjustments for Sidebar */
+        @media (max-width: 992px) {
+            #sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100%;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                box-shadow: var(--shadow-lg);
+                border-right: none;
+                width: var(--sidebar-width);
+                z-index: 1002;
+            }
+            
+            #sidebar.collapsed {
+                width: var(--sidebar-width);
+                min-width: var(--sidebar-width);
+            }
+            #sidebar.collapsed .sidebar-brand,
+            #sidebar.collapsed .nav-link span,
+            #sidebar.collapsed .dropdown-toggle::after {
+                display: flex;
+                opacity: 1;
+            }
+
+            #sidebar.active { transform: translateX(0); }
+            
+            .burger-icon { display: none; }
+            .sidebar-header { justify-content: center; }
+            
+            .mobile-header { display: flex; } /* Show header on mobile */
+            .content-wrapper { margin-top: 60px; } /* Push content down */
+        }
+
+        /* --- BACKGROUND ANIMATION STYLES --- */
         .background-shapes {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Behind everything */
+            z-index: -1; 
             overflow: hidden;
             pointer-events: none;
         }
 
         .shape {
             position: absolute;
-            opacity: 0.05; /* Very subtle */
+            opacity: 0.05; 
             color: var(--accent);
         }
 
-        /* Animation Keyframes */
         .drift-slow { animation: drift 35s ease-in-out infinite alternate; }
         .drift-medium { animation: drift 25s ease-in-out infinite alternate; }
         .drift-fast { animation: drift 18s ease-in-out infinite alternate; }
@@ -78,139 +357,16 @@
             0% { transform: translate(0, 0) rotate(0deg); }
             100% { transform: translate(-40px, 40px) rotate(-10deg); }
         }
-        /* --------------------------------------- */
-        
-        /* Modern navbar styling - UPDATED TO STICKY */
-        .navbar {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--dark) 100%) !important;
-            box-shadow: var(--shadow-md);
-            padding: 0.5rem 1rem;
-            
-            /* CHANGED: Sticky positioning */
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            width: 100%;
-        }
-        
-        .navbar-brand {
-            color: var(--light) !important;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            font-size: 1.4rem;
-        }
-        
-        .navbar-brand i {
-            color: var(--primary);
-            font-size: 1.8rem;
-            margin-right: 10px;
-            transition: var(--transition);
-        }
-        
-        .navbar-brand:hover i {
-            transform: rotate(-15deg);
-        }
-        
-        .nav-link {
-            color: rgba(255, 255, 255, 0.85) !important;
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            transition: var(--transition);
-            position: relative;
-            border-radius: var(--radius);
-            margin: 0 0.2rem;
-        }
-        
-        .nav-link:hover {
-            color: var(--primary) !important;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .nav-link.active {
-            color: var(--primary) !important;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .nav-link i {
-            margin-right: 8px;
-            font-size: 1rem;
-            width: 20px;
-            text-align: center;
-        }
 
-        .dropdown-menu {
-            border-radius: var(--radius);
-            border: none;
-            box-shadow: var(--shadow-md);
-            background: white;
-            overflow: hidden;
-        }
-        
-        .dropdown-item {
-            padding: 0.7rem 1.2rem;
-            transition: var(--transition);
-            color: var(--dark);
-            font-weight: 500;
-        }
-        
-        .dropdown-item:hover {
-            background: var(--highlight);
-            color: var(--dark);
-        }
-        
-        .dropdown-item i {
-            margin-right: 8px;
-            color: var(--accent);
-            width: 18px;
-        }
-        
-        /* Main content */
+        /* --- SCAN PAGE SPECIFIC CONTENT STYLES --- */
         .content-container {
-            padding: 2rem 1rem;
+            padding: 2rem 1.5rem;
             max-width: 1400px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
         }
         
-        .section-title {
-            color: var(--dark);
-            font-weight: 700;
-            margin-bottom: 2rem;
-            text-align: center;
-            position: relative;
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .section-title i {
-            color: var(--accent);
-            margin-right: 15px;
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 2px;
-        }
-        
-        /* Card styling */
         .card {
             border: none;
             border-radius: var(--radius);
@@ -243,26 +399,13 @@
             border-radius: var(--radius) var(--radius) 0 0 !important;
         }
         
-        .bg-gradient-primary {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%) !important;
-            color: white;
-        }
-
-        .bg-gradient-info {
-            background: linear-gradient(135deg, var(--secondary) 0%, #9c8a7f 100%) !important;
-            color: white;
-        }
-
-        .bg-gradient-secondary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
-            color: var(--dark);
-        }
+        .bg-gradient-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%) !important; color: white; }
+        .bg-gradient-info { background: linear-gradient(135deg, var(--secondary) 0%, #9c8a7f 100%) !important; color: white; }
+        .bg-gradient-secondary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important; color: var(--dark); }
         
-        .card-body {
-            padding: 1.5rem;
-        }
+        .card-body { padding: 1.5rem; }
         
-        /* Camera placeholder styling */
+        /* Camera placeholder */
         .camera-placeholder {
             background: linear-gradient(135deg, var(--light) 0%, rgba(214, 193, 177, 0.3) 100%);
             border: 3px dashed var(--secondary);
@@ -297,7 +440,7 @@
             transform: scale(1.1);
         }
         
-        /* Button styling */
+        /* Buttons */
         .btn {
             border: none;
             border-radius: var(--radius);
@@ -334,7 +477,7 @@
             color: white;
         }
         
-        /* Result styling */
+        /* Results */
         .result-badge {
             display: inline-block;
             padding: 0.8rem 1.5rem;
@@ -345,17 +488,9 @@
             border: 2px solid transparent;
         }
         
-        .result-healthy {
-            background: linear-gradient(135deg, var(--accent), var(--highlight));
-            color: white;
-        }
-        
-        .result-disease {
-            background: linear-gradient(135deg, var(--danger), #D67B6A);
-            color: white;
-        }
+        .result-healthy { background: linear-gradient(135deg, var(--accent), var(--highlight)); color: white; }
+        .result-disease { background: linear-gradient(135deg, var(--danger), #D67B6A); color: white; }
 
-        /* New Style for Analysis Loading State */
         .result-analyzing {
             background: linear-gradient(135deg, #8B786D, #D6C1B1);
             color: white;
@@ -368,10 +503,7 @@
             100% { box-shadow: 0 0 0 0 rgba(139, 120, 109, 0); }
         }
         
-        .recommendation-list {
-            list-style: none;
-            padding-left: 0;
-        }
+        .recommendation-list { list-style: none; padding-left: 0; }
         
         .recommendation-list li {
             padding: 0.8rem 0;
@@ -391,11 +523,9 @@
             font-size: 1.2rem;
         }
         
-        .recommendation-list li:last-child {
-            border-bottom: none;
-        }
+        .recommendation-list li:last-child { border-bottom: none; }
         
-        /* Analysis history styling */
+        /* Analysis history */
         #analysis-history .history-item {
             display: flex;
             justify-content: space-between;
@@ -412,9 +542,7 @@
             padding-right: 0.5rem;
         }
         
-        #analysis-history .history-item:last-child {
-            border-bottom: none;
-        }
+        #analysis-history .history-item:last-child { border-bottom: none; }
         
         .status-dot {
             width: 12px;
@@ -426,19 +554,11 @@
             border: 2px solid white;
         }
         
-        .status-dot.healthy {
-            background-color: var(--accent);
-        }
+        .status-dot.healthy { background-color: var(--accent); }
+        .status-dot.disease { background-color: var(--danger); }
+        .status-dot.warning { background-color: #E6B800; }
         
-        .status-dot.disease {
-            background-color: var(--danger);
-        }
-        
-        .status-dot.warning {
-            background-color: #E6B800;
-        }
-        
-        /* Video element styling */
+        /* Video element */
         #camera {
             border-radius: var(--radius);
             box-shadow: var(--shadow-md);
@@ -506,7 +626,7 @@
             border-radius: var(--radius);
         }
 
-        /* --- NEW: SCANNING ANIMATION CSS --- */
+        /* --- SCANNING ANIMATION CSS --- */
         .scan-wrapper {
             position: relative;
             display: inline-block;
@@ -523,7 +643,7 @@
             background: var(--accent);
             box-shadow: 0 0 15px 2px var(--accent);
             z-index: 10;
-            display: none; /* Hidden by default */
+            display: none;
         }
 
         .scan-overlay {
@@ -534,7 +654,7 @@
             height: 100%;
             background: linear-gradient(to bottom, rgba(77, 106, 109, 0.2), transparent 40%);
             z-index: 9;
-            display: none; /* Hidden by default */
+            display: none;
             transform: translateY(-100%);
         }
 
@@ -587,17 +707,9 @@
             border-left: 4px solid var(--accent);
         }
         
-        .notification.success {
-            border-left-color: var(--success);
-        }
-        
-        .notification.warning {
-            border-left-color: var(--warning, #E6B800);
-        }
-        
-        .notification.danger {
-            border-left-color: var(--danger);
-        }
+        .notification.success { border-left-color: var(--success); }
+        .notification.warning { border-left-color: var(--warning, #E6B800); }
+        .notification.danger { border-left-color: var(--danger); }
         
         .notification-icon {
             font-size: 1.5rem;
@@ -605,9 +717,7 @@
             flex-shrink: 0;
         }
         
-        .notification-content {
-            flex-grow: 1;
-        }
+        .notification-content { flex-grow: 1; }
         
         .notification-title {
             font-weight: 600;
@@ -645,71 +755,29 @@
             animation: progressBar 5s linear forwards;
         }
         
-        .notification.success .notification-progress-bar {
-            background: var(--success);
-        }
-        
-        .notification.warning .notification-progress-bar {
-            background: var(--warning, #E6B800);
-        }
-        
-        .notification.danger .notification-progress-bar {
-            background: var(--danger);
-        }
+        .notification.success .notification-progress-bar { background: var(--success); }
+        .notification.warning .notification-progress-bar { background: var(--warning, #E6B800); }
+        .notification.danger .notification-progress-bar { background: var(--danger); }
         
         @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
         
         @keyframes progressBar {
-            from {
-                width: 100%;
-            }
-            to {
-                width: 0%;
-            }
+            from { width: 100%; }
+            to { width: 0%; }
         }
         
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            .content-container {
-                padding: 1.5rem 1rem;
-            }
-            
-            .section-title {
-                font-size: 1.5rem;
-            }
-            
-            .camera-placeholder {
-                height: 300px;
-            }
-            
-            .btn {
-                padding: 0.7rem 1.2rem;
-                font-size: 0.9rem;
-            }
-            
-            .preview-modal-img {
-                max-height: 50vh;
-            }
-            
-            .toast-container {
-                left: 20px;
-                right: 20px;
-            }
-            
-            .notification-container {
-                left: 20px;
-                right: 20px;
-                max-width: none;
-            }
+            .content-container { padding: 1.5rem 1rem; }
+            .section-title { font-size: 1.5rem; }
+            .camera-placeholder { height: 300px; }
+            .btn { padding: 0.7rem 1.2rem; font-size: 0.9rem; }
+            .preview-modal-img { max-height: 50vh; }
+            .toast-container { left: 20px; right: 20px; }
+            .notification-container { left: 20px; right: 20px; max-width: none; }
             .chat-window { width: 300px; right: -20px; bottom: 70px; }
         }
         
@@ -720,9 +788,7 @@
             100% { transform: scale(1); }
         }
         
-        .status-updated {
-            animation: pulse 0.5s ease;
-        }
+        .status-updated { animation: pulse 0.5s ease; }
         
         /* Loading spinner */
         .spinner-border {
@@ -796,7 +862,7 @@
             align-items: center;
         }
 
-        .chat-header h3 { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .chat-header h3 { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; margin: 0; }
         
         .chat-close { cursor: pointer; opacity: 0.8; transition: 0.2s; }
         .chat-close:hover { opacity: 1; }
@@ -873,7 +939,8 @@
     <div class="background-shapes">
         <i class="fas fa-leaf shape drift-medium" style="top: 10%; left: 5%; font-size: 60px;"></i>
         <i class="fas fa-cloud shape drift-slow" style="top: 20%; right: 15%; font-size: 100px;"></i>
-        <i class="fas fa-microscope shape drift-reverse" style="bottom: 15%; left: 10%; font-size: 80px;"></i> <i class="fas fa-temperature-low shape drift-fast" style="bottom: 30%; right: 5%; font-size: 70px;"></i>
+        <i class="fas fa-microscope shape drift-reverse" style="bottom: 15%; left: 10%; font-size: 80px;"></i> 
+        <i class="fas fa-temperature-low shape drift-fast" style="bottom: 30%; right: 5%; font-size: 70px;"></i>
         <i class="fas fa-tint shape drift-medium" style="top: 50%; left: 50%; font-size: 120px; opacity: 0.03;"></i>
     </div>
 
@@ -895,160 +962,203 @@
 
     <div class="notification-container" id="notification-container"></div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="fas fa-seedling"></i>SMARTSHROOM</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto"> 
-                    <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link " href="{% url 'report' %}"><i class="fas fa-file-alt"></i> Report</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="{% url 'scan' %}"><i class="fas fa-qrcode"></i> Scan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'remote' %}"><i class="fas fa-wifi"></i> Remote</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i> 
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+    <div class="layout-container">
+        <div class="mobile-header">
+            <div class="mobile-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="mobile-brand">
+                <i class="fas fa-seedling"></i> SMARTSHROOM
             </div>
         </div>
-    </nav>
 
-    <div class="content-container">
-
-        <div class="row mb-4">
-            <div class="col-lg-8">
-                <div class="card border-0 animate__animated animate__fadeInLeft">
-                    <div class="card-header bg-gradient-primary">
-                        <h5 class="mb-0">
-                            <i class="fas fa-camera me-2"></i>Real-time Mushroom Disease Detection
-                        </h5>
-                    </div>
-                    <div class="card-body text-center">
-                        <div id="camera-placeholder" class="camera-placeholder">
-                            <i class="fas fa-video"></i>
-                            <h5 class="text-muted mt-3">Click to Start Real-time Analysis</h5>
-                            <p class="text-muted mb-0">Camera will analyze mushrooms continuously</p>
-                        </div>
-                        
-                        <video id="camera" class="d-none" autoplay playsinline muted></video>
-                        
-                        <div id="camera-error" class="alert alert-danger d-none mt-3">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            <span id="error-message"></span>
-                        </div>
-                        
-                        <div class="mt-4 d-flex justify-content-center gap-3">
-                            <button type="button" id="start-camera" class="btn btn-success">
-                                <i class="fas fa-video me-2"></i>Start Real-time Analysis
-                            </button>
-                            <button type="button" id="capture-image" class="btn btn-primary d-none">
-                                <i class="fas fa-camera me-2"></i>Save Current Frame
-                            </button>
-                        </div>
-                        
-                        <div class="mt-3">
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Real-time analysis updates every 2 seconds
-                            </small>
-                        </div>
-                    </div>
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <div class="burger-icon" onclick="collapseSidebar()">
+                    <i class="fas fa-bars"></i>
                 </div>
+                
+                <a class="sidebar-brand" href="#">
+                  <i class="fas fa-seedling"></i><span>SMARTSHROOM</span>
+                </a>
             </div>
             
-            <div class="col-lg-4">
-                <div id="result-container" class="d-none animate__animated animate__fadeInRight">
-                    <div class="card border-0">
-                        <div class="card-header bg-gradient-info">
-                            <h6 class="mb-0">
-                                <i class="fas fa-chart-line me-2"></i>Live Analysis Feed
-                            </h6>
-                        </div>
-                        <div class="card-body p-0">
-                            <div id="real-time-result"></div>
-                            
-                            <div class="p-3 border-top">
-                                <h6 class="text-muted mb-3">
-                                    <i class="fas fa-history me-2"></i>Recent Detections
-                                </h6>
-                                <div id="analysis-history" class="small">
-                                    <div class="text-center text-muted py-3">
-                                        <i class="fas fa-clock me-2"></i>No recent analyses
-                                    </div>
+            <ul class="nav flex-column sidebar-nav" id="sidebarNav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}"
+                      ><i class="fas fa-chart-line"></i> <span>Dashboard</span></a
+                    >
+                </li>
+                
+                <li class="nav-item dropdown">
+                  <a class="nav-link" href="{% url 'report' %}">
+                    <i class="fas fa-file-alt"></i> <span>Report</span>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'scan' %}"
+                      ><i class="fas fa-qrcode"></i> <span>Scan</span></a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'remote' %}"
+                      ><i class="fas fa-wifi"></i> <span>Remote</span></a
+                    >
+                </li>
+                
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#userSubmenu"
+                    role="button"
+                    data-bs-toggle="collapse"
+                    aria-expanded="false"
+                  >
+                    <i class="fas fa-user-circle"></i> <span>Account</span>
+                  </a>
+                  <div class="collapse dropdown-menu" id="userSubmenu" data-bs-parent="#sidebarNav">
+                    <a class="dropdown-item" href="{% url 'profile' %}"
+                      ><i class="fas fa-user"></i> <span>Profile</span></a
+                    >
+                    <a class="dropdown-item" href="{% url 'logout' %}"
+                      ><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a
+                    >
+                  </div>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="content-wrapper">
+            <div class="content-container">
+                <div class="row mb-4">
+                    <div class="col-lg-8">
+                        <div class="card border-0 animate__animated animate__fadeInLeft">
+                            <div class="card-header bg-gradient-primary">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-camera me-2"></i>Real-time Mushroom Disease Detection
+                                </h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <div id="camera-placeholder" class="camera-placeholder">
+                                    <i class="fas fa-video"></i>
+                                    <h5 class="text-muted mt-3">Click to Start Real-time Analysis</h5>
+                                    <p class="text-muted mb-0">Camera will analyze mushrooms continuously</p>
+                                </div>
+                                
+                                <video id="camera" class="d-none" autoplay playsinline muted></video>
+                                
+                                <div id="camera-error" class="alert alert-danger d-none mt-3">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <span id="error-message"></span>
+                                </div>
+                                
+                                <div class="mt-4 d-flex justify-content-center gap-3">
+                                    <button type="button" id="start-camera" class="btn btn-success">
+                                        <i class="fas fa-video me-2"></i>Start Real-time Analysis
+                                    </button>
+                                    <button type="button" id="capture-image" class="btn btn-primary d-none">
+                                        <i class="fas fa-camera me-2"></i>Save Current Frame
+                                    </button>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Real-time analysis updates every 2 seconds
+                                    </small>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="card border-0 mt-4">
-                        <div class="card-body">
-                            <h6 class="card-title text-muted mb-3">
-                                <i class="fas fa-tachometer-alt me-2"></i>Performance Metrics
-                            </h6>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="performance-metric">
-                                        <div class="fw-bold text-success fs-4" id="fps-counter">0</div>
-                                        <small class="text-muted">FPS</small>
+                    <div class="col-lg-4">
+                        <div id="result-container" class="d-none animate__animated animate__fadeInRight">
+                            <div class="card border-0">
+                                <div class="card-header bg-gradient-info">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-chart-line me-2"></i>Live Analysis Feed
+                                    </h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div id="real-time-result"></div>
+                                    
+                                    <div class="p-3 border-top">
+                                        <h6 class="text-muted mb-3">
+                                            <i class="fas fa-history me-2"></i>Recent Detections
+                                        </h6>
+                                        <div id="analysis-history" class="small">
+                                            <div class="text-center text-muted py-3">
+                                                <i class="fas fa-clock me-2"></i>No recent analyses
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="performance-metric">
-                                        <div class="fw-bold text-info fs-4" id="analysis-counter">0</div>
-                                        <small class="text-muted">Analyzed</small>
+                            </div>
+                            
+                            <div class="card border-0 mt-4">
+                                <div class="card-body">
+                                    <h6 class="card-title text-muted mb-3">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Performance Metrics
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="performance-metric">
+                                                <div class="fw-bold text-success fs-4" id="fps-counter">0</div>
+                                                <small class="text-muted">FPS</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="performance-metric">
+                                                <div class="fw-bold text-info fs-4" id="analysis-counter">0</div>
+                                                <small class="text-muted">Analyzed</small>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card border-0 animate__animated animate__fadeInUp">
+                            <div class="card-header bg-gradient-secondary">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-upload me-2"></i>Upload Image for Analysis
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <div class="upload-area p-4 text-center">
+                                            <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                            <h6 class="text-muted">Drop your mushroom image here</h6>
+                                            <p class="text-muted small mb-3">Or click to browse files</p>
+                                            <input type="file" class="form-control d-none" id="image-upload" accept="image/*">
+                                            <button type="button" class="btn btn-primary" onclick="document.getElementById('image-upload').click()">
+                                                <i class="fas fa-folder-open me-2"></i>Choose File
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="upload-info">
+                                            <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Upload Guidelines</h6>
+                                            <ul class="recommendation-list">
+                                                <li>Use high-quality images (min. 640x640px)</li>
+                                                <li>Ensure good lighting conditions</li>
+                                                <li>Focus on mushroom caps and stems</li>
+                                                <li>Supported formats: JPG, PNG, WebP</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
                 </div>
             </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card border-0 animate__animated animate__fadeInUp">
-                    <div class="card-header bg-gradient-secondary">
-                        <h5 class="mb-0">
-                            <i class="fas fa-upload me-2"></i>Upload Image for Analysis
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-6">
-                                <div class="upload-area p-4 text-center">
-                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                                    <h6 class="text-muted">Drop your mushroom image here</h6>
-                                    <p class="text-muted small mb-3">Or click to browse files</p>
-                                    <input type="file" class="form-control d-none" id="image-upload" accept="image/*">
-                                    <button type="button" class="btn btn-primary" onclick="document.getElementById('image-upload').click()">
-                                        <i class="fas fa-folder-open me-2"></i>Choose File
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="upload-info">
-                                    <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Upload Guidelines</h6>
-                                    <ul class="recommendation-list">
-                                        <li>Use high-quality images (min. 640x640px)</li>
-                                        <li>Ensure good lighting conditions</li>
-                                        <li>Focus on mushroom caps and stems</li>
-                                        <li>Supported formats: JPG, PNG, WebP</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> 
         </div>
     </div>
 
@@ -1138,6 +1248,30 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+    // SIDEBAR LOGIC
+    function collapseSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('collapsed');
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('active');
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.querySelector('.mobile-toggle');
+        
+        if (window.innerWidth <= 992 && 
+            sidebar.classList.contains('active') && 
+            !sidebar.contains(event.target) && 
+            !toggleBtn.contains(event.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
+
     // Real-time camera functionality
     let camera = null;
     let analysisInterval = null;

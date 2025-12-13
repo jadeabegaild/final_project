@@ -818,7 +818,7 @@ def get_sensor_data(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-    
+
 def update_control_settings(request):
     if 'user' not in request.session:
         messages.error(request, "You need to log in first.")
@@ -1366,17 +1366,25 @@ def profile(request):
         return redirect('dashboard')
 
 
+from django.shortcuts import redirect
+from django.contrib import messages
+# ... ensure other imports like db, firestore are present ...
+
 def edit_profile(request):
+    # 1. Check Login
     if 'user' not in request.session:
         messages.error(request, "You need to log in first.")
         return redirect('login')
     
-    user_ref = db.collection("users").document(request.session['user']['localId'])
-    user_data = user_ref.get().to_dict()
-    
+    # 2. Handle POST (Form Submission)
     if request.method == 'POST':
         try:
-            # Get updated data from form
+            user_ref = db.collection("users").document(request.session['user']['localId'])
+            
+            # Fetch current data to handle defaults safely
+            user_snapshot = user_ref.get()
+            user_data = user_snapshot.to_dict() if user_snapshot.exists else {}
+
             updated_data = {
                 "firstName": request.POST.get('first_name', user_data.get('firstName', '')),
                 "lastName": request.POST.get('last_name', user_data.get('lastName', '')),
@@ -1394,16 +1402,18 @@ def edit_profile(request):
                 "updatedAt": firestore.SERVER_TIMESTAMP
             }
             
-            # Update Firestore document
             user_ref.set(updated_data, merge=True)
             
             messages.success(request, 'Profile updated successfully!')
-            return redirect('profile')
+            # Add a query parameter so your JS knows to show the success log if needed
+            return redirect('/profile/?success=true') 
             
         except Exception as e:
+            print(f"Error details: {e}") # Print to console for debugging
             messages.error(request, f'Error updating profile: {str(e)}')
-    
-    return render(request, 'accounts/edit_profile.html', {
-        'user_data': user_data,
-        'preserved_data': request.POST if request.method == 'POST' else None
-    })
+            return redirect('profile')
+
+    # 3. Handle GET (URL Access)
+    # If someone tries to visit /profile/edit/ directly in the browser address bar,
+    # just send them back to the main profile page.
+    return redirect('profile')
